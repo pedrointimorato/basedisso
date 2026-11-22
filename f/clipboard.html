@@ -31,7 +31,6 @@
                     </div>
 
                     <div class="nav-right">
-                        <div class="nav-account" data-nav-account></div>
                         <button class="btn-add-question">Apoiar</button>
                         <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
         <i class="fa-solid fa-sliders"></i></button>
@@ -127,7 +126,8 @@
             
             <div class="sidebar-header">
                 <h2 id="sidebar-tab-title"><a href="#" class="nav-logo">basedisso</a></h2>
-                 <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+<a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
                  <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
                 <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
 
@@ -135,10 +135,14 @@
             
             <div class="sidebar-body">
                 
-                <div class="sidebar-tab-content active" id="tab-historico">
-                    <div class="sidebar-block">
+                                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                    <div class="sidebar-block sidebar-history-block">
+                        <h3>Histórico</h3>
                         <h3 class="sidebar-slogan">Nossa base é organizar</h3>
-                        <h3>Visto recentemente</h3>
+                        <p class="sidebar-history-sub">Visto recentemente</p>
                         <ul class="tab-list"></ul>
                     </div>
                 </div>
@@ -175,9 +179,9 @@
             </div>
 
             <footer class="sidebar-footer">
-                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('historico', 'Histórico', event)">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                    <span>Histórico</span>
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
                 </button>
                 <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
                     <i class="fa-solid fa-sliders"></i>

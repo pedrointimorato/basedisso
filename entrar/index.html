@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="site-container layout-auth">
+    <div class="site-container layout-default">
         <div class="left-area">
             <nav class="navbar">
                 <div class="nav-container">
@@ -24,8 +24,9 @@
                         <a href="/adm/" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
                     </div>
                     <div class="nav-right">
-                        <div class="nav-account" data-nav-account></div>
                         <button class="btn-add-question">Apoiar</button>
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
                     </div>
                 </div>
             </nav>
@@ -47,6 +48,70 @@
             </main>
 
         </div>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                    <div class="sidebar-block sidebar-history-block">
+                        <h3>Histórico</h3>
+                        <h3 class="sidebar-slogan">Nossa base é organizar</h3>
+                        <p class="sidebar-history-sub">Visto recentemente</p>
+                        <ul class="tab-list"></ul>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Modo Escuro</span>
+                                <input type="checkbox" id="theme-toggle">
+                            </label>
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="/adm/">abrir página do adm</a>
+                    </div>
+                </div>
+            </div>
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
     </div>
     <script src="/script.js"></script>
     <script src="/account.js"></script>

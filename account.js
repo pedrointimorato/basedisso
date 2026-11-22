@@ -96,6 +96,12 @@
       .catch(function () { return null; });
   }
 
+  function logout() {
+    fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }).finally(function () {
+      window.location.reload();
+    });
+  }
+
   function fillNav(user) {
     var nodes = document.querySelectorAll("[data-nav-account]");
     for (var i = 0; i < nodes.length; i++) {
@@ -103,13 +109,7 @@
       while (box.firstChild) box.removeChild(box.firstChild);
       if (user) {
         box.appendChild(userLink(user.username, user.is_admin, "nav-account-link"));
-        box.appendChild(
-          el("button", { type: "button", class: "btn-account-sair", onClick: function () {
-            fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }).finally(function () {
-              window.location.reload();
-            });
-          } }, "Sair")
-        );
+        box.appendChild(el("button", { type: "button", class: "btn-account-sair", onClick: logout }, "Sair"));
       } else {
         box.appendChild(el("a", { href: "/entrar" }, "Entrar"));
         box.appendChild(el("a", { href: "/cadastro", class: "nav-account-cadastro" }, "Cadastrar"));
@@ -117,8 +117,34 @@
     }
   }
 
+  function fillSidebarAccount(user) {
+    var nodes = document.querySelectorAll("[data-sidebar-account]");
+    for (var i = 0; i < nodes.length; i++) {
+      var box = nodes[i];
+      while (box.firstChild) box.removeChild(box.firstChild);
+      if (user) {
+        var row = el("div", { class: "sidebar-account-user" },
+          userLink(user.username, user.is_admin, "nav-account-link"),
+          el("button", { type: "button", class: "btn-account-sair", onClick: logout }, "Sair")
+        );
+        box.appendChild(row);
+      } else {
+        var actions = el("div", { class: "sidebar-account-actions" },
+          el("a", { href: "/entrar", class: "sidebar-btn-entrar" }, "Entrar"),
+          el("a", { href: "/cadastro", class: "sidebar-btn-cadastro" }, "Cadastrar")
+        );
+        box.appendChild(actions);
+      }
+    }
+  }
+
+  function fillAccountUI(user) {
+    fillNav(user);
+    fillSidebarAccount(user);
+  }
+
   function initNav() {
-    me().then(fillNav);
+    me().then(fillAccountUI);
   }
 
   global.BDAccount = {
@@ -130,6 +156,8 @@
     appendBodyWithMentions: appendBodyWithMentions,
     tokenizeMentions: tokenizeMentions,
     fillNav: fillNav,
+    fillSidebarAccount: fillSidebarAccount,
+    fillAccountUI: fillAccountUI,
   };
 
   if (document.readyState === "loading") {

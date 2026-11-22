@@ -166,9 +166,21 @@ body {
     margin-left: 25px;
 }
 .sidebar-icon-link {
-    margin-left: 100px;
+    margin-left: 0;
     color: #a12320;
     font-size: 13px;
+    flex-shrink: 0;
+}
+.sidebar-header .sidebar-btn-apoiar {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+.sidebar-header h2 {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .btn-add-question {
     background-color: var(--accent-red);
@@ -211,8 +223,12 @@ body {
     top: 0;
     width: 350px;
     height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     z-index: 1001;
 }
 
@@ -220,8 +236,10 @@ body {
     height: 50px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 12px 0 20px;
+    gap: 8px;
     border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
 }
 
 .sidebar-header h2 {
@@ -233,7 +251,11 @@ body {
 .sidebar-body {
     padding: 20px;
     overflow-y: auto;
-    flex: 1;
+    overflow-x: hidden;
+    flex: 1 1 auto;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 /* BLOCOS DAS ABAS */
@@ -366,10 +388,13 @@ body {
 
 /* RODAPÉ COM BOTÕES DE NAVEGAÇÃO */
 .sidebar-footer {
-    height: 60px;
+    min-height: 60px;
+    height: auto;
     border-top: 1px solid var(--border-color);
     display: flex;
     background-color: var(--bg-footer);
+    flex-shrink: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .footer-tab-btn {
@@ -458,10 +483,15 @@ body {
     .right-sidebar {
         position: fixed;
         display: flex;
+        flex-direction: column;
         right: -350px; /* Joga a sidebar totalmente para fora da tela (direita) */
         top: 0;
         width: 310px; /* Um pouco mais estreita no mobile */
         height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        overflow: hidden;
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
         transition: right 0.3s ease; /* Animação suave de deslize */
         z-index: 2000; /* Fica por cima de tudo */
@@ -604,8 +634,9 @@ body {
 
 /* Cabeçalho da sidebar no celular: ícones cabem e o × fica no fim */
 @media (max-width: 950px) {
-    .sidebar-header { gap: 14px; padding: 0 16px; }
-    .sidebar-header .sidebar-icon-link { margin-left: auto; }
+    .sidebar-header { gap: 8px; padding: 0 12px 0 16px; }
+    .sidebar-header .sidebar-btn-apoiar { margin-left: auto; }
+    .sidebar-header .sidebar-icon-link { margin-left: 0; }
     .sidebar-header .sidebar-icon-link.sidebar-help-link { margin-left: 0; }
     .sidebar-header .btn-close-sidebar { order: 3; margin-left: 0; }
 }
@@ -655,3 +686,57 @@ body {
     opacity: 1;
 }
 .btn-adm-page:hover { background-color: var(--accent-red-hover); color: #fff; }
+
+/* Conta e Apoiar na aba Meu / cabeçalho da sidebar */
+.sidebar-account-block { margin-bottom: 18px; }
+.sidebar-account { margin-bottom: 12px; }
+.sidebar-account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.sidebar-account-actions a {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.sidebar-btn-entrar {
+    background-color: var(--accent-red);
+    color: #fff;
+    border: none;
+}
+.sidebar-btn-entrar:hover { background-color: var(--accent-red-hover); color: #fff; }
+.sidebar-btn-cadastro {
+    background-color: var(--bg-card);
+    color: var(--accent-red);
+    border: 1px solid var(--accent-red);
+}
+.sidebar-btn-cadastro:hover { background-color: var(--bg-global); }
+.sidebar-account-user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.sidebar-account-user .user-mention { font-size: 16px; }
+.sidebar-history-block h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+.sidebar-history-block h3.sidebar-slogan {
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+.sidebar-history-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 10px;
+    font-weight: 600;
+}

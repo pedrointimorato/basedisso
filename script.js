@@ -1,6 +1,6 @@
 /**
  * Alterna as abas internas do corpo da sidebar e atualiza o estado dos botões do rodapé.
- * * @param {string} idAba - O sufixo do ID da aba (ex: 'historico', 'configuracoes', 'ofertas').
+ * * @param {string} idAba - O sufixo do ID da aba (ex: 'meu', 'configuracoes', 'ofertas').
  * @param {Event} event - O evento de clique para capturar o botão ativo.
  */
 function mudarAbaSidebar(idAba, tituloCabecalho, event) {
@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. Verifica se o usuário já tinha uma preferência salva anteriormente
     const temaSalvo = localStorage.getItem("tema") || "light";
     document.documentElement.setAttribute("data-theme", temaSalvo);
+
+    if (!themeToggle) return;
 
     // Ajusta o estado visual do checkbox baseado no tema carregado
     if (temaSalvo === "dark") {
