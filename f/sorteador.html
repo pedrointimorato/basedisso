@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador de números — basedisso</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="tools.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    
+                    <div class="nav-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="nav-search-input" placeholder="base de busca">
+                    </div>
+
+                    <div class="nav-icons">
+                        <a href="../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="index.html" class="nav-icon-link active"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="#" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-add-question">Apoiar</button>
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <div class="tool-page">
+                    <p class="tool-back"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Ferramentas</a></p>
+                    <header>
+                        <h1>Sorteador de números</h1>
+                        <p class="tool-lead">Defina o intervalo, quantos números quer e se podem repetir. O resultado aparece na hora, neste navegador.</p>
+                    </header>
+
+                    <section class="tool-card" aria-labelledby="sort-config-title">
+                        <h2 id="sort-config-title">Personalizar</h2>
+                        <div class="tool-fields">
+                            <label>
+                                <span class="tool-label">Mínimo</span>
+                                <input type="number" id="sort-min" class="tool-input" value="1" step="1">
+                            </label>
+                            <label>
+                                <span class="tool-label">Máximo</span>
+                                <input type="number" id="sort-max" class="tool-input" value="100" step="1">
+                            </label>
+                            <label>
+                                <span class="tool-label">Quantidade</span>
+                                <input type="number" id="sort-qtd" class="tool-input" value="1" min="1" step="1">
+                            </label>
+                        </div>
+                        <label>
+                            <span class="tool-label">Excluir números <span>(opcional, separados por vírgula)</span></span>
+                            <input type="text" id="sort-excluir" class="tool-input" placeholder="Ex.: 13, 17, 21" autocomplete="off">
+                        </label>
+                        <div class="tool-checks">
+                            <label class="tool-check"><input type="checkbox" id="sort-unico" checked> Não repetir número</label>
+                            <label class="tool-check"><input type="checkbox" id="sort-ordenar"> Ordenar resultado</label>
+                            <label class="tool-check"><input type="checkbox" id="sort-animacao" checked> Animação de contagem</label>
+                        </div>
+                        <div class="tool-actions">
+                            <button type="button" class="tool-btn tool-btn-primary" id="btn-sortear"><i class="fa-solid fa-shuffle"></i> Sortear</button>
+                            <button type="button" class="tool-btn is-hidden" id="btn-sortear-de-novo"><i class="fa-solid fa-rotate-right"></i> Sortear de novo</button>
+                            <button type="button" class="tool-btn is-hidden" id="btn-copiar"><i class="fa-regular fa-copy"></i> Copiar resultado</button>
+                        </div>
+                        <p class="tool-status" id="sort-status" role="status"></p>
+                    </section>
+
+                    <section class="tool-card" aria-labelledby="sort-resultado-title">
+                        <h2 id="sort-resultado-title">Resultado</h2>
+                        <div class="sort-stage" id="sort-stage">
+                            <p class="sort-placeholder" id="sort-placeholder">O resultado do sorteio aparece aqui.</p>
+                            <div class="sort-numbers is-hidden" id="sort-numbers"></div>
+                            <div class="sort-countdown is-hidden" id="sort-countdown" aria-hidden="true"></div>
+                        </div>
+                        <p class="sort-meta" id="sort-meta"></p>
+                    </section>
+
+                    <section class="tool-card" aria-labelledby="sort-hist-title">
+                        <div class="sort-history-head">
+                            <h2 id="sort-hist-title">Histórico deste navegador</h2>
+                            <button type="button" class="tool-btn tool-btn-ghost" id="btn-limpar-hist">Apagar histórico</button>
+                        </div>
+                        <ul class="sort-list" id="sort-list"></ul>
+                    </section>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="#" class="nav-logo">basedisso</a></h2>
+                 <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                 <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+
+            </div>
+            
+            <div class="sidebar-body">
+                
+                <div class="sidebar-tab-content active" id="tab-historico">
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-slogan">Nossa base é organizar</h3>
+                        <h3>Visto recentemente</h3>
+                        <ul class="tab-list"></ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Modo Escuro</span>
+                                <input type="checkbox" id="theme-toggle">
+                            </label>
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block ad-block">
+                        <span class="ad-badge">Patrocinado</span>
+                        <h3>Quora Plus</h3>
+                        <p>Adquira a assinatura anual com 40% de desconto e acesse respostas exclusivas de especialistas.</p>
+                        <button class="btn-ad">Saber mais</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('historico', 'Histórico', event)">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Histórico</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="../script.js"></script>
+    <script src="sorteador.js"></script>
+</body>
+</html>

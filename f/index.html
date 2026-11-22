@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferramentas — basedisso</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="tools.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    
+                    <div class="nav-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="nav-search-input" placeholder="base de busca">
+                    </div>
+
+                    <div class="nav-icons">
+                        <a href="../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="index.html" class="nav-icon-link active"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="#" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-add-question">Apoiar</button>
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <div class="tools-panel">
+                    <header class="tools-hero">
+                        <h1>Ferramentas</h1>
+                        <p>Um painel com utilitários rápidos. As que já estão prontas abrem na hora; as outras aparecem como prévia.</p>
+                    </header>
+
+                    <div class="tools-filters">
+                        <div class="tools-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="search" id="tools-busca" placeholder="Buscar ferramenta…" autocomplete="off">
+                        </div>
+                        <div class="tools-chips" id="tools-chips" role="tablist" aria-label="Categorias">
+                            <button type="button" class="tools-chip is-on" data-cat="todas">Todas</button>
+                            <button type="button" class="tools-chip" data-cat="Texto">Texto</button>
+                            <button type="button" class="tools-chip" data-cat="Sorteio">Sorteio</button>
+                            <button type="button" class="tools-chip" data-cat="Produtividade">Produtividade</button>
+                            <button type="button" class="tools-chip" data-cat="Conversão">Conversão</button>
+                        </div>
+                    </div>
+
+                    <div class="tools-grid" id="tools-grid">
+                        <a class="tool-tile" href="clipboard.html" data-cat="Texto" data-name="Área de transferência clipboard colar texto link">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-regular fa-clipboard"></i></span></div>
+                            <h2 class="tool-tile-name">Área de transferência</h2>
+                            <p class="tool-tile-desc">Cole um texto, gere um código ou um link e recupere depois neste ou em outro aparelho.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Texto</span></div>
+                        </a>
+
+                        <a class="tool-tile" href="sorteador.html" data-cat="Sorteio" data-name="Sorteador de números aleatório rifa bingo intervalo">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-solid fa-hashtag"></i></span></div>
+                            <h2 class="tool-tile-name">Sorteador de números</h2>
+                            <p class="tool-tile-desc">Sorteie um ou vários números em um intervalo, com ou sem repetição.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Sorteio</span></div>
+                        </a>
+
+                        <div class="tool-tile is-soon" data-cat="Sorteio" data-name="Sorteio de nomes lista participantes">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-solid fa-user-group"></i></span></div>
+                            <h2 class="tool-tile-name">Sorteio de nomes</h2>
+                            <p class="tool-tile-desc">Cole uma lista de nomes e sorteie um ou mais ganhadores.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Sorteio</span><span class="tool-badge-soon">em breve</span></div>
+                        </div>
+
+                        <div class="tool-tile is-soon" data-cat="Sorteio" data-name="Cara ou coroa moeda">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-solid fa-coins"></i></span></div>
+                            <h2 class="tool-tile-name">Cara ou coroa</h2>
+                            <p class="tool-tile-desc">Lance uma moeda virtual para decidir entre duas opções.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Sorteio</span><span class="tool-badge-soon">em breve</span></div>
+                        </div>
+
+                        <div class="tool-tile is-soon" data-cat="Sorteio" data-name="Dados dado rolagem">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-solid fa-dice"></i></span></div>
+                            <h2 class="tool-tile-name">Dados</h2>
+                            <p class="tool-tile-desc">Role um ou mais dados (d6, d20 e outros) e some o resultado.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Sorteio</span><span class="tool-badge-soon">em breve</span></div>
+                        </div>
+
+                        <div class="tool-tile is-soon" data-cat="Texto" data-name="Contador de palavras caracteres linhas">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-solid fa-font"></i></span></div>
+                            <h2 class="tool-tile-name">Contador de palavras</h2>
+                            <p class="tool-tile-desc">Conte palavras, caracteres e linhas de um texto colado.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Texto</span><span class="tool-badge-soon">em breve</span></div>
+                        </div>
+
+                        <div class="tool-tile is-soon" data-cat="Produtividade" data-name="Gerador de senha aleatória">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-solid fa-key"></i></span></div>
+                            <h2 class="tool-tile-name">Gerador de senha</h2>
+                            <p class="tool-tile-desc">Crie senhas fortes com tamanho e tipos de caractere à sua escolha.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Produtividade</span><span class="tool-badge-soon">em breve</span></div>
+                        </div>
+
+                        <div class="tool-tile is-soon" data-cat="Produtividade" data-name="Pomodoro timer foco">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-regular fa-clock"></i></span></div>
+                            <h2 class="tool-tile-name">Pomodoro</h2>
+                            <p class="tool-tile-desc">Timer de foco e pausa para organizar o trabalho em blocos.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Produtividade</span><span class="tool-badge-soon">em breve</span></div>
+                        </div>
+
+                        <div class="tool-tile is-soon" data-cat="Conversão" data-name="Conversor de unidades medida">
+                            <div class="tool-tile-top"><span class="tool-tile-icon"><i class="fa-solid fa-arrows-rotate"></i></span></div>
+                            <h2 class="tool-tile-name">Conversor de unidades</h2>
+                            <p class="tool-tile-desc">Converta comprimento, peso, temperatura e outras unidades.</p>
+                            <div class="tool-tile-foot"><span class="tool-tag">Conversão</span><span class="tool-badge-soon">em breve</span></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="#" class="nav-logo">basedisso</a></h2>
+                 <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                 <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+
+            </div>
+            
+            <div class="sidebar-body">
+                
+                <div class="sidebar-tab-content active" id="tab-historico">
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-slogan">Nossa base é organizar</h3>
+                        <h3>Visto recentemente</h3>
+                        <ul class="tab-list"></ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Modo Escuro</span>
+                                <input type="checkbox" id="theme-toggle">
+                            </label>
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block ad-block">
+                        <span class="ad-badge">Patrocinado</span>
+                        <h3>Quora Plus</h3>
+                        <p>Adquira a assinatura anual com 40% de desconto e acesse respostas exclusivas de especialistas.</p>
+                        <button class="btn-ad">Saber mais</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('historico', 'Histórico', event)">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Histórico</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="../script.js"></script>
+    <script src="painel.js"></script>
+</body>
+</html>

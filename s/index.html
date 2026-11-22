@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sátiras — basedisso</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="satira.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    
+                    <div class="nav-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="nav-search-input" placeholder="base de busca">
+                    </div>
+
+                    <div class="nav-icons">
+                        <a href="../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="index.html" class="nav-icon-link active"><span class="nav-letter-icon">S</span></a>
+                        <a href="../f/index.html" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="#" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-add-question">Apoiar</button>
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <header class="satira-hero">
+                    <h1>Sátiras</h1>
+                    <p>Um feed de trabalhos satíricos. A peça em destaque é a Bíblia Amarela, da wiki do r/BrasilSocial.</p>
+                </header>
+
+                <div class="satira-shelf">
+                    <div class="shelf-top">
+                    <div class="shelf-col shelf-featured">
+                        <article class="shelf-item">
+                            <a class="book book-lg" href="biblia-amarela.html" aria-label="Abrir a Bíblia Amarela">
+                                <div class="book-3d">
+                                    <span class="book-spine" aria-hidden="true"><span>A Bíblia Amarela</span></span>
+                                    <span class="book-page" aria-hidden="true"></span>
+                                    <span class="book-edge-right" aria-hidden="true"></span>
+                                    <span class="book-edge-bottom" aria-hidden="true"></span>
+                                    <span class="book-cover">
+                                        <span class="book-cover-face">
+                                            <span class="book-title">A Bíblia Amarela</span>
+                                            <span class="book-sub">Escritura based a orientação para a verdade, sabedoria e glória.</span>
+                                            <span class="book-ornament" aria-hidden="true"></span>
+                                            <span class="book-author">Intimorato</span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <span class="book-shadow" aria-hidden="true"></span>
+                            </a>
+                        </article>
+                        <div class="shelf-plank shelf-plank-mobile" aria-hidden="true"></div>
+                    </div>
+
+                    <div class="shelf-col shelf-small">
+                        <div class="shelf-row">
+                            <article class="shelf-item">
+                                <div class="book book-sm book-cloth" aria-hidden="true">
+                                    <div class="book-3d">
+                                        <span class="book-spine"></span>
+                                        <span class="book-page"></span>
+                                        <span class="book-edge-right"></span>
+                                        <span class="book-edge-bottom"></span>
+                                        <span class="book-cover">
+                                            <span class="book-cover-face">
+                                                <span class="book-roman">II</span>
+                                                <span class="book-sm-title">Volume II</span>
+                                                <span class="book-soon-label">Em breve</span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span class="book-shadow" aria-hidden="true"></span>
+                                </div>
+                            </article>
+                            <article class="shelf-item">
+                                <div class="book book-sm book-cream" aria-hidden="true">
+                                    <div class="book-3d">
+                                        <span class="book-spine"></span>
+                                        <span class="book-page"></span>
+                                        <span class="book-edge-right"></span>
+                                        <span class="book-edge-bottom"></span>
+                                        <span class="book-cover">
+                                            <span class="book-cover-face">
+                                                <span class="book-roman">III</span>
+                                                <span class="book-sm-title">Caderno</span>
+                                                <span class="book-soon-label">Em breve</span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span class="book-shadow" aria-hidden="true"></span>
+                                </div>
+                            </article>
+                            <div class="shelf-plank" aria-hidden="true"></div>
+                        </div>
+                        <div class="shelf-row">
+                            <article class="shelf-item">
+                                <div class="book book-sm book-red" aria-hidden="true">
+                                    <div class="book-3d">
+                                        <span class="book-spine"></span>
+                                        <span class="book-page"></span>
+                                        <span class="book-edge-right"></span>
+                                        <span class="book-edge-bottom"></span>
+                                        <span class="book-cover">
+                                            <span class="book-cover-face">
+                                                <span class="book-roman">IV</span>
+                                                <span class="book-sm-title">Panfleto</span>
+                                                <span class="book-soon-label">Em breve</span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span class="book-shadow" aria-hidden="true"></span>
+                                </div>
+                            </article>
+                            <article class="shelf-item">
+                                <div class="book book-sm book-green" aria-hidden="true">
+                                    <div class="book-3d">
+                                        <span class="book-spine"></span>
+                                        <span class="book-page"></span>
+                                        <span class="book-edge-right"></span>
+                                        <span class="book-edge-bottom"></span>
+                                        <span class="book-cover">
+                                            <span class="book-cover-face">
+                                                <span class="book-roman">V</span>
+                                                <span class="book-sm-title">Antologia</span>
+                                                <span class="book-soon-label">Em breve</span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <span class="book-shadow" aria-hidden="true"></span>
+                                </div>
+                            </article>
+                            <div class="shelf-plank shelf-plank-mobile" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="shelf-plank shelf-plank-full" aria-hidden="true"></div>
+                    <div class="shelf-caption-row">
+                        <p class="book-caption">
+                            <span class="livro-credit">r/BrasilSocial</span>
+                            <span class="livro-links">
+                                <a href="biblia-amarela.html">Ler no site</a>
+                                ·
+                                <a href="https://www.reddit.com/r/BrasilSocial/wiki/biblia-amarela/" target="_blank" rel="noopener noreferrer">Wiki original</a>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="#" class="nav-logo">basedisso</a></h2>
+                 <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                 <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+
+            </div>
+            
+            <div class="sidebar-body">
+                
+                <div class="sidebar-tab-content active" id="tab-historico">
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-slogan">Nossa base é organizar</h3>
+                        <h3>Visto recentemente</h3>
+                        <ul class="tab-list"></ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Modo Escuro</span>
+                                <input type="checkbox" id="theme-toggle">
+                            </label>
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block ad-block">
+                        <span class="ad-badge">Patrocinado</span>
+                        <h3>Quora Plus</h3>
+                        <p>Adquira a assinatura anual com 40% de desconto e acesse respostas exclusivas de especialistas.</p>
+                        <button class="btn-ad">Saber mais</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('historico', 'Histórico', event)">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Histórico</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="../script.js"></script>
+</body>
+</html>

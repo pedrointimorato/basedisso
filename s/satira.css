@@ -1,0 +1,537 @@
+/* Feed de sátiras (/s/) e leitor da Bíblia Amarela */
+.satira-hero {
+    max-width: 960px;
+    margin: 0 auto 12px;
+    padding: 8px 8px 0;
+}
+.satira-hero h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+.satira-hero p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.tool-back {
+    margin: 0 0 14px;
+}
+.tool-back a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.tool-back a:hover { color: var(--accent-red); }
+
+.tool-badge-soon {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--search-bg);
+    color: var(--text-light);
+    margin-top: 6px;
+}
+
+/* ===== Estante e livros em CSS ===== */
+.satira-shelf {
+    display: flex;
+    flex-direction: column;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 12px 8px 48px;
+}
+.shelf-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 28px 32px;
+}
+.shelf-featured {
+    flex: 0 0 auto;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.shelf-small {
+    flex: 1 1 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+}
+.shelf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+    align-items: end;
+}
+.shelf-plank {
+    grid-column: 1 / -1;
+    height: 9px;
+    margin: 2px 0 0;
+    background: linear-gradient(to bottom, #e2d3b8, #c8ad86 55%, #a8875a);
+    box-shadow: 0 3px 8px rgba(40, 24, 8, .18), inset 0 1px 0 rgba(255,255,255,.4);
+    border-radius: 1px;
+}
+.shelf-plank-full {
+    width: 100%;
+    margin-top: 0;
+}
+.shelf-plank-mobile {
+    display: none;
+}
+.shelf-caption-row {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 8px;
+}
+.shelf-caption-row .book-caption {
+    width: 260px;
+}
+.shelf-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+.book {
+    --spine: 16px;
+    --yellow: #e3b210;
+    --yellow-dark: #b3860c;
+    --ink: #1a1408;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    width: 240px;
+    perspective: 1100px;
+    padding: 10px 14px 16px 10px;
+    box-sizing: border-box;
+}
+.book-lg { width: 240px; }
+.book-sm { width: 132px; --spine: 11px; padding: 8px 12px 14px 8px; }
+
+.book-3d {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    height: auto;
+    transform: rotateY(-7deg);
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+}
+.book-lg:hover .book-3d,
+.book-lg:focus-visible .book-3d {
+    transform: rotateY(-14deg) translateY(-8px);
+}
+
+.book-spine {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: var(--spine);
+    z-index: 4;
+    background: linear-gradient(90deg, #7a5e08 0%, var(--yellow-dark) 38%, #c4920c 72%, #6e5408 100%);
+    border-radius: 2px 0 0 2px;
+    /* sulco da dobradiça na borda direita da lombada */
+    box-shadow:
+        inset -3px 0 0 rgba(0,0,0,.35),
+        inset 2px 0 3px rgba(255, 236, 160, .25),
+        inset 0 2px 2px rgba(255,255,255,.12),
+        inset 0 -2px 2px rgba(0,0,0,.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.book-spine > span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+.book-page {
+    position: absolute;
+    left: var(--spine);
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    background:
+        repeating-linear-gradient(to bottom, transparent 0 22px, rgba(180,160,120,.18) 22px 23px),
+        #f7f1e3;
+    border-radius: 0 6px 6px 0;
+    box-shadow: inset 0 0 0 1px #e4d8c0;
+}
+
+.book-cover {
+    position: absolute;
+    left: var(--spine);
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    transform-origin: left center;
+    transform: rotateY(0deg);
+    transition: transform 0.45s ease;
+    border-radius: 0 7px 7px 0;
+    overflow: hidden;
+    background: var(--yellow);
+    box-shadow: 2px 0 6px rgba(0,0,0,.12);
+}
+.book-lg:hover .book-cover,
+.book-lg:focus-visible .book-cover {
+    transform: rotateY(-22deg);
+}
+.book-cover-face {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 14px 12px 12px 14px;
+    border: 2px solid var(--ink);
+    margin: 10px 9px 10px 8px;
+    color: var(--ink);
+    box-sizing: border-box;
+    background: var(--yellow);
+}
+.book-title {
+    font-family: Palatino, "Palatino Linotype", "Book Antiqua", "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.05;
+    text-align: center;
+    margin: 6px 0 12px;
+    display: block;
+}
+.book-sub {
+    font-family: Palatino, "Palatino Linotype", "Book Antiqua", "Times New Roman", serif;
+    font-size: 12.5px;
+    line-height: 1.35;
+    text-align: center;
+    display: block;
+    margin: 0 2px;
+}
+.book-ornament {
+    display: block;
+    margin: auto 6px 10px;
+    height: 28px;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    position: relative;
+}
+.book-ornament::before,
+.book-ornament::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    background: var(--ink);
+}
+.book-ornament::before {
+    width: 2px;
+    height: 20px;
+    top: 4px;
+    transform: translateX(-50%);
+}
+.book-ornament::after {
+    width: 10px;
+    height: 2px;
+    top: 9px;
+    transform: translateX(-50%);
+}
+.book-author {
+    font-family: Palatino, "Palatino Linotype", "Book Antiqua", "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 13px;
+    color: #000;
+    display: block;
+}
+
+.book-edge-right {
+    position: absolute;
+    top: 3px;
+    bottom: 5px;
+    right: -8px;
+    width: 8px;
+    z-index: 1;
+    background: repeating-linear-gradient(to right, #f8f3e8 0 1px, #d4cbb6 1px 2px);
+    border-radius: 0 3px 3px 0;
+}
+.book-edge-bottom {
+    position: absolute;
+    left: calc(var(--spine) + 3px);
+    right: 1px;
+    bottom: -7px;
+    height: 7px;
+    z-index: 1;
+    background: repeating-linear-gradient(to bottom, #f8f3e8 0 1px, #d4cbb6 1px 2px);
+    border-radius: 0 0 3px 2px;
+}
+
+.book-shadow {
+    display: block;
+    height: 16px;
+    margin: -4px 8% 0 12%;
+    background: rgba(40, 24, 8, .28);
+    filter: blur(8px);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.book-lg:hover .book-shadow,
+.book-lg:focus-visible .book-shadow {
+    opacity: 0.65;
+    transform: translateY(4px);
+}
+
+.book-caption {
+    text-align: center;
+    margin: 4px 0 0;
+    max-width: 240px;
+}
+.livro-credit {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+.livro-links {
+    display: block;
+    font-size: 13px;
+    color: var(--text-light);
+}
+.livro-links a {
+    color: var(--accent-red);
+    text-decoration: none;
+    font-weight: 600;
+}
+.livro-links a:hover { text-decoration: underline; }
+
+/* livros menores (em breve) */
+.book-sm .book-cover-face {
+    padding: 10px 8px 8px 10px;
+    margin: 7px 6px 7px 5px;
+    border-width: 1.5px;
+    align-items: center;
+    text-align: center;
+}
+.book-roman {
+    font-family: Palatino, "Palatino Linotype", "Times New Roman", serif;
+    font-style: italic;
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 8px;
+    display: block;
+}
+.book-sm-title {
+    font-family: Palatino, "Palatino Linotype", "Times New Roman", serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 8px;
+    display: block;
+    line-height: 1.2;
+}
+.book-soon-label {
+    display: block;
+    margin-top: auto;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 1;
+    color: #fff;
+}
+.book-cream .book-soon-label {
+    color: #1a1408;
+}
+.book-cloth { --yellow: #6d6a63; --yellow-dark: #4d4b46; --ink: #f3efe6; }
+.book-cream { --yellow: #e8d9b8; --yellow-dark: #c4ae86; --ink: #3a3224; }
+.book-red { --yellow: #8a3b32; --yellow-dark: #5e241e; --ink: #f3efe6; }
+.book-green { --yellow: #3f5d48; --yellow-dark: #2a3f31; --ink: #f3efe6; }
+
+/* ===== Leitor ===== */
+.book-reader {
+    max-width: none;
+    margin: 0 auto;
+    padding: 8px 8px 40px;
+}
+.book-paper {
+    background: #f6efe2;
+    color: #2a2418;
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 40px 48px 64px;
+    box-shadow: 0 10px 36px rgba(0,0,0,.18), 0 0 0 1px rgba(80,60,30,.12);
+    border-radius: 2px;
+    font-family: Palatino, "Palatino Linotype", "Book Antiqua", "Iowan Old Style", "Times New Roman", serif;
+    font-size: 19px;
+    line-height: 1.75;
+}
+.book-frontispiece {
+    margin: 0 0 28px;
+    text-align: center;
+}
+.book-frontispiece img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.book-frontispiece figcaption {
+    font-size: 13px;
+    color: #6a5e4a;
+    margin-top: 8px;
+    font-style: italic;
+}
+.book-source-note {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #5c5346;
+    background: #efe6d4;
+    border-left: 3px solid #e3b210;
+    padding: 10px 12px;
+    margin: 0 0 24px;
+}
+.book-source-note a { color: #8a3b00; }
+.book-toc {
+    border-top: 1px solid #d4c8b0;
+    border-bottom: 1px solid #d4c8b0;
+    padding: 16px 0;
+    margin: 0 0 32px;
+}
+.book-toc h2 {
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #5c5346;
+}
+.book-toc ol { list-style: none; }
+.book-toc li { margin: 4px 0; }
+.book-toc a {
+    color: #2a2418;
+    text-decoration: none;
+    border-bottom: 1px dotted #a89878;
+}
+.book-toc a:hover { border-bottom-style: solid; }
+.book-body h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 16px;
+    text-align: center;
+}
+.book-body h2 {
+    font-size: 22px;
+    margin: 28px 0 12px;
+    text-align: left;
+}
+.book-body p { margin: 0 0 14px; }
+.book-body ul {
+    margin: 0 0 18px 1.2em;
+}
+.book-body li { margin: 4px 0; }
+.book-wiki-link {
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid #d4c8b0;
+    font-size: 13px;
+    color: #6a5e4a;
+    word-break: break-all;
+}
+.book-wiki-link a { color: #8a3b00; }
+
+
+.book-toc ol ol {
+    list-style: none;
+    margin: 4px 0 8px 1.2em;
+}
+.book-toc .toc-pending {
+    color: #6a5e4a;
+}
+.book-toc .toc-pending em {
+    font-size: 13px;
+    font-weight: 400;
+    color: #8a7d68;
+    margin-left: 6px;
+}
+.book-credit {
+    font-size: 14px;
+    font-style: italic;
+    color: #5c5346;
+    margin: -4px 0 18px;
+}
+.book-body h2 {
+    font-size: 22px;
+    margin: 28px 0 12px;
+    text-align: left;
+}
+
+@media (max-width: 640px) {
+    .satira-hero { padding: 0; }
+    .satira-hero h1 { font-size: 22px; }
+    .satira-shelf {
+        padding: 8px 0 32px;
+    }
+    .shelf-top {
+        display: contents;
+    }
+    .shelf-featured {
+        order: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .shelf-plank-full {
+        display: none;
+    }
+    .shelf-plank-mobile {
+        display: block;
+        width: 100%;
+    }
+    .shelf-caption-row {
+        order: 2;
+        justify-content: center;
+        padding: 8px 0 16px;
+    }
+    .shelf-caption-row .book-caption {
+        width: 220px;
+    }
+    .shelf-small {
+        order: 3;
+        flex: none;
+        width: 100%;
+        gap: 20px;
+    }
+    .book-lg { width: 220px; }
+    .book-title { font-size: 24px; }
+    .book-sub { font-size: 11.5px; }
+    /* Largura explícita: com width:auto e filhos absolutos, o livro colapsava a 0x0. */
+    .book-sm {
+        width: 100%;
+        max-width: 150px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+    .book-paper { padding: 24px 18px 40px; font-size: 17px; }
+    .book-body h1 { font-size: 26px; }
+    .book-reader { padding: 0 0 32px; }
+}

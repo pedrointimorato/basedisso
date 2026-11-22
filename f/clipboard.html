@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área de transferência — basedisso</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="tools.css">
+    <link rel="stylesheet" href="clipboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    
+                    <div class="nav-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="nav-search-input" placeholder="base de busca">
+                    </div>
+
+                    <div class="nav-icons">
+                        <a href="../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="index.html" class="nav-icon-link active"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="#" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-add-question">Apoiar</button>
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <div class="clipboard-tool">
+                    <p class="tool-back"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Ferramentas</a></p>
+
+                    <header class="clip-hero">
+                        <h1>Área de transferência</h1>
+                        <p>Cole um texto, gere um código curto ou um link e recupere depois — no mesmo estilo de um clipboard online.</p>
+                    </header>
+
+                    <p class="clip-notice">
+                        <i class="fa-solid fa-circle-info"></i>
+                        O código curto fica só neste navegador. Para outro aparelho, use o link: o texto vai na própria URL, sem servidor. Evite dados sensíveis.
+                    </p>
+
+                    <section class="clip-card" aria-labelledby="clip-editor-title">
+                        <h2 id="clip-editor-title" class="visually-hidden">Editor</h2>
+                        <label class="clip-label" for="clip-title">Título <span>(opcional)</span></label>
+                        <input type="text" id="clip-title" class="clip-input" maxlength="80" placeholder="Ex.: comandos do deploy" autocomplete="off">
+
+                        <label class="clip-label" for="clip-text">Texto</label>
+                        <textarea id="clip-text" class="clip-textarea" rows="12" placeholder="Cole ou escreva o texto aqui…"></textarea>
+
+                        <div class="clip-counts" id="clip-counts" aria-live="polite">0 palavras · 0 caracteres · 0 linhas</div>
+
+                        <div class="clip-toolbar">
+                            <label class="clip-expiry">
+                                <span>Validade</span>
+                                <select id="clip-expiry">
+                                    <option value="600">10 minutos</option>
+                                    <option value="3600">1 hora</option>
+                                    <option value="86400" selected>1 dia</option>
+                                    <option value="0">Sem prazo</option>
+                                </select>
+                            </label>
+                            <div class="clip-actions">
+                                <button type="button" class="clip-btn clip-btn-primary" id="btn-salvar"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+                                <button type="button" class="clip-btn" id="btn-limpar"><i class="fa-solid fa-eraser"></i> Limpar</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="clip-card" aria-labelledby="clip-recupera-title">
+                        <h2 id="clip-recupera-title">Recuperar</h2>
+                        <p class="clip-hint">Digite o código gerado neste navegador para reabrir o texto.</p>
+                        <form class="clip-retrieve" id="form-recuperar">
+                            <input type="text" id="clip-code-input" class="clip-input clip-code-field" maxlength="8" placeholder="Ex.: K7M2P" autocomplete="off" spellcheck="false" aria-label="Código do recorte">
+                            <button type="submit" class="clip-btn clip-btn-primary" id="btn-recuperar"><i class="fa-solid fa-arrow-up-right-from-square"></i> Recuperar</button>
+                        </form>
+                    </section>
+
+                    <section class="clip-card clip-result is-hidden" id="clip-result" aria-live="polite">
+                        <h2>Recorte salvo</h2>
+                        <div class="clip-code-display">
+                            <span class="clip-code-label">Código</span>
+                            <strong id="result-code">—</strong>
+                        </div>
+                        <p class="clip-expiry-line" id="result-expiry"></p>
+                        <label class="clip-label" for="result-link">Link para outro dispositivo</label>
+                        <div class="clip-link-row">
+                            <input type="text" id="result-link" class="clip-input" readonly>
+                        </div>
+                        <p class="clip-hint" id="result-link-hint"></p>
+                        <div class="clip-actions clip-result-actions">
+                            <button type="button" class="clip-btn clip-btn-primary" id="btn-copiar-texto"><i class="fa-regular fa-copy"></i> Copiar texto</button>
+                            <button type="button" class="clip-btn" id="btn-copiar-codigo"><i class="fa-solid fa-hashtag"></i> Copiar código</button>
+                            <button type="button" class="clip-btn" id="btn-copiar-link"><i class="fa-solid fa-link"></i> Copiar link</button>
+                            <button type="button" class="clip-btn" id="btn-baixar"><i class="fa-solid fa-download"></i> Baixar</button>
+                        </div>
+                    </section>
+
+                    <section class="clip-card" aria-labelledby="clip-recentes-title">
+                        <div class="clip-recent-head">
+                            <h2 id="clip-recentes-title">Recortes recentes</h2>
+                            <button type="button" class="clip-btn clip-btn-ghost" id="btn-apagar-todos">Apagar todos</button>
+                        </div>
+                        <ul class="clip-list" id="clip-list"></ul>
+                    </section>
+
+                    <p class="clip-status" id="clip-status" role="status"></p>
+                
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="#" class="nav-logo">basedisso</a></h2>
+                 <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                 <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+
+            </div>
+            
+            <div class="sidebar-body">
+                
+                <div class="sidebar-tab-content active" id="tab-historico">
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-slogan">Nossa base é organizar</h3>
+                        <h3>Visto recentemente</h3>
+                        <ul class="tab-list"></ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Modo Escuro</span>
+                                <input type="checkbox" id="theme-toggle">
+                            </label>
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block ad-block">
+                        <span class="ad-badge">Patrocinado</span>
+                        <h3>Quora Plus</h3>
+                        <p>Adquira a assinatura anual com 40% de desconto e acesse respostas exclusivas de especialistas.</p>
+                        <button class="btn-ad">Saber mais</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('historico', 'Histórico', event)">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Histórico</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="../script.js"></script>
+    <script src="clipboard.js"></script>
+</body>
+</html>

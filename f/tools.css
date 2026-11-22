@@ -1,0 +1,436 @@
+/* Painel e páginas de ferramentas em /f/ — usa as variáveis do tema */
+.tool-back {
+    margin: 0 0 14px;
+}
+.tool-back a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.tool-back a:hover {
+    color: var(--accent-red);
+}
+
+.tools-panel,
+.tool-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 8px 8px 40px;
+}
+.tool-page {
+    max-width: 720px;
+}
+
+.tools-hero h1,
+.tool-page h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+.tools-hero p,
+.tool-lead {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.tools-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.tools-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.tools-search i {
+    position: absolute;
+    left: 12px;
+    color: var(--text-light);
+}
+.tools-search input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px 0 36px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    outline: none;
+    font-size: 14px;
+}
+.tools-search input:focus {
+    border-color: var(--accent-blue);
+}
+.tools-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.tools-chip {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.tools-chip:hover {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+.tools-chip.is-on {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: #fff;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+}
+.tools-empty {
+    grid-column: 1 / -1;
+    font-size: 14px;
+    color: var(--text-light);
+    padding: 20px 0;
+}
+
+.tool-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 16px;
+    text-decoration: none;
+    color: inherit;
+    min-height: 170px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+a.tool-tile:hover {
+    border-color: var(--accent-red);
+    transform: translateY(-2px);
+}
+.tool-tile.is-soon {
+    opacity: 0.78;
+    cursor: default;
+}
+.tool-tile-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+.tool-tile-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--search-bg);
+    color: var(--accent-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.tool-tile-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 4px;
+}
+.tool-tile-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    flex: 1;
+}
+.tool-tile-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+.tool-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+    white-space: nowrap;
+}
+.tool-badge-soon {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--search-bg);
+    color: var(--text-light);
+    margin-left: auto;
+}
+
+/* Formulários compartilhados das ferramentas */
+.tool-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+.tool-card h2 {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+.tool-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 6px;
+}
+.tool-label span {
+    font-weight: 400;
+    color: var(--text-light);
+}
+.tool-input,
+.tool-textarea {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--search-bg);
+    color: var(--text-primary);
+    outline: none;
+    font-size: 14px;
+}
+.tool-input {
+    height: 38px;
+    padding: 0 12px;
+}
+.tool-input:focus,
+.tool-textarea:focus {
+    border-color: var(--accent-blue);
+    background: var(--bg-navbar);
+}
+.tool-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.tool-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 8px 0 16px;
+}
+.tool-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.tool-check input {
+    accent-color: var(--accent-red);
+    width: 16px;
+    height: 16px;
+}
+.tool-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.tool-btn {
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.tool-btn:hover:not(:disabled) {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+.tool-btn:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+.tool-btn-primary {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: #fff;
+}
+.tool-btn-primary:hover:not(:disabled) {
+    background: var(--accent-red-hover);
+    border-color: var(--accent-red-hover);
+    color: #fff;
+}
+.tool-status {
+    min-height: 1.2em;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-red);
+}
+.tool-status.is-ok {
+    color: #1a7f37;
+}
+[data-theme="dark"] .tool-status.is-ok {
+    color: #6bcf7a;
+}
+
+/* Sorteador */
+.sort-stage {
+    position: relative;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--search-bg);
+    border-radius: 10px;
+    padding: 24px 16px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+.sort-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+.sort-placeholder {
+    font-size: 15px;
+    color: var(--text-light);
+}
+.sort-num {
+    min-width: 72px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 2px solid var(--accent-red);
+    color: var(--accent-red);
+    font-size: 32px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    line-height: 1.1;
+    animation: sortPop 0.35s ease;
+}
+.sort-countdown {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    font-size: 80px;
+    font-weight: 800;
+    color: var(--accent-red);
+    animation: sortCount 0.9s ease;
+}
+.sort-countdown.is-hidden,
+.is-hidden {
+    display: none !important;
+}
+@keyframes sortPop {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+@keyframes sortCount {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.sort-meta {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-bottom: 12px;
+}
+.sort-history-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.sort-history-head h2 { margin-bottom: 0; }
+.tool-btn-ghost {
+    height: auto;
+    padding: 4px 8px;
+    border: none;
+    background: none;
+    color: var(--text-light);
+    font-weight: 500;
+}
+.tool-btn-ghost:hover { color: var(--accent-red); }
+.sort-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.sort-list-empty {
+    font-size: 13px;
+    color: var(--text-light);
+    padding: 8px 0;
+}
+.sort-item {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--search-bg);
+}
+.sort-item-time {
+    display: block;
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+}
+.sort-item-nums {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    word-break: break-word;
+}
+.sort-item-opts {
+    display: block;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+@media (max-width: 700px) {
+    .tool-fields { grid-template-columns: 1fr; }
+    .sort-num { font-size: 26px; min-width: 60px; }
+}
+@media (max-width: 640px) {
+    .tools-panel, .tool-page { padding: 0 0 32px; }
+    .tools-hero h1, .tool-page h1 { font-size: 22px; }
+}
+
+/* Garante que tiles filtrados sumam */
+.tool-tile[hidden] { display: none !important; }

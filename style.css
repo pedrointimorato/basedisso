@@ -1,0 +1,611 @@
+/* Definição de Variáveis de Cores (Tema Claro por padrão) */
+:root {
+    --bg-global: #f1f2f2;
+    --bg-navbar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-sidebar: #ffffff;
+    --bg-footer: #f7f7f8;
+    --border-color: #dee0e1;
+    --border-subtle: #f1f2f2;
+    
+    --text-primary: #2e3031;
+    --text-secondary: #636466;
+    --text-light: #8f9092;
+    
+    --accent-red: #b92b27;
+    --accent-red-hover: #a12320;
+    --accent-blue: #1a73e8;
+    
+    --search-bg: #f7f7f8;
+}
+
+/* VARIÁVEIS PARA O MODO ESCURO */
+[data-theme="dark"] {
+    --bg-global: #18191a;
+    --bg-navbar: #242526;
+    --bg-card: #242526;
+    --bg-sidebar: #242526;
+    --bg-footer: #1c1d1e;
+    --border-color: #3e4042;
+    --border-subtle: #2f3031;
+    
+    --text-primary: #e4e6eb;
+    --text-secondary: #b0b3b8;
+    --text-light: #8a8d91;
+    
+    --search-bg: #3a3b3c;
+}
+
+/* Configurações Gerais e Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    /* Transição suave ao mudar de tema */
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-global);
+    color: var(--text-primary);
+}
+
+/* ESTRUTURA GRID */
+.site-container {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    min-height: 100vh;
+}
+
+.left-area {
+    display: flex;
+    flex-direction: column;
+}
+
+/* NAVBAR */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% - 350px);
+    height: 50px;
+    background-color: var(--bg-navbar);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-container {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.nav-logo {
+    color: var(--accent-red);
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
+.nav-icons {
+    display: flex;
+    gap: 5px;
+}
+
+.nav-icon-link {
+    color: var(--text-secondary);
+    font-size: 20px;
+    width: 42px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.nav-icon-link.active {
+    color: var(--accent-red);
+    border-bottom: 3px solid var(--accent-red);
+}
+
+/* Barra de Pesquisa */
+.nav-search-box {
+    flex-grow: 1;
+    max-width: 360px;
+    margin-left: 25px;
+    margin-right: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nav-search-box i {
+    position: absolute;
+    left: 12px;
+    color: var(--text-light);
+}
+
+.nav-search-input {
+    width: 100%;
+    height: 35px;
+    padding: 0 12px 0 35px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    outline: none;
+    background-color: var(--search-bg);
+    color: var(--text-primary);
+}
+
+.nav-search-input:focus {
+    border-color: var(--accent-blue);
+    background-color: var(--bg-navbar);
+}
+
+/* Perfil e Botão */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    margin-left: 25px;
+}
+.sidebar-icon-link {
+    margin-left: 100px;
+    color: #a12320;
+    font-size: 13px;
+}
+.btn-add-question {
+    background-color: var(--accent-red);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* FEED PRINCIPAL */
+.main-content {
+    margin-top: 50px;
+    padding: 30px;
+    max-width: 800px;
+    width: 100%;
+    align-self: center;
+}
+
+.post-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.post-card h2 { margin-bottom: 10px; color: var(--text-primary); }
+.post-card p { color: var(--text-secondary); line-height: 1.5; }
+
+/* SIDEBAR DIREITA COMPLETA */
+.right-sidebar {
+    background-color: var(--bg-sidebar);
+    border-left: 1px solid var(--border-color);
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 350px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+}
+
+.sidebar-header {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.sidebar-header h2 {
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+/* Corpo interno (Scroll independente) */
+.sidebar-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* BLOCOS DAS ABAS */
+.sidebar-tab-content {
+    display: none;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.sidebar-tab-content.active {
+    display: block;
+}
+
+.sidebar-block {
+    margin-bottom: 20px;
+}
+
+.sidebar-block h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+/* Listas internas */
+.tab-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tab-list li {
+    font-size: 13.5px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.tab-list li:hover {
+    color: var(--accent-red);
+}
+
+/* CONFIGURAÇÕES ESTILO */
+.config-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.config-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+/* Customização básica do checkbox */
+.config-item input[type="checkbox"] {
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background-color: #ccc;
+    border-radius: 20px;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.config-item input[type="checkbox"]:checked {
+    background-color: var(--accent-red);
+}
+
+.config-item input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    background-color: white;
+    transition: transform 0.2s;
+}
+
+.config-item input[type="checkbox"]:checked::before {
+    transform: translateX(20px);
+}
+
+/* ESTILIZAÇÃO DO AD (OFERTAS) */
+.ad-block {
+    background: var(--bg-global);
+    border: 1px dashed var(--text-light);
+    border-radius: 6px;
+    padding: 15px;
+    position: relative;
+}
+
+.ad-badge {
+    background-color: #e6a23c;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.ad-block p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 8px 0 12px;
+    line-height: 1.4;
+}
+
+.btn-ad {
+    background-color: #e6a23c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    width: 100%;
+}
+
+/* RODAPÉ COM BOTÕES DE NAVEGAÇÃO */
+.sidebar-footer {
+    height: 60px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    background-color: var(--bg-footer);
+}
+
+.footer-tab-btn {
+    flex: 1;
+    border: none;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.footer-tab-btn i {
+    font-size: 18px;
+}
+
+.footer-tab-btn span {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.footer-tab-btn.active {
+    color: var(--accent-red);
+    background-color: var(--bg-sidebar);
+}
+
+/* Animação */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade */
+@media (max-width: 950px) {
+    .site-container { grid-template-columns: 1fr; }
+    .navbar { width: 100%; }
+}
+
+.btn-toggle-sidebar {
+    display: none; /* Escondido por padrão no computador */
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close-sidebar {
+    display: none; /* Escondido por padrão no computador */
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    margin-left: auto; /* Joga o botão para a extrema direita */
+}
+
+/* --- 2. REGRAS PARA TELAS MENORES (ATUALIZADO) --- */
+@media (max-width: 950px) {
+    .site-container { 
+        grid-template-columns: 1fr; /* O feed ocupa a tela toda */
+    }
+    
+    .navbar { 
+        width: 100%; /* Navbar ocupa toda a largura */
+    }
+
+    /* Exibe o botão de abrir na navbar */
+    .btn-toggle-sidebar {
+        display: flex;
+    }
+
+    /* Exibe o botão de fechar na sidebar */
+    .btn-close-sidebar {
+        display: block;
+    }
+
+    /* TRANSFORMA A SIDEBAR EM UM MENU RETRÁTIL */
+    .right-sidebar {
+        position: fixed;
+        display: flex;
+        right: -350px; /* Joga a sidebar totalmente para fora da tela (direita) */
+        top: 0;
+        width: 310px; /* Um pouco mais estreita no mobile */
+        height: 100vh;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease; /* Animação suave de deslize */
+        z-index: 2000; /* Fica por cima de tudo */
+    }
+
+    /* CLASSE QUE O JAVASCRIPT VAI ATIVAR */
+    .right-sidebar.mobile-open {
+        right: 0; /* Traz a sidebar de volta para dentro da tela */
+    }
+}
+/* Letra "S" usada como ícone na navbar, no mesmo tamanho dos ícones */
+.nav-letter-icon {
+    font-weight: 900;
+    font-size: 1.15em;
+    line-height: 1;
+    font-family: inherit;
+}
+
+/* Ícone "?" que ocupa o lugar da foto de perfil */
+.sidebar-icon-link.sidebar-help-link {
+    margin-left: 25px;
+}
+
+/* Ícone combinado de engrenagem com chave */
+.icon-gear-wrench {
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+}
+.icon-gear-wrench .fa-wrench {
+    position: absolute;
+    right: -6px;
+    bottom: -4px;
+    font-size: 0.6em;
+    background: var(--bg-navbar);
+    border-radius: 50%;
+    padding: 1px;
+}
+
+/* Slogan acima de "Visto recentemente", com a mesma fonte */
+.sidebar-block h3.sidebar-slogan {
+    margin-bottom: 24px;
+}
+
+/* ===== FEED EM GRADE (MASONRY) ===== */
+.main-content {
+    max-width: none;
+    padding: 16px;
+    align-self: stretch;
+}
+.feed-grid { column-count: 3; column-gap: 16px; }
+@media (max-width: 1250px) { .feed-grid { column-count: 2; } }
+@media (max-width: 640px) { .feed-grid { column-count: 1; } .main-content { padding: 10px; } }
+
+.feed-card {
+    break-inside: avoid;
+    display: inline-block; width: 100%;
+    margin-bottom: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.card-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+.card-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--accent-red); color: #fff; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.card-meta { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.card-author { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.card-time { font-size: 12px; color: var(--text-light); }
+.card-badge {
+    font-size: 11px; padding: 3px 8px; border-radius: 999px;
+    border: 1px solid var(--accent-red); color: var(--accent-red); white-space: nowrap;
+}
+.card-body { padding: 0 14px 10px; }
+.card-title { font-size: 16px; color: var(--text-primary); margin-bottom: 8px; }
+.card-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px; }
+.read-more { font-size: 13px; color: var(--accent-red); text-decoration: none; font-weight: 600; }
+.card-caption { font-size: 14px; color: var(--text-secondary); margin-top: 8px; line-height: 1.4; }
+.card-img { width: 100%; display: block; border-radius: 6px; background: var(--search-bg); }
+
+.video-wrap { position: relative; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: #000; }
+.video-wrap img, .video-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.video-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--accent-red); color: #fff; font-size: 20px;
+}
+.video-play:hover { background: var(--accent-red-hover); }
+.video-duration {
+    position: absolute; right: 8px; bottom: 8px; font-size: 12px;
+    background: rgba(0,0,0,.75); color: #fff; padding: 2px 6px; border-radius: 4px;
+}
+
+.card-actions { display: flex; border-top: 1px solid var(--border-subtle); }
+.card-action {
+    flex: 1; background: none; border: none; cursor: pointer; padding: 10px 4px;
+    font-size: 13px; color: var(--text-secondary); display: flex; gap: 6px; align-items: center; justify-content: center;
+}
+.card-action:hover, .card-action.on { color: var(--accent-red); }
+
+/* Ferramentas */
+.tool-checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.tool-checklist label { font-size: 14px; color: var(--text-primary); display: flex; gap: 8px; align-items: center; cursor: pointer; }
+.tool-checklist input { accent-color: var(--accent-red); }
+.tool-checklist input:checked + span, .tool-checklist li.done label { text-decoration: line-through; color: var(--text-light); }
+.tool-add { display: flex; gap: 6px; }
+.tool-add input, .tool-add button { height: 32px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--search-bg); color: var(--text-primary); }
+.tool-add input { flex: 1; padding: 0 10px; outline: none; }
+.tool-add button { width: 36px; background: var(--accent-red); color: #fff; border: none; cursor: pointer; }
+.tool-hint { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+
+.tool-poll { display: flex; flex-direction: column; gap: 8px; }
+.poll-opt {
+    position: relative; overflow: hidden; text-align: left; padding: 9px 12px; cursor: pointer;
+    border: 1px solid var(--border-color); border-radius: 6px; background: var(--search-bg);
+    color: var(--text-primary); font-size: 14px;
+}
+.poll-opt .poll-bar { position: absolute; inset: 0 auto 0 0; background: var(--accent-red); opacity: .18; transition: width .4s; }
+.poll-opt .poll-pct { float: right; font-weight: 600; position: relative; }
+.poll-opt .poll-label { position: relative; }
+.poll-opt.voted { border-color: var(--accent-red); }
+
+.tool-timer { text-align: center; }
+.timer-display { font-size: 40px; font-weight: 700; color: var(--accent-red); display: block; margin: 6px 0 10px; font-variant-numeric: tabular-nums; }
+.timer-btns { display: flex; gap: 8px; justify-content: center; }
+.timer-btns button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent-red); background: none; color: var(--accent-red); cursor: pointer; }
+.timer-btns .timer-start { background: var(--accent-red); color: #fff; }
+
+.cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; color: var(--text-primary); font-weight: 600; font-size: 14px; }
+.cal-head button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 14px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; font-size: 12px; }
+.cal-grid .dow { color: var(--text-light); font-weight: 600; }
+.cal-grid .day { padding: 6px 0; border-radius: 50%; color: var(--text-primary); cursor: pointer; }
+.cal-grid .day:hover { background: var(--search-bg); }
+.cal-grid .day.today { background: var(--accent-red); color: #fff; }
+.cal-grid .day.sel { outline: 2px solid var(--accent-red); }
+
+/* Cabeçalho da sidebar no celular: ícones cabem e o × fica no fim */
+@media (max-width: 950px) {
+    .sidebar-header { gap: 14px; padding: 0 16px; }
+    .sidebar-header .sidebar-icon-link { margin-left: auto; }
+    .sidebar-header .sidebar-icon-link.sidebar-help-link { margin-left: 0; }
+    .sidebar-header .btn-close-sidebar { order: 3; margin-left: 0; }
+}
