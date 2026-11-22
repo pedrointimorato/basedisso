@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderação — basedisso</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="moderar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="../../index.html" class="nav-logo">basedisso</a>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="base de busca">
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="../../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+            <a href="../../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+            <a href="../../f/index.html" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+            <a href="../" class="nav-icon-link active"><i class="fa-solid fa-users"></i></a>
+            <button class="btn-apoiar">Apoiar</button>
+        </div>
+    </nav>
+
+    <main class="mod-main">
+        <h1>Moderação de comentários</h1>
+        <p class="mod-lead">Entre com a senha de administração para listar, ocultar ou apagar comentários.</p>
+
+        <section class="mod-card" id="mod-login">
+            <form id="mod-login-form">
+                <label for="mod-password">Senha de administração</label>
+                <input id="mod-password" type="password" name="password" autocomplete="current-password" required>
+                <div class="mod-actions">
+                    <button type="submit" class="mod-btn">Entrar</button>
+                </div>
+                <p class="mod-status" id="mod-login-status" role="status"></p>
+            </form>
+        </section>
+
+        <section id="mod-panel">
+            <div class="mod-actions">
+                <button type="button" class="mod-btn secondary" id="mod-logout">Sair</button>
+                <a class="mod-btn secondary" href="../" style="text-decoration:none;display:inline-block;">Voltar ao /adm</a>
+            </div>
+            <p class="mod-status" id="mod-list-status" role="status"></p>
+            <div class="mod-card" id="mod-list"></div>
+        </section>
+    </main>
+
+    <script src="moderar.js"></script>
+</body>
+</html>

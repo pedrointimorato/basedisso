@@ -1,0 +1,69 @@
+
+.mod-main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+}
+.mod-main h1 { font-size: 22px; margin: 0 0 8px; color: var(--text-primary); }
+.mod-lead { color: var(--text-secondary); margin: 0 0 20px; font-size: 14px; }
+.mod-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+.mod-card label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.mod-card input[type="password"] {
+    width: 100%;
+    max-width: 360px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font: inherit;
+    background: var(--search-bg);
+    color: var(--text-primary);
+}
+.mod-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.mod-btn {
+    appearance: none;
+    border: none;
+    background: var(--accent-red);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.mod-btn:hover { background: var(--accent-red-hover); }
+.mod-btn.secondary {
+    background: transparent;
+    color: var(--accent-red);
+    border: 1px solid var(--accent-red);
+}
+.mod-btn.danger { background: #8a1f1c; }
+.mod-status { font-size: 13px; margin-top: 8px; color: var(--text-secondary); }
+.mod-status.erro { color: var(--accent-red); }
+.mod-status.ok { color: #228822; }
+.mod-item {
+    border-top: 1px solid var(--border-subtle);
+    padding: 14px 0;
+}
+.mod-item:first-child { border-top: 0; }
+.mod-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+.mod-name { font-weight: 700; color: var(--text-primary); }
+.mod-page { font-family: ui-monospace, monospace; }
+.mod-hidden-flag {
+    display: inline-block;
+    margin-left: 6px;
+    color: #8a1f1c;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+.mod-body { white-space: pre-wrap; word-break: break-word; font-size: 14px; margin: 0 0 8px; }
+.mod-empty { color: var(--text-secondary); }
+#mod-panel { display: none; }
+body.mod-in #mod-login { display: none; }
+body.mod-in #mod-panel { display: block; }

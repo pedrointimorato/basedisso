@@ -1,0 +1,11 @@
+# Local development only (`npx wrangler pages dev .`).
+# Production and preview bindings are set on the Pages project via deployment_configs.
+# Do not add pages_build_output_dir — that would make this file the source of truth
+# and could overwrite dashboard/API secrets on the next git deploy.
+name = "basedisso"
+compatibility_date = "2026-11-22"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "basedisso-comments"
+database_id = "b3ae4061-c076-45de-a9cb-5befc8cec405"
