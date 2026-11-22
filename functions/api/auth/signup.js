@@ -65,8 +65,11 @@ export async function onRequestPost(context) {
       );
     }
     isAdminAccount = 1;
-  } else if (isReservedUsername(parsed.username_lc)) {
-    return errorJson("Este nome não está disponível.", 400);
+  } else {
+    return errorJson(
+      "O cadastro aberto está encerrado. Reserve um nome da série Usuários primordiais em /cadastro.",
+      403
+    );
   }
 
   const existing = await env.DB.prepare("SELECT id FROM users WHERE username_lc = ?")

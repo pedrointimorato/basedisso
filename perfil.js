@@ -34,7 +34,7 @@
     }
     var name = el("h1", { class: "profile-name" });
     if (window.BDAccount) {
-      name.appendChild(window.BDAccount.userLink(u.username, u.is_admin));
+      name.appendChild(window.BDAccount.userLink(u));
     } else {
       name.appendChild(document.createTextNode(">>" + u.username));
     }
@@ -45,6 +45,7 @@
     }
     var meta = "No basedisso desde " + relativeTime(u.created_at);
     if (u.is_admin) meta += " · administrador";
+    if (u.is_primordial) meta += u.primordial_n != null ? " · primordial #" + u.primordial_n : " · primordial";
     root.appendChild(el("p", { class: "profile-meta" }, meta));
     var comments = data.comentarios || [];
     root.appendChild(el("h2", { class: "bd-comments-title" }, comments.length ? "Comentários" : "Ainda sem comentários."));

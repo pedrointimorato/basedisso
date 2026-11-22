@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar — basedisso</title>
+    <title>Usuários primordiais — basedisso</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/account.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,26 +31,32 @@
                 </div>
             </nav>
             <main class="auth-main">
-                <section class="auth-card">
-                    <h1>Criar conta</h1>
-                    <p class="auth-lead">O nome aparece no site como <strong>&gt;&gt;Nome</strong>. O endereço do perfil é <strong>/@Nome</strong>.</p>
+                <section class="auth-card reserva-card">
+                    <p class="reserva-kicker">Série limitada</p>
+                    <h1>Usuários primordiais</h1>
+                    <p class="auth-lead">Os primeiros nomes do basedisso formam a série dos <strong>usuários primordiais</strong>. Cada nome é único, aparece no site como <strong>&gt;&gt;Nome</strong>, tem perfil em <strong>/@Nome</strong> e leva o selo <strong>primordial #N</strong> — o número da ordem de pagamento.</p>
+                    <p class="auth-lead">A reserva custa <strong>R$&nbsp;5,00</strong> por nome e ajuda a manter o projeto. O pagamento é feito no Mercado Pago (Pix ou cartão). O nome fica reservado por cerca de 20 minutos até a confirmação.</p>
                     <div id="claim-box" class="claim-box" hidden>
                         <h2>Reivindicar &gt;&gt;Intimorato</h2>
-                        <p>Você está com a sessão de moderação ativa. Use este botão para reservar o nome do administrador e criar a conta &gt;&gt;Intimorato com uma senha sua.</p>
-                        <button type="button" id="claim-btn">Reivindicar &gt;&gt;Intimorato</button>
+                        <p>Você está com a sessão de moderação ativa. Defina uma senha sua para reivindicar a conta de administrador (sem pagamento).</p>
+                        <form id="claim-form">
+                            <label for="claim-password">Senha</label>
+                            <input id="claim-password" type="password" autocomplete="new-password" minlength="8" required>
+                            <label for="claim-password2">Confirmar senha</label>
+                            <input id="claim-password2" type="password" autocomplete="new-password" minlength="8" required>
+                            <button type="submit" id="claim-btn" class="auth-submit">Reivindicar &gt;&gt;Intimorato</button>
+                            <p class="auth-status" id="claim-status" role="status"></p>
+                        </form>
                     </div>
-                    <form id="signup-form">
-                        <label for="signup-username">Nome de usuário</label>
-                        <input id="signup-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="3 a 20 letras, números ou _">
-                        <label for="signup-email">E-mail (opcional)</label>
-                        <input id="signup-email" name="email" type="email" autocomplete="email">
-                        <label for="signup-password">Senha</label>
-                        <input id="signup-password" name="password" type="password" autocomplete="new-password" required minlength="8">
-                        <label for="signup-password2">Confirmar senha</label>
-                        <input id="signup-password2" name="password2" type="password" autocomplete="new-password" required minlength="8">
+                    <form id="reserva-form">
+                        <label for="reserva-username">Nome que você quer reservar</label>
+                        <input id="reserva-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="3 a 20 letras, números ou _">
+                        <p class="auth-status" id="reserva-disponivel" role="status"></p>
+                        <label for="reserva-email">E-mail (opcional, para contato e comprovante)</label>
+                        <input id="reserva-email" name="email" type="email" autocomplete="email">
                         <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-                        <button type="submit" class="auth-submit">Cadastrar</button>
-                        <p class="auth-status" id="signup-status" role="status"></p>
+                        <button type="submit" class="auth-submit" id="reserva-btn">Reservar por R$ 5</button>
+                        <p class="auth-status" id="reserva-status" role="status"></p>
                     </form>
                     <p class="auth-alt">Já tem conta? <a href="/entrar">Entrar</a>.</p>
                 </section>

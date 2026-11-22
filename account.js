@@ -39,14 +39,39 @@
     return "/@" + username;
   }
 
-  function userLink(username, isAdmin, extraClass) {
+  function badgesFor(user) {
+    var nodes = [];
+    if (user && user.is_admin) {
+      nodes.push(el("span", { class: "user-badge", title: "administrador" }, "[M]"));
+    }
+    if (user && user.is_primordial) {
+      var label = user.primordial_n != null ? "primordial #" + user.primordial_n : "primordial";
+      nodes.push(el("span", { class: "user-badge primordial", title: "usuário primordial" }, label));
+    }
+    return nodes;
+  }
+
+  function userLink(username, isAdminOrUser, extraClass) {
+    var user = null;
+    var name = username;
+    if (username && typeof username === "object") {
+      user = username;
+      name = username.username;
+      extraClass = isAdminOrUser;
+    } else if (isAdminOrUser && typeof isAdminOrUser === "object") {
+      user = isAdminOrUser;
+    } else {
+      user = { username: name, is_admin: !!isAdminOrUser };
+    }
     var a = el(
       "a",
-      { class: ("user-mention" + (extraClass ? " " + extraClass : "")), href: profileHref(username) },
-      displayName(username)
+      { class: ("user-mention" + (extraClass ? " " + extraClass : "")), href: profileHref(name) },
+      displayName(name)
     );
-    if (!isAdmin) return a;
-    var wrap = el("span", { class: "user-with-badge" }, a, el("span", { class: "user-badge", title: "administrador" }, "[M]"));
+    var badges = badgesFor(user);
+    if (!badges.length) return a;
+    var wrap = el("span", { class: "user-with-badge" }, a);
+    badges.forEach(function (b) { wrap.appendChild(b); });
     return wrap;
   }
 
@@ -84,7 +109,7 @@
         node.appendChild(document.createTextNode(part.raw));
         return;
       }
-      node.appendChild(userLink(info.username, info.is_admin));
+      node.appendChild(userLink(info));
     });
     return node;
   }
@@ -108,7 +133,7 @@
       var box = nodes[i];
       while (box.firstChild) box.removeChild(box.firstChild);
       if (user) {
-        box.appendChild(userLink(user.username, user.is_admin, "nav-account-link"));
+        box.appendChild(userLink(user, "nav-account-link"));
         box.appendChild(el("button", { type: "button", class: "btn-account-sair", onClick: logout }, "Sair"));
       } else {
         box.appendChild(el("a", { href: "/entrar" }, "Entrar"));
@@ -124,7 +149,7 @@
       while (box.firstChild) box.removeChild(box.firstChild);
       if (user) {
         var row = el("div", { class: "sidebar-account-user" },
-          userLink(user.username, user.is_admin, "nav-account-link"),
+          userLink(user, "nav-account-link"),
           el("button", { type: "button", class: "btn-account-sair", onClick: logout }, "Sair")
         );
         box.appendChild(row);

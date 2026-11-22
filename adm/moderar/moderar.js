@@ -108,7 +108,7 @@
                 "p",
                 { class: "mod-meta" },
                 (c.usuario && c.usuario.username && window.BDAccount)
-                  ? window.BDAccount.userLink(c.usuario.username, c.usuario.is_admin)
+                  ? window.BDAccount.userLink(c.usuario)
                   : el("span", { class: "mod-name" }, c.name || "anônimo"),
                 " · ",
                 el("span", { class: "mod-page" }, c.page || ""),
@@ -123,9 +123,85 @@
           );
         });
         setStatus(listStatus, items.length + " comentário(s).");
+        loadReservas();
       })
       .catch(function () {
         setStatus(listStatus, "Falha de rede.", "erro");
+      });
+  }
+
+
+
+  var resRoot = document.getElementById("mod-res-list");
+  var resStatus = document.getElementById("mod-res-status");
+
+  function loadReservas() {
+    if (!resRoot) return;
+    setStatus(resStatus, "Carregando reservas…");
+    fetch("/api/moderation/reservas", {
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    })
+      .then(function (res) {
+        return res.json().then(function (data) { return { res: res, data: data }; });
+      })
+      .then(function (out) {
+        if (!out.res.ok) {
+          setStatus(resStatus, out.data && out.data.erro ? out.data.erro : "Falha ao listar reservas.", "erro");
+          return;
+        }
+        while (resRoot.firstChild) resRoot.removeChild(resRoot.firstChild);
+        var items = out.data.reservas || [];
+        if (!items.length) {
+          resRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhuma reserva ainda."));
+          setStatus(resStatus, "");
+          return;
+        }
+        var table = el("table", { class: "mod-res-table" });
+        var thead = el("thead", null, el("tr", null,
+          el("th", null, "Nome"),
+          el("th", null, "Estado"),
+          el("th", null, "Nº"),
+          el("th", null, "E-mail"),
+          el("th", null, "Criada"),
+          el("th", null, "Pagamento"),
+          el("th", null, "")
+        ));
+        var tbody = el("tbody");
+        items.forEach(function (r) {
+          var payBtn = null;
+          if (r.status === "pending" || r.status === "expired") {
+            payBtn = el("button", { type: "button", class: "mod-btn secondary" }, "Marcar como paga");
+            payBtn.addEventListener("click", function () {
+              if (!confirm("Confirmar manualmente o pagamento de >>" + r.username + "?")) return;
+              fetch("/api/moderation/reservas/" + encodeURIComponent(r.id), {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                body: JSON.stringify({ acao: "pagar" }),
+              }).then(function (res) {
+                if (res.ok) loadReservas();
+                else setStatus(resStatus, "Não foi possível atualizar a reserva.", "erro");
+              });
+            });
+          }
+          tbody.appendChild(el("tr", null,
+            el("td", null, ">>" + (r.username || "")),
+            el("td", null, el("span", { class: "mod-res-status " + (r.status || "") }, r.status || "")),
+            el("td", null, r.primordial_n != null ? "#" + r.primordial_n : "—"),
+            el("td", null, r.email || "—"),
+            el("td", null, fmtTime(r.created_at)),
+            el("td", null, r.paid_at ? fmtTime(r.paid_at) : "—"),
+            el("td", null, payBtn)
+          ));
+        });
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        resRoot.appendChild(table);
+        setStatus(resStatus, items.length + " reserva(s).");
+      })
+      .catch(function () {
+        setStatus(resStatus, "Falha de rede ao listar reservas.", "erro");
       });
   }
 

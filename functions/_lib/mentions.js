@@ -56,12 +56,12 @@ export async function lookupMentions(db, text) {
   const placeholders = unique.map(() => "?").join(",");
   const { results } = await db
     .prepare(
-      `SELECT username, username_lc, is_admin FROM users WHERE username_lc IN (${placeholders})`
+      `SELECT username, username_lc, is_admin, is_primordial, primordial_n FROM users WHERE username_lc IN (${placeholders})`
     )
     .bind(...unique)
     .all();
   for (const row of results || []) {
-    map[row.username_lc] = { username: row.username, is_admin: Boolean(row.is_admin) };
+    map[row.username_lc] = { username: row.username, is_admin: Boolean(row.is_admin), is_primordial: Boolean(row.is_primordial), primordial_n: row.primordial_n == null ? null : Number(row.primordial_n) };
   }
   return map;
 }

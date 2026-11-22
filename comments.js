@@ -58,7 +58,7 @@
 
   function authorNode(c) {
     if (c.usuario && c.usuario.username && window.BDAccount) {
-      return window.BDAccount.userLink(c.usuario.username, c.usuario.is_admin, "bd-comment-name");
+      return window.BDAccount.userLink(c.usuario, "bd-comment-name");
     }
     return el("span", { class: "bd-comment-name" }, c.name || "anônimo");
   }
@@ -116,7 +116,7 @@
         asUser.style.display = "";
         while (asUser.firstChild) asUser.removeChild(asUser.firstChild);
         asUser.appendChild(document.createTextNode("Comentar como "));
-        asUser.appendChild(window.BDAccount.userLink(currentUser.username, currentUser.is_admin));
+        asUser.appendChild(window.BDAccount.userLink(currentUser));
       } else {
         nameLabel.style.display = "";
         asUser.style.display = "none";

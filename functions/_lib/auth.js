@@ -66,6 +66,13 @@ const RESERVED = new Set(
     "new",
     "edit",
     "delete",
+    "reserva",
+    "reservas",
+    "primordial",
+    "primordiais",
+    "pagamento",
+    "checkout",
+    "retorno",
   ]
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
@@ -151,7 +158,7 @@ export async function verifyPassword(password, stored) {
   return out === 0;
 }
 
-function randomToken() {
+export function randomToken() {
   return b64(crypto.getRandomValues(new Uint8Array(32)));
 }
 
@@ -190,6 +197,8 @@ export function publicUser(row) {
   return {
     username: row.username,
     is_admin: Boolean(row.is_admin),
+    is_primordial: Boolean(row.is_primordial),
+    primordial_n: row.primordial_n == null ? null : Number(row.primordial_n),
     created_at: row.created_at || null,
   };
 }
@@ -201,7 +210,7 @@ export async function getSessionUser(request, env) {
   if (!token) return null;
   const id = await sha256Hex(token);
   const row = await env.DB.prepare(
-    `SELECT u.id, u.username, u.username_lc, u.is_admin, u.created_at, s.expires_at
+    `SELECT u.id, u.username, u.username_lc, u.is_admin, u.is_primordial, u.primordial_n, u.created_at, s.expires_at
      FROM sessions s
      JOIN users u ON u.id = s.user_id
      WHERE s.id = ?`

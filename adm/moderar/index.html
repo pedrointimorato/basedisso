@@ -28,8 +28,8 @@
     </nav>
 
     <main class="mod-main">
-        <h1>Moderação de comentários</h1>
-        <p class="mod-lead">Entre com a senha de administração para listar, ocultar ou apagar comentários.</p>
+        <h1>Moderação</h1>
+        <p class="mod-lead">Entre com a senha de administração para moderar comentários e ver as reservas primordiais.</p>
 
         <section class="mod-card" id="mod-login">
             <form id="mod-login-form">
@@ -49,6 +49,12 @@
             </div>
             <p class="mod-status" id="mod-list-status" role="status"></p>
             <div class="mod-card" id="mod-list"></div>
+            <div class="mod-reservas">
+                <h2>Reservas de nomes primordiais</h2>
+                <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
+                <p class="mod-status" id="mod-res-status" role="status"></p>
+                <div class="mod-card" id="mod-res-list"></div>
+            </div>
         </section>
     </main>
 

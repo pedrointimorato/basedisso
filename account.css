@@ -41,6 +41,16 @@
     font-weight: 700;
     font-size: 11px;
 }
+.user-badge.primordial {
+    color: #8a5a12;
+    background: #f8efd2;
+    border: 1px solid #e0c772;
+    border-radius: 999px;
+    padding: 0 6px;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+}
 .bd-comments-reddit .user-mention { color: #369; }
 .bd-comments-reddit .user-badge { color: #228822; }
 .or-author.user-mention, a.or-author { font-weight: 700; }
@@ -151,3 +161,52 @@
 .site-container.layout-auth .navbar {
     width: 100%;
 }
+
+.reserva-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8a5a12;
+    margin: 0 0 6px;
+}
+.reserva-card h1 { margin-bottom: 10px; }
+.reserva-card .auth-lead { margin-bottom: 12px; }
+.retorno-nome { margin: 8px 0 14px; font-size: 15px; }
+.claim-link-box {
+    border: 1px dashed var(--border-color, #dee0e1);
+    background: var(--search-bg, #f7f7f8);
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-size: 13px;
+    word-break: break-all;
+}
+.claim-link-box p { margin: 0 0 8px; }
+.btn-copy-link {
+    appearance: none;
+    border: 1px solid var(--border-color, #dee0e1);
+    background: #fff;
+    color: var(--text-primary, #2e3031);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-copy-link:hover { border-color: var(--accent-red, #b92b27); color: var(--accent-red, #b92b27); }
+.mod-reservas { margin-top: 28px; }
+.mod-reservas h2 { font-size: 18px; margin: 0 0 8px; }
+.mod-res-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.mod-res-table th, .mod-res-table td {
+    text-align: left;
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border-subtle, #f1f2f2);
+    vertical-align: top;
+}
+.mod-res-table th { color: var(--text-secondary); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+.mod-res-status { font-weight: 700; }
+.mod-res-status.paid, .mod-res-status.claimed { color: #228822; }
+.mod-res-status.pending { color: #8a5a12; }
+.mod-res-status.expired { color: var(--text-light, #8f9092); }

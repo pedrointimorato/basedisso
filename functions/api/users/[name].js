@@ -9,7 +9,7 @@ export async function onRequestGet(context) {
   if (!parsed) return errorJson("Nome inválido.", 400);
 
   const row = await env.DB.prepare(
-    "SELECT id, username, username_lc, is_admin, created_at FROM users WHERE username_lc = ?"
+    "SELECT id, username, username_lc, is_admin, is_primordial, primordial_n, created_at FROM users WHERE username_lc = ?"
   )
     .bind(parsed.username_lc)
     .first();
