@@ -239,11 +239,11 @@ body {
 /* BLOCOS DAS ABAS */
 .sidebar-tab-content {
     display: none;
-    animation: fadeIn 0.25s ease-out;
 }
 
 .sidebar-tab-content.active {
     display: block;
+    opacity: 1;
 }
 
 .sidebar-block {
@@ -612,13 +612,16 @@ body {
 
 /* Caixa ADM no lugar do antigo card de ofertas */
 .adm-box {
-    background: var(--bg-global);
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 15px;
+    color: var(--text-primary);
+    opacity: 1;
 }
 .adm-box h3 {
     font-size: 14px;
+    font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 10px;
 }
@@ -630,8 +633,8 @@ body {
 }
 .adm-box a[href^="mailto:"] {
     color: var(--accent-red);
-    text-decoration: none;
-    font-weight: 600;
+    text-decoration: underline;
+    font-weight: 700;
     word-break: break-all;
 }
 .adm-box a[href^="mailto:"]:hover { text-decoration: underline; }
@@ -649,5 +652,6 @@ body {
     text-decoration: none;
     width: 100%;
     box-sizing: border-box;
+    opacity: 1;
 }
 .btn-adm-page:hover { background-color: var(--accent-red-hover); color: #fff; }
