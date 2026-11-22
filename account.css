@@ -143,3 +143,11 @@
     .nav-account { margin-right: 4px; gap: 6px; }
     .nav-account .nav-account-cadastro { display: none; }
 }
+
+/* Auth and profile pages have no right sidebar: use the full width. */
+.site-container.layout-auth {
+    grid-template-columns: 1fr;
+}
+.site-container.layout-auth .navbar {
+    width: 100%;
+}
