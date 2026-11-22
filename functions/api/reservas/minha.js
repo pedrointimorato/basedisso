@@ -4,6 +4,7 @@ import {
   expireHolds,
   parseReservaCookie,
   publicReserva,
+  refreshReservationPayment,
   tokenMatches,
 } from "../../_lib/reservas.js";
 
@@ -37,6 +38,9 @@ export async function onRequestGet(context) {
   if (!owns) {
     return json({ ok: true, reserva: publicReserva(row), sua: false });
   }
+
+  // Re-check Mercado Pago if the webhook has not arrived yet (Pix and card).
+  row = (await refreshReservationPayment(env, row)) || row;
 
   const origin = url.origin;
   const claimUrl = claimUrlFor(origin, row.id, rawToken);
