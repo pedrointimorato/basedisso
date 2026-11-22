@@ -609,3 +609,45 @@ body {
     .sidebar-header .sidebar-icon-link.sidebar-help-link { margin-left: 0; }
     .sidebar-header .btn-close-sidebar { order: 3; margin-left: 0; }
 }
+
+/* Caixa ADM no lugar do antigo card de ofertas */
+.adm-box {
+    background: var(--bg-global);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 15px;
+}
+.adm-box h3 {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+.adm-box p {
+    font-size: 13px;
+    color: var(--text-primary);
+    margin: 0 0 14px;
+    line-height: 1.5;
+}
+.adm-box a[href^="mailto:"] {
+    color: var(--accent-red);
+    text-decoration: none;
+    font-weight: 600;
+    word-break: break-all;
+}
+.adm-box a[href^="mailto:"]:hover { text-decoration: underline; }
+.btn-adm-page {
+    display: block;
+    text-align: center;
+    background-color: var(--accent-red);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+.btn-adm-page:hover { background-color: var(--accent-red-hover); color: #fff; }

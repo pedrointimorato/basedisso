@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>adm — basedisso</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="adm.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    
+                    <div class="nav-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="nav-search-input" placeholder="base de busca">
+                    </div>
+
+                    <div class="nav-icons">
+                        <a href="../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="../f/index.html" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="index.html" class="nav-icon-link active"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-add-question">Apoiar</button>
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content adm-main">
+                <div class="oldreddit">
+                    <header class="or-header">
+                        <div class="or-sr-bar">basedisso &nbsp;·&nbsp; <a href="index.html">r/adm</a></div>
+                        <div class="or-header-main">
+                            <a class="or-snoo" href="index.html" aria-label="r/adm">b</a>
+                            <h1 class="or-pagename"><a href="index.html">adm</a></h1>
+                            <ul class="or-tabmenu">
+                                <li class="selected"><a href="index.html">links</a></li>
+                                <li><a href="#or-listing">novos</a></li>
+                                <li><a href="#or-listing">em alta</a></li>
+                                <li><a href="#or-listing">controversos</a></li>
+                                <li><a href="#or-listing">topo</a></li>
+                            </ul>
+                        </div>
+                    </header>
+
+                    <div class="or-wrap">
+                        <div class="or-listing" id="or-listing">
+                    <article class="or-thing or-stickied">
+                        <div class="or-rank">•</div>
+                        <div class="or-midcol">
+                            <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
+                            <div class="or-score" title="pontuação">1</div>
+                            <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
+                        </div>
+                        <a class="or-thumb or-thumb-sticky" href="#aviso" aria-hidden="true"><i class="fa-solid fa-bullhorn"></i></a>
+                        <div class="or-entry">
+                            <p class="or-title"><a href="#aviso">Alguma queixa, elogio, sugestão ou oferta?</a> <span class="or-domain">(self.adm)</span></p>
+                            <p class="or-tagline"><span class="or-sticky-tag">announcement</span> enviado por <a href="index.html" class="or-author">u/Intimorato__</a> <span class="or-mod" title="moderador">[M]</span></p>
+                            <ul class="or-buttons">
+                                <li><a href="#aviso">comentários</a></li>
+                                <li><a href="#aviso">compartilhar</a></li>
+                                <li><button type="button" class="or-save">salvar</button></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="or-thing">
+                        <div class="or-rank">1</div>
+                        <div class="or-midcol">
+                            <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
+                            <div class="or-score" title="pontuação">1</div>
+                            <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
+                        </div>
+                        <a class="or-thumb" href="../index.html" style="background:#b92b27" aria-hidden="true"><i class="fa-solid fa-house"></i></a>
+                        <div class="or-entry">
+                            <p class="or-title"><a href="../index.html">Feed principal do basedisso</a> <span class="or-domain">(basedisso.com)</span></p>
+                            <p class="or-tagline">enviado há 2 dias por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-exp">A página inicial, com o feed em grade.</p>
+                            <ul class="or-buttons">
+                                <li><a href="../index.html">o feed</a></li>
+                                <li><a href="../index.html">compartilhar</a></li>
+                                <li><button type="button" class="or-save">salvar</button></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="or-thing">
+                        <div class="or-rank">2</div>
+                        <div class="or-midcol">
+                            <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
+                            <div class="or-score" title="pontuação">1</div>
+                            <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
+                        </div>
+                        <a class="or-thumb" href="../f/" style="background:#1a73e8" aria-hidden="true"><i class="fa-solid fa-screwdriver-wrench"></i></a>
+                        <div class="or-entry">
+                            <p class="or-title"><a href="../f/">Painel de ferramentas</a> <span class="or-domain">(basedisso.com/f)</span></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-exp">A área /f/, com as ferramentas do site.</p>
+                            <ul class="or-buttons">
+                                <li><a href="../f/">ferramentas</a></li>
+                                <li><a href="../f/">compartilhar</a></li>
+                                <li><button type="button" class="or-save">salvar</button></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="or-thing">
+                        <div class="or-rank">3</div>
+                        <div class="or-midcol">
+                            <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
+                            <div class="or-score" title="pontuação">1</div>
+                            <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
+                        </div>
+                        <a class="or-thumb" href="../f/clipboard.html" style="background:#c4920c" aria-hidden="true"><i class="fa-solid fa-clipboard"></i></a>
+                        <div class="or-entry">
+                            <p class="or-title"><a href="../f/clipboard.html">Área de transferência</a> <span class="or-domain">(basedisso.com/f)</span></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-exp">Cole um texto, gere um código ou um link.</p>
+                            <ul class="or-buttons">
+                                <li><a href="../f/clipboard.html">ferramenta</a></li>
+                                <li><a href="../f/clipboard.html">compartilhar</a></li>
+                                <li><button type="button" class="or-save">salvar</button></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="or-thing">
+                        <div class="or-rank">4</div>
+                        <div class="or-midcol">
+                            <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
+                            <div class="or-score" title="pontuação">1</div>
+                            <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
+                        </div>
+                        <a class="or-thumb" href="../f/sorteador.html" style="background:#3f5d48" aria-hidden="true"><i class="fa-solid fa-hashtag"></i></a>
+                        <div class="or-entry">
+                            <p class="or-title"><a href="../f/sorteador.html">Sorteador de números</a> <span class="or-domain">(basedisso.com/f)</span></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-exp">Sorteie números em um intervalo, com ou sem repetição.</p>
+                            <ul class="or-buttons">
+                                <li><a href="../f/sorteador.html">ferramenta</a></li>
+                                <li><a href="../f/sorteador.html">compartilhar</a></li>
+                                <li><button type="button" class="or-save">salvar</button></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="or-thing">
+                        <div class="or-rank">5</div>
+                        <div class="or-midcol">
+                            <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
+                            <div class="or-score" title="pontuação">1</div>
+                            <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
+                        </div>
+                        <a class="or-thumb" href="../s/" style="background:#5c3d8a" aria-hidden="true"><i class="fa-solid fa-masks-theater"></i></a>
+                        <div class="or-entry">
+                            <p class="or-title"><a href="../s/">Feed de sátiras</a> <span class="or-domain">(basedisso.com/s)</span></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-exp">Trabalhos satíricos publicados no site.</p>
+                            <ul class="or-buttons">
+                                <li><a href="../s/">sátiras</a></li>
+                                <li><a href="../s/">compartilhar</a></li>
+                                <li><button type="button" class="or-save">salvar</button></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="or-thing">
+                        <div class="or-rank">6</div>
+                        <div class="or-midcol">
+                            <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
+                            <div class="or-score" title="pontuação">1</div>
+                            <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
+                        </div>
+                        <a class="or-thumb" href="../s/biblia-amarela.html" style="background:#e3b210" aria-hidden="true"><i class="fa-solid fa-book"></i></a>
+                        <div class="or-entry">
+                            <p class="or-title"><a href="../s/biblia-amarela.html">A Bíblia Amarela</a> <span class="or-domain">(basedisso.com/s)</span></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-exp">Texto da wiki do r/BrasilSocial, por u/Intimorato__.</p>
+                            <ul class="or-buttons">
+                                <li><a href="../s/biblia-amarela.html">leitura</a></li>
+                                <li><a href="../s/biblia-amarela.html">compartilhar</a></li>
+                                <li><button type="button" class="or-save">salvar</button></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                        <section class="or-selfpost" id="aviso">
+                            <h2 class="or-selfpost-title">Alguma queixa, elogio, sugestão ou oferta?</h2>
+                            <p class="or-tagline"><span class="or-sticky-tag">announcement</span> enviado por <a href="index.html" class="or-author">u/Intimorato__</a> <span class="or-mod" title="moderador">[M]</span></p>
+                            <div class="or-md or-selfpost-body">
+                                <p>Alguma queixa, elogio, sugestão ou oferta?</p>
+                                <p>Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                            </div>
+                        </section>
+                        </div>
+
+                        <aside class="or-side">
+                            <div class="or-spacer">
+                                <button type="button" class="or-subscribe" id="or-subscribe">inscrever-se</button>
+                            </div>
+                            <div class="or-titlebox">
+                                <h2 class="or-side-name">adm</h2>
+                                <p class="or-side-meta">página do administrador · u/Intimorato__</p>
+                                <div class="or-md">
+                                    <p>Alguma queixa, elogio, sugestão ou oferta?</p>
+                                    <p>Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title">ADM</h2>
+                 <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                 <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+
+            </div>
+            
+            <div class="sidebar-body">
+                
+                <div class="sidebar-tab-content" id="tab-historico">
+                    <div class="sidebar-block">
+                        <h3 class="sidebar-slogan">Nossa base é organizar</h3>
+                        <h3>Visto recentemente</h3>
+                        <ul class="tab-list"></ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Modo Escuro</span>
+                                <input type="checkbox" id="theme-toggle">
+                            </label>
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-tab-content active" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="index.html">abrir página do adm</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('historico', 'Histórico', event)">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Histórico</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="../script.js"></script>
+    <script src="adm.js"></script>
+</body>
+</html>

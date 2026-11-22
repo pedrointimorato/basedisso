@@ -197,3 +197,10 @@ document.addEventListener("DOMContentLoaded", () => {
         render();
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (location.hash === "#adm") {
+        const btn = document.querySelector('.footer-tab-btn[onclick*="ofertas"]');
+        mudarAbaSidebar("ofertas", "ADM", btn ? { currentTarget: btn } : null);
+    }
+});
