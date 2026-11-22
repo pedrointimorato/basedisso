@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrar — basedisso</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="/account.css">
+    <link rel="stylesheet" href="/account.css?v=20261122p">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -36,7 +36,7 @@
                     <p class="auth-lead">Use o nome da sua conta (sem &gt;&gt; ou @) e a senha.</p>
                     <form id="login-form">
                         <label for="login-username">Nome de usuário</label>
-                        <input id="login-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}">
+                        <input id="login-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" inputmode="text" autocapitalize="off" spellcheck="false">
                         <label for="login-password">Senha</label>
                         <input id="login-password" name="password" type="password" autocomplete="current-password" required minlength="8">
                         <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -115,6 +115,6 @@
     </div>
     <script src="/script.js"></script>
     <script src="/account.js"></script>
-    <script src="/entrar/entrar.js"></script>
+    <script src="/entrar/entrar.js?v=20261122p"></script>
 </body>
 </html>

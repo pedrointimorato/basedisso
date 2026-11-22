@@ -83,16 +83,22 @@
 }
 .auth-card .auth-submit {
     margin-top: 16px;
+    -webkit-appearance: none;
     appearance: none;
+    display: block;
+    box-sizing: border-box;
     border: none;
     background: var(--accent-red, #b92b27);
     color: #fff;
+    font-family: inherit;
     font-weight: 700;
     font-size: 14px;
+    line-height: 1.2;
     padding: 9px 16px;
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
+    text-align: center;
 }
 .auth-card .auth-submit:hover { background: var(--accent-red-hover, #a12320); }
 .auth-card .auth-submit:disabled { opacity: 0.7; cursor: wait; }
@@ -213,16 +219,22 @@
 
 .auth-card .auth-secondary {
     margin-top: 8px;
+    -webkit-appearance: none;
     appearance: none;
+    display: block;
+    box-sizing: border-box;
     border: 1px solid var(--border-color, #dee0e1);
-    background: #fff;
+    background: var(--bg-card, #fff);
     color: var(--text-primary, #2e3031);
+    font-family: inherit;
     font-weight: 700;
     font-size: 14px;
+    line-height: 1.2;
     padding: 9px 16px;
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
+    text-align: center;
 }
 .auth-card .auth-secondary:hover { border-color: var(--accent-red, #b92b27); color: var(--accent-red, #b92b27); }
 .auth-card .auth-secondary:disabled { opacity: 0.7; cursor: not-allowed; }

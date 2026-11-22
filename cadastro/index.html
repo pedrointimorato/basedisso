@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuários primordiais — basedisso</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="/account.css">
+    <link rel="stylesheet" href="/account.css?v=20261122p">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -50,7 +50,7 @@
                     </div>
                     <form id="reserva-form">
                         <label for="reserva-username">Nome que você quer reservar</label>
-                        <input id="reserva-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="3 a 20 letras, números ou _">
+                        <input id="reserva-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" inputmode="text" autocapitalize="off" spellcheck="false" placeholder="3 a 20 letras, números ou _">
                         <p class="auth-status" id="reserva-disponivel" role="status"></p>
                         <label for="reserva-email">E-mail (obrigatório, para o Pix e o comprovante)</label>
                         <input id="reserva-email" name="email" type="email" autocomplete="email" required>
@@ -141,6 +141,6 @@
     </div>
     <script src="/script.js"></script>
     <script src="/account.js"></script>
-    <script src="/cadastro/cadastro.js"></script>
+    <script src="/cadastro/cadastro.js?v=20261122p"></script>
 </body>
 </html>

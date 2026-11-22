@@ -14,6 +14,7 @@
   var pollTimer = null;
   var countdownTimer = null;
   var currentReserva = null;
+  var USERNAME_RE = /^[A-Za-z0-9_]{3,20}$/;
 
   function setMsg(node, text, kind) {
     node.textContent = text || "";
@@ -156,6 +157,11 @@
       setMsg(status, "Reservas abrem em breve.", "erro");
       return;
     }
+    if (!USERNAME_RE.test(userInput.value.trim())) {
+      setMsg(status, "O nome deve ter 3 a 20 caracteres (letras, números ou _).", "erro");
+      userInput.focus();
+      return;
+    }
     if (!emailInput.value.trim()) {
       setMsg(status, "Informe um e-mail válido.", "erro");
       emailInput.focus();
@@ -216,6 +222,11 @@
 
   if (cardBtn) {
     cardBtn.addEventListener("click", function () {
+      if (!USERNAME_RE.test(userInput.value.trim())) {
+        setMsg(status, "O nome deve ter 3 a 20 caracteres (letras, números ou _).", "erro");
+        userInput.focus();
+        return;
+      }
       if (!form.reportValidity()) return;
       submitReserva("card");
     });

@@ -6,6 +6,13 @@
     ev.preventDefault();
     status.textContent = "";
     status.className = "auth-status";
+    var nome = document.getElementById("login-username").value.trim();
+    if (!/^[A-Za-z0-9_]{3,20}$/.test(nome)) {
+      status.textContent = "O nome deve ter 3 a 20 caracteres (letras, números ou _).";
+      status.classList.add("erro");
+      document.getElementById("login-username").focus();
+      return;
+    }
     var btn = form.querySelector(".auth-submit");
     btn.disabled = true;
     fetch("/api/auth/login", {
