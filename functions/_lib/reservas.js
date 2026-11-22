@@ -12,9 +12,9 @@ import {
   userCookieHeader,
 } from "./auth.js";
 import { hashIp, sha256Hex } from "./shared.js";
-import { PRICE_BRL, createPreference, reservasAbertas } from "./mp.js";
+import { PRICE_BRL, createPreference, createPixPayment, fetchPayment, paymentAmountOk, reservasAbertas } from "./mp.js";
 
-export const HOLD_MS = 20 * 60 * 1000;
+export const HOLD_MS = 30 * 60 * 1000; // Pix requires a minimum 30-minute expiration
 export const RESERVA_COOKIE = "bd_reserva";
 export const RESERVA_COOKIE_TTL = 60 * 60 * 24 * 30;
 
@@ -152,7 +152,32 @@ export async function tokenMatches(row, rawToken) {
   return hash === row.claim_token_hash;
 }
 
-export async function createReservation(env, request, { username, email }) {
+export async function refreshReservationPayment(env, row) {
+  if (!row || row.status !== "pending" || !row.mp_payment_id || !env?.DB) return row;
+  let payment;
+  try {
+    payment = await fetchPayment(env, row.mp_payment_id);
+  } catch {
+    return row;
+  }
+  const st = String(payment.status || "").toLowerCase();
+  if (st === "approved" && paymentAmountOk(payment)) {
+    const ref = String(payment.external_reference || "").trim();
+    if (ref && ref !== row.id) return row;
+    const result = await markReservationPaid(env.DB, row, { paymentId: payment.id });
+    return result.reservation || row;
+  }
+  if (st === "cancelled" || st === "rejected" || st === "expired") {
+    await env.DB.prepare("UPDATE reservations SET status = 'expired' WHERE id = ? AND status = 'pending'")
+      .bind(row.id)
+      .run();
+    const updated = await env.DB.prepare("SELECT * FROM reservations WHERE id = ?").bind(row.id).first();
+    return updated || row;
+  }
+  return row;
+}
+
+export async function createReservation(env, request, { username, email, method }) {
   if (!env.DB) return { error: "Serviço de reservas indisponível.", status: 503 };
   if (!reservasAbertas(env)) {
     return { error: "Reservas abrem em breve.", status: 503, code: "em_breve" };
@@ -163,7 +188,11 @@ export async function createReservation(env, request, { username, email }) {
   if (err) return { error: err, status: conflict === "em_uso" || conflict === "reservado" ? 409 : 400 };
 
   const emailNorm = normalizeEmail(email);
-  if (emailNorm === undefined) return { error: "E-mail inválido.", status: 400 };
+  if (!emailNorm) return { error: "Informe um e-mail válido.", status: 400 };
+
+  const metodoRaw = String(method || "pix").toLowerCase();
+  const isCard = metodoRaw === "card" || metodoRaw === "cartao" || metodoRaw === "checkout";
+  const metodo = isCard ? "card" : "pix";
 
   const id = crypto.randomUUID();
   const token = randomToken();
@@ -197,36 +226,70 @@ export async function createReservation(env, request, { username, email }) {
   }
 
   const origin = new URL(request.url).origin;
-  let pref;
+  const expiresAt = expires.toISOString();
+  const reservaPublica = publicReserva({
+    id,
+    username: parsed.username,
+    status: "pending",
+    created_at: now.toISOString(),
+    expires_at: expiresAt,
+    primordial_n: null,
+  });
+
+  if (isCard) {
+    let pref;
+    try {
+      pref = await createPreference(env, {
+        reservationId: id,
+        username: parsed.username,
+        email: emailNorm,
+        origin,
+        expiresAt,
+      });
+    } catch (e) {
+      await env.DB.prepare("UPDATE reservations SET status = 'expired' WHERE id = ?").bind(id).run();
+      return { error: "Não foi possível iniciar o pagamento. Tente de novo em instantes.", status: 502 };
+    }
+    await env.DB.prepare("UPDATE reservations SET mp_preference_id = ? WHERE id = ?")
+      .bind(pref.id || null, id)
+      .run();
+    return {
+      ok: true,
+      metodo: "card",
+      reserva: reservaPublica,
+      checkout_url: pref.init_point || pref.sandbox_init_point,
+      cookie: `${id}.${token}`,
+    };
+  }
+
+  let pix;
   try {
-    pref = await createPreference(env, {
+    pix = await createPixPayment(env, {
       reservationId: id,
       username: parsed.username,
       email: emailNorm,
-      origin,
-      expiresAt: expires.toISOString(),
+      expiresAt,
     });
   } catch (e) {
     await env.DB.prepare("UPDATE reservations SET status = 'expired' WHERE id = ?").bind(id).run();
-    return { error: "Não foi possível iniciar o pagamento. Tente de novo em instantes.", status: 502 };
+    return {
+      error: "Não foi possível gerar o Pix. Tente de novo em instantes.",
+      status: 502,
+      detalhe: e && e.public ? e.public : null,
+    };
   }
-
-  await env.DB.prepare("UPDATE reservations SET mp_preference_id = ? WHERE id = ?")
-    .bind(pref.id || null, id)
+  await env.DB.prepare("UPDATE reservations SET mp_payment_id = ? WHERE id = ?")
+    .bind(pix.id || null, id)
     .run();
-
-  const checkout = pref.init_point || pref.sandbox_init_point;
   return {
     ok: true,
-    reserva: publicReserva({
-      id,
-      username: parsed.username,
-      status: "pending",
-      created_at: now.toISOString(),
-      expires_at: expires.toISOString(),
-      primordial_n: null,
-    }),
-    checkout_url: checkout,
+    metodo: "pix",
+    reserva: reservaPublica,
+    pix: {
+      qr_code: pix.qr_code,
+      qr_code_base64: pix.qr_code_base64,
+      expires_at: pix.date_of_expiration || expiresAt,
+    },
     cookie: `${id}.${token}`,
   };
 }

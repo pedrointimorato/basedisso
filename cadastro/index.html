@@ -35,7 +35,7 @@
                     <p class="reserva-kicker">Série limitada</p>
                     <h1>Usuários primordiais</h1>
                     <p class="auth-lead">Os primeiros nomes do basedisso formam a série dos <strong>usuários primordiais</strong>. Cada nome é único, aparece no site como <strong>&gt;&gt;Nome</strong>, tem perfil em <strong>/@Nome</strong> e leva o selo <strong>primordial #N</strong> — o número da ordem de pagamento.</p>
-                    <p class="auth-lead">A reserva custa <strong>R$&nbsp;5,00</strong> por nome e ajuda a manter o projeto. O pagamento é feito no Mercado Pago (Pix ou cartão). O nome fica reservado por cerca de 20 minutos até a confirmação.</p>
+                    <p class="auth-lead">A reserva custa <strong>R$&nbsp;5,00</strong> por nome e ajuda a manter o projeto. O pagamento é feito no Mercado Pago (Pix ou cartão). O nome fica reservado por cerca de 30 minutos até a confirmação.</p>
                     <div id="claim-box" class="claim-box" hidden>
                         <h2>Reivindicar &gt;&gt;Intimorato</h2>
                         <p>Você está com a sessão de moderação ativa. Defina uma senha sua para reivindicar a conta de administrador (sem pagamento).</p>
@@ -52,12 +52,23 @@
                         <label for="reserva-username">Nome que você quer reservar</label>
                         <input id="reserva-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="3 a 20 letras, números ou _">
                         <p class="auth-status" id="reserva-disponivel" role="status"></p>
-                        <label for="reserva-email">E-mail (opcional, para contato e comprovante)</label>
-                        <input id="reserva-email" name="email" type="email" autocomplete="email">
+                        <label for="reserva-email">E-mail (obrigatório, para o Pix e o comprovante)</label>
+                        <input id="reserva-email" name="email" type="email" autocomplete="email" required>
                         <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-                        <button type="submit" class="auth-submit" id="reserva-btn">Reservar por R$ 5</button>
+                        <button type="submit" class="auth-submit" id="reserva-btn">Pagar com Pix · R$ 5</button>
+                        <button type="button" class="auth-secondary" id="reserva-card-btn">Pagar com cartão</button>
                         <p class="auth-status" id="reserva-status" role="status"></p>
                     </form>
+                    <div id="pix-box" class="pix-box" hidden>
+                        <h2>Pague com Pix</h2>
+                        <p class="pix-nome" id="pix-nome"></p>
+                        <p class="pix-timer" id="pix-timer"></p>
+                        <img id="pix-qr" class="pix-qr" alt="QR Code Pix">
+                        <label for="pix-copia">Pix copia e cola</label>
+                        <textarea id="pix-copia" readonly rows="4"></textarea>
+                        <button type="button" id="pix-copy" class="auth-submit">Copiar código Pix</button>
+                        <p class="auth-status" id="pix-status" role="status">Aguardando o pagamento…</p>
+                    </div>
                     <p class="auth-alt">Já tem conta? <a href="/entrar">Entrar</a>.</p>
                 </section>
             </main>

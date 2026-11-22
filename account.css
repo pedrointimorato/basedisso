@@ -210,3 +210,57 @@
 .mod-res-status.paid, .mod-res-status.claimed { color: #228822; }
 .mod-res-status.pending { color: #8a5a12; }
 .mod-res-status.expired { color: var(--text-light, #8f9092); }
+
+.auth-card .auth-secondary {
+    margin-top: 8px;
+    appearance: none;
+    border: 1px solid var(--border-color, #dee0e1);
+    background: #fff;
+    color: var(--text-primary, #2e3031);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 9px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+.auth-card .auth-secondary:hover { border-color: var(--accent-red, #b92b27); color: var(--accent-red, #b92b27); }
+.auth-card .auth-secondary:disabled { opacity: 0.7; cursor: not-allowed; }
+.pix-box {
+    border: 1px solid var(--border-color, #dee0e1);
+    background: var(--search-bg, #f7f7f8);
+    border-radius: 8px;
+    padding: 16px 14px;
+    margin-top: 16px;
+}
+.pix-box h2 { font-size: 16px; margin: 0 0 8px; color: var(--text-primary, #2e3031); }
+.pix-nome { margin: 0 0 6px; font-size: 14px; }
+.pix-timer { margin: 0 0 12px; font-size: 13px; font-weight: 700; color: #8a5a12; }
+.pix-qr {
+    display: block;
+    width: 220px;
+    height: 220px;
+    max-width: 100%;
+    margin: 0 auto 14px;
+    background: #fff;
+    border: 1px solid var(--border-color, #dee0e1);
+    border-radius: 6px;
+    object-fit: contain;
+}
+.pix-box textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color, #dee0e1);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font: inherit;
+    font-size: 12px;
+    line-height: 1.4;
+    background: #fff;
+    color: var(--text-primary, #2e3031);
+    resize: vertical;
+    word-break: break-all;
+}
+@media (max-width: 640px) {
+    .pix-qr { width: 200px; height: 200px; }
+}

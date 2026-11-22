@@ -66,6 +66,80 @@ export async function createPreference(env, { reservationId, username, email, or
   return data;
 }
 
+export function publicMpError(data) {
+  const causes = Array.isArray(data?.cause) ? data.cause : [];
+  const first = causes[0] || {};
+  const code = first.code ?? data?.code ?? data?.error ?? null;
+  const message = first.description || first.message || data?.message || data?.error || null;
+  return {
+    code: code != null && String(code).trim() !== "" ? String(code) : null,
+    message: message != null && String(message).trim() !== "" ? String(message) : null,
+  };
+}
+
+function pixQrFromPayment(data) {
+  const tx = data && data.point_of_interaction && data.point_of_interaction.transaction_data;
+  if (!tx) return { qr_code: "", qr_code_base64: "" };
+  const raw = String(tx.qr_code_base64 || "").trim();
+  let img = raw;
+  if (raw && !/^data:/i.test(raw)) img = `data:image/png;base64,${raw}`;
+  return { qr_code: String(tx.qr_code || "").trim(), qr_code_base64: img };
+}
+
+const MOCK_QR_PNG =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+export async function createPixPayment(env, { reservationId, username, email, expiresAt }) {
+  const description = `${ITEM_TITLE_PREFIX}${username}`;
+  const notificationUrl = "https://basedisso.com/api/mp/webhook";
+  const expiration = expiresAt || new Date(Date.now() + 30 * 60 * 1000).toISOString();
+
+  if (isMockMp(env)) {
+    return {
+      id: `pix-mock-${reservationId}`,
+      status: "pending",
+      qr_code: `00020126MOCKPIX${reservationId}52040000530398654045.005802BR5913BASEDISSO PIX6009SAOPAULO62070503***6304MOCK`,
+      qr_code_base64: MOCK_QR_PNG,
+      date_of_expiration: expiration,
+    };
+  }
+
+  const body = {
+    transaction_amount: PRICE_BRL,
+    description,
+    payment_method_id: "pix",
+    payer: { email },
+    external_reference: reservationId,
+    notification_url: notificationUrl,
+    date_of_expiration: expiration,
+  };
+
+  const res = await fetch("https://api.mercadopago.com/v1/payments", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.MP_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+      "X-Idempotency-Key": String(reservationId),
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  const qr = pixQrFromPayment(data);
+  if (!res.ok || !qr.qr_code) {
+    const err = new Error("mp_pix_failed");
+    err.detail = data;
+    err.public = publicMpError(data);
+    throw err;
+  }
+  return {
+    id: data.id != null ? String(data.id) : null,
+    status: data.status || "pending",
+    qr_code: qr.qr_code,
+    qr_code_base64: qr.qr_code_base64,
+    date_of_expiration: data.date_of_expiration || expiration,
+  };
+}
+
 export async function fetchPayment(env, paymentId) {
   const id = String(paymentId || "").trim();
   if (!id) throw new Error("missing_payment_id");

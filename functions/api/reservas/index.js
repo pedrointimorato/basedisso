@@ -25,13 +25,18 @@ export async function onRequestPost(context) {
   const result = await createReservation(env, request, {
     username: data?.username,
     email: data?.email,
+    method: data?.metodo || data?.method,
   });
-  if (result.error) return errorJson(result.error, result.status || 400);
+  if (result.error) {
+    const body = { erro: result.error };
+    if (result.detalhe) body.detalhe = result.detalhe;
+    return json(body, result.status || 400);
+  }
   if (env.DB) await recordRate(env.DB, ipHash, "reserva");
 
-  return json(
-    { ok: true, reserva: result.reserva, checkout_url: result.checkout_url },
-    201,
-    { "Set-Cookie": reservaCookieHeader(request, result.cookie) }
-  );
+  const payload = { ok: true, metodo: result.metodo || null, reserva: result.reserva };
+  if (result.checkout_url) payload.checkout_url = result.checkout_url;
+  if (result.pix) payload.pix = result.pix;
+
+  return json(payload, 201, { "Set-Cookie": reservaCookieHeader(request, result.cookie) });
 }
