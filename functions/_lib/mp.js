@@ -9,8 +9,13 @@ export function isMockMp(env) {
   return env?.MP_MOCK === "1" || token === "mock" || token.startsWith("TEST_MOCK");
 }
 
+export function isValidMpAccessToken(token) {
+  const t = String(token ?? "").trim();
+  return (t.startsWith("APP_USR-") || t.startsWith("TEST-")) && t.length > 30;
+}
+
 export function reservasAbertas(env) {
-  return Boolean(env?.MP_ACCESS_TOKEN) || isMockMp(env);
+  return isValidMpAccessToken(env?.MP_ACCESS_TOKEN);
 }
 
 export async function createPreference(env, { reservationId, username, email, origin, expiresAt }) {
@@ -145,8 +150,8 @@ export function isPaymentNotification(url, body) {
  * data.id is lowercased, following the official Mercado Pago SDK.
  */
 export async function verifyMpSignature(request, env, dataId) {
-  const secret = env.MP_WEBHOOK_SECRET;
-  if (!secret) return { ok: true, skipped: true };
+  const secret = String(env?.MP_WEBHOOK_SECRET ?? "").trim();
+  if (!secret) return { ok: false, reason: "missing_secret" };
   const xsig = request.headers.get("x-signature") || "";
   const reqId = (request.headers.get("x-request-id") || "").trim();
   const parts = {};

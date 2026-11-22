@@ -14,6 +14,9 @@ export async function onRequestGet() {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+  if (!String(env?.MP_WEBHOOK_SECRET ?? "").trim()) {
+    return json({ ok: false, erro: "assinatura inválida" }, 401);
+  }
   let body = null;
   const ct = request.headers.get("Content-Type") || "";
   try {
