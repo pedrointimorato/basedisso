@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>adm — basedisso</title>
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="/account.css">
     <link rel="stylesheet" href="adm.css">
     <link rel="stylesheet" href="../comments.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,6 +31,7 @@
                     </div>
 
                     <div class="nav-right">
+                        <div class="nav-account" data-nav-account></div>
                         <button class="btn-add-question">Apoiar</button>
                         <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
         <i class="fa-solid fa-sliders"></i></button>
@@ -66,7 +68,7 @@
                         <a class="or-thumb or-thumb-sticky" href="#aviso" aria-hidden="true"><i class="fa-solid fa-bullhorn"></i></a>
                         <div class="or-entry">
                             <p class="or-title"><a href="#aviso">Alguma queixa, elogio, sugestão ou oferta?</a> <span class="or-domain">(self.adm)</span></p>
-                            <p class="or-tagline"><span class="or-sticky-tag">announcement</span> enviado por <a href="index.html" class="or-author">u/Intimorato__</a> <span class="or-mod" title="moderador">[M]</span></p>
+                            <p class="or-tagline"><span class="or-sticky-tag">announcement</span> enviado por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a> <span class="or-mod" title="moderador">[M]</span></p>
                             <ul class="or-buttons">
                                 <li><a href="#aviso">comentários</a></li>
                                 <li><a href="#aviso">compartilhar</a></li>
@@ -85,7 +87,7 @@
                         <a class="or-thumb" href="../index.html" style="background:#b92b27" aria-hidden="true"><i class="fa-solid fa-house"></i></a>
                         <div class="or-entry">
                             <p class="or-title"><a href="../index.html">Feed principal do basedisso</a> <span class="or-domain">(basedisso.com)</span></p>
-                            <p class="or-tagline">enviado há 2 dias por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-tagline">enviado há 2 dias por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">A página inicial, com o feed em grade.</p>
                             <ul class="or-buttons">
                                 <li><a href="../index.html">o feed</a></li>
@@ -105,7 +107,7 @@
                         <a class="or-thumb" href="../f/" style="background:#1a73e8" aria-hidden="true"><i class="fa-solid fa-screwdriver-wrench"></i></a>
                         <div class="or-entry">
                             <p class="or-title"><a href="../f/">Painel de ferramentas</a> <span class="or-domain">(basedisso.com/f)</span></p>
-                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">A área /f/, com as ferramentas do site.</p>
                             <ul class="or-buttons">
                                 <li><a href="../f/">ferramentas</a></li>
@@ -125,7 +127,7 @@
                         <a class="or-thumb" href="../f/clipboard.html" style="background:#c4920c" aria-hidden="true"><i class="fa-solid fa-clipboard"></i></a>
                         <div class="or-entry">
                             <p class="or-title"><a href="../f/clipboard.html">Área de transferência</a> <span class="or-domain">(basedisso.com/f)</span></p>
-                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">Cole um texto, gere um código ou um link.</p>
                             <ul class="or-buttons">
                                 <li><a href="../f/clipboard.html">ferramenta</a></li>
@@ -145,7 +147,7 @@
                         <a class="or-thumb" href="../f/sorteador.html" style="background:#3f5d48" aria-hidden="true"><i class="fa-solid fa-hashtag"></i></a>
                         <div class="or-entry">
                             <p class="or-title"><a href="../f/sorteador.html">Sorteador de números</a> <span class="or-domain">(basedisso.com/f)</span></p>
-                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">Sorteie números em um intervalo, com ou sem repetição.</p>
                             <ul class="or-buttons">
                                 <li><a href="../f/sorteador.html">ferramenta</a></li>
@@ -165,7 +167,7 @@
                         <a class="or-thumb" href="../s/" style="background:#5c3d8a" aria-hidden="true"><i class="fa-solid fa-masks-theater"></i></a>
                         <div class="or-entry">
                             <p class="or-title"><a href="../s/">Feed de sátiras</a> <span class="or-domain">(basedisso.com/s)</span></p>
-                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">Trabalhos satíricos publicados no site.</p>
                             <ul class="or-buttons">
                                 <li><a href="../s/">sátiras</a></li>
@@ -185,8 +187,8 @@
                         <a class="or-thumb" href="../s/biblia-amarela.html" style="background:#e3b210" aria-hidden="true"><i class="fa-solid fa-book"></i></a>
                         <div class="or-entry">
                             <p class="or-title"><a href="../s/biblia-amarela.html">A Bíblia Amarela</a> <span class="or-domain">(basedisso.com/s)</span></p>
-                            <p class="or-tagline">enviado há 1 dia por <a href="index.html" class="or-author">u/Intimorato__</a></p>
-                            <p class="or-exp">Texto da wiki do r/BrasilSocial, por u/Intimorato__.</p>
+                            <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
+                            <p class="or-exp">Texto da wiki do r/BrasilSocial, por <a href="/@Intimorato" class="user-mention">>>Intimorato</a>.</p>
                             <ul class="or-buttons">
                                 <li><a href="../s/biblia-amarela.html">leitura</a></li>
                                 <li><a href="../s/biblia-amarela.html">compartilhar</a></li>
@@ -197,7 +199,7 @@
 
                         <section class="or-selfpost" id="aviso">
                             <h2 class="or-selfpost-title">Alguma queixa, elogio, sugestão ou oferta?</h2>
-                            <p class="or-tagline"><span class="or-sticky-tag">announcement</span> enviado por <a href="index.html" class="or-author">u/Intimorato__</a> <span class="or-mod" title="moderador">[M]</span></p>
+                            <p class="or-tagline"><span class="or-sticky-tag">announcement</span> enviado por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a> <span class="or-mod" title="moderador">[M]</span></p>
                             <div class="or-md or-selfpost-body">
                                 <p>Alguma queixa, elogio, sugestão ou oferta?</p>
                                 <p>Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
@@ -212,7 +214,7 @@
                             </div>
                             <div class="or-titlebox">
                                 <h2 class="or-side-name">adm</h2>
-                                <p class="or-side-meta">página do administrador · u/Intimorato__</p>
+                                <p class="or-side-meta">página do administrador · <a href="/@Intimorato" class="user-mention">>>Intimorato</a></p>
                                 <div class="or-md">
                                     <p>Alguma queixa, elogio, sugestão ou oferta?</p>
                                     <p>Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
@@ -296,6 +298,7 @@
 
     <script src="../script.js"></script>
     <script src="adm.js"></script>
+    <script src="/account.js"></script>
     <script src="../comments.js"></script>
 </body>
 </html>

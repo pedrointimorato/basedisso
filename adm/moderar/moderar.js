@@ -107,7 +107,9 @@
               el(
                 "p",
                 { class: "mod-meta" },
-                el("span", { class: "mod-name" }, c.name || "anônimo"),
+                (c.usuario && c.usuario.username && window.BDAccount)
+                  ? window.BDAccount.userLink(c.usuario.username, c.usuario.is_admin)
+                  : el("span", { class: "mod-name" }, c.name || "anônimo"),
                 " · ",
                 el("span", { class: "mod-page" }, c.page || ""),
                 " · ",

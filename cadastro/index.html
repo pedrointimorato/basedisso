@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar — basedisso</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/account.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="site-container layout-default">
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="nav-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="nav-search-input" placeholder="base de busca">
+                    </div>
+                    <div class="nav-icons">
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/adm/" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                    </div>
+                    <div class="nav-right">
+                        <div class="nav-account" data-nav-account></div>
+                        <button class="btn-add-question">Apoiar</button>
+                    </div>
+                </div>
+            </nav>
+            <main class="auth-main">
+                <section class="auth-card">
+                    <h1>Criar conta</h1>
+                    <p class="auth-lead">O nome aparece no site como <strong>&gt;&gt;Nome</strong>. O endereço do perfil é <strong>/@Nome</strong>.</p>
+                    <div id="claim-box" class="claim-box" hidden>
+                        <h2>Reivindicar &gt;&gt;Intimorato</h2>
+                        <p>Você está com a sessão de moderação ativa. Use este botão para reservar o nome do administrador e criar a conta &gt;&gt;Intimorato com uma senha sua.</p>
+                        <button type="button" id="claim-btn">Reivindicar &gt;&gt;Intimorato</button>
+                    </div>
+                    <form id="signup-form">
+                        <label for="signup-username">Nome de usuário</label>
+                        <input id="signup-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="3 a 20 letras, números ou _">
+                        <label for="signup-email">E-mail (opcional)</label>
+                        <input id="signup-email" name="email" type="email" autocomplete="email">
+                        <label for="signup-password">Senha</label>
+                        <input id="signup-password" name="password" type="password" autocomplete="new-password" required minlength="8">
+                        <label for="signup-password2">Confirmar senha</label>
+                        <input id="signup-password2" name="password2" type="password" autocomplete="new-password" required minlength="8">
+                        <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                        <button type="submit" class="auth-submit">Cadastrar</button>
+                        <p class="auth-status" id="signup-status" role="status"></p>
+                    </form>
+                    <p class="auth-alt">Já tem conta? <a href="/entrar">Entrar</a>.</p>
+                </section>
+            </main>
+
+        </div>
+    </div>
+    <script src="/script.js"></script>
+    <script src="/account.js"></script>
+    <script src="/cadastro/cadastro.js"></script>
+</body>
+</html>

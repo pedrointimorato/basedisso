@@ -8,9 +8,11 @@ export async function onRequestGet(context) {
   const url = new URL(request.url);
   const limit = Math.min(200, Math.max(1, Number(url.searchParams.get("limit") || 100) || 100));
   const { results } = await env.DB.prepare(
-    `SELECT id, page, parent_id, name, body, created_at, hidden
-     FROM comments
-     ORDER BY created_at DESC
+    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden,
+            u.username, u.is_admin
+     FROM comments c
+     LEFT JOIN users u ON u.id = c.user_id
+     ORDER BY c.created_at DESC
      LIMIT ?`
   )
     .bind(limit)
@@ -21,10 +23,13 @@ export async function onRequestGet(context) {
       id: row.id,
       page: row.page,
       parent_id: row.parent_id,
-      name: row.name,
+      name: row.username || row.name,
       body: row.body,
       created_at: row.created_at,
       hidden: Boolean(row.hidden),
+      usuario: row.username
+        ? { username: row.username, is_admin: Boolean(row.is_admin) }
+        : null,
     })),
   });
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar — basedisso</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/account.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="site-container layout-default">
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="nav-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="nav-search-input" placeholder="base de busca">
+                    </div>
+                    <div class="nav-icons">
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/adm/" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                    </div>
+                    <div class="nav-right">
+                        <div class="nav-account" data-nav-account></div>
+                        <button class="btn-add-question">Apoiar</button>
+                    </div>
+                </div>
+            </nav>
+            <main class="auth-main">
+                <section class="auth-card">
+                    <h1>Entrar</h1>
+                    <p class="auth-lead">Use o nome da sua conta (sem &gt;&gt; ou @) e a senha.</p>
+                    <form id="login-form">
+                        <label for="login-username">Nome de usuário</label>
+                        <input id="login-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}">
+                        <label for="login-password">Senha</label>
+                        <input id="login-password" name="password" type="password" autocomplete="current-password" required minlength="8">
+                        <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                        <button type="submit" class="auth-submit">Entrar</button>
+                        <p class="auth-status" id="login-status" role="status"></p>
+                    </form>
+                    <p class="auth-alt">Não tem conta? <a href="/cadastro">Cadastre-se</a>.</p>
+                </section>
+            </main>
+
+        </div>
+    </div>
+    <script src="/script.js"></script>
+    <script src="/account.js"></script>
+    <script src="/entrar/entrar.js"></script>
+</body>
+</html>

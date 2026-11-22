@@ -155,7 +155,7 @@ export async function checkLoginRate(db, ipHash) {
     : null;
 }
 
-function parseCookies(header) {
+export function parseCookies(header) {
   const out = {};
   if (!header) return out;
   for (const part of header.split(";")) {

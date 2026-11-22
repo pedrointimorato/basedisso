@@ -6,11 +6,29 @@ import {
   isSameOrigin,
   json,
   normalizePage,
-  publicComment,
   recordRate,
   sanitizeBody,
   sanitizeName,
 } from "../_lib/shared.js";
+import { getSessionUser, publicUser } from "../_lib/auth.js";
+import { lookupMentions } from "../_lib/mentions.js";
+
+async function formatComment(db, row) {
+  const mencoes = await lookupMentions(db, row.body);
+  const usuario = row.username
+    ? { username: row.username, is_admin: Boolean(row.is_admin) }
+    : null;
+  return {
+    id: row.id,
+    page: row.page,
+    parent_id: row.parent_id,
+    name: usuario ? usuario.username : row.name,
+    body: row.body,
+    created_at: row.created_at,
+    usuario,
+    mencoes,
+  };
+}
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -19,8 +37,10 @@ export async function onRequestGet(context) {
   const page = normalizePage(url.searchParams.get("page") || "");
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
-    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at
+    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id,
+            u.username, u.is_admin
      FROM comments c
+     LEFT JOIN users u ON u.id = c.user_id
      LEFT JOIN comments p ON c.parent_id = p.id
      WHERE c.page = ? AND c.hidden = 0
        AND (c.parent_id IS NULL OR (p.id IS NOT NULL AND p.hidden = 0))
@@ -29,7 +49,11 @@ export async function onRequestGet(context) {
   )
     .bind(page)
     .all();
-  return json({ comentarios: (results || []).map(publicComment) });
+  const comentarios = [];
+  for (const row of results || []) {
+    comentarios.push(await formatComment(env.DB, row));
+  }
+  return json({ comentarios });
 }
 
 export async function onRequestPost(context) {
@@ -44,7 +68,6 @@ export async function onRequestPost(context) {
     return errorJson("Pedido inválido.", 400);
   }
 
-  // Honeypot: pretend success, do not store.
   if (data && typeof data.website === "string" && data.website.trim() !== "") {
     return json({ ok: true, comentario: null }, 201);
   }
@@ -58,7 +81,10 @@ export async function onRequestPost(context) {
     return errorJson(`Comentário longo demais (máx. ${BODY_MAX} caracteres).`, 400);
   }
 
-  const name = sanitizeName(data?.name);
+  const session = await getSessionUser(request, env);
+  const name = session ? session.username : sanitizeName(data?.name);
+  const userId = session ? session.id : null;
+
   let parentId = data?.parent_id ? String(data.parent_id).trim() : null;
   if (parentId) {
     if (!/^[0-9a-f-]{36}$/i.test(parentId)) return errorJson("Resposta inválida.", 400);
@@ -84,25 +110,22 @@ export async function onRequestPost(context) {
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO comments (id, page, parent_id, name, body, created_at, hidden, ip_hash)
-     VALUES (?, ?, ?, ?, ?, ?, 0, ?)`
+    `INSERT INTO comments (id, page, parent_id, name, body, created_at, hidden, ip_hash, user_id)
+     VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)`
   )
-    .bind(id, page, parentId, name, body, createdAt, ipHash)
+    .bind(id, page, parentId, name, body, createdAt, ipHash, userId)
     .run();
   await recordRate(env.DB, ipHash, "post");
 
-  return json(
-    {
-      ok: true,
-      comentario: publicComment({
-        id,
-        page,
-        parent_id: parentId,
-        name,
-        body,
-        created_at: createdAt,
-      }),
-    },
-    201
-  );
+  const comentario = await formatComment(env.DB, {
+    id,
+    page,
+    parent_id: parentId,
+    name,
+    body,
+    created_at: createdAt,
+    username: session ? session.username : null,
+    is_admin: session ? session.is_admin : 0,
+  });
+  return json({ ok: true, comentario }, 201);
 }

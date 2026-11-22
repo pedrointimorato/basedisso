@@ -2,15 +2,22 @@
   "use strict";
 
   var API = "/api/comments";
+  var currentUser = null;
 
-  function el(tag, attrs) {
+  function el() {
+    return window.BDAccount
+      ? window.BDAccount.el.apply(null, arguments)
+      : fallbackEl.apply(null, arguments);
+  }
+
+  function fallbackEl(tag, attrs) {
     var node = document.createElement(tag);
     var i, key, val, child;
     attrs = attrs || {};
     for (key in attrs) {
       if (!Object.prototype.hasOwnProperty.call(attrs, key)) continue;
       val = attrs[key];
-      if (val == null || key === "children") continue;
+      if (val == null) continue;
       if (key === "class") node.className = val;
       else if (key === "dataset") {
         for (var d in val) {
@@ -18,20 +25,15 @@
         }
       } else if (key.slice(0, 2) === "on" && typeof val === "function") {
         node.addEventListener(key.slice(2).toLowerCase(), val);
-      } else if (key === "disabled" || key === "checked") {
-        node[key] = !!val;
-      } else {
-        node.setAttribute(key, val);
-      }
+      } else if (key === "disabled") node.disabled = !!val;
+      else node.setAttribute(key, val);
     }
     for (i = 2; i < arguments.length; i++) {
       child = arguments[i];
       if (child == null || child === false) continue;
       if (typeof child === "string" || typeof child === "number") {
         node.appendChild(document.createTextNode(String(child)));
-      } else {
-        node.appendChild(child);
-      }
+      } else node.appendChild(child);
     }
     return node;
   }
@@ -54,6 +56,23 @@
     }
   }
 
+  function authorNode(c) {
+    if (c.usuario && c.usuario.username && window.BDAccount) {
+      return window.BDAccount.userLink(c.usuario.username, c.usuario.is_admin, "bd-comment-name");
+    }
+    return el("span", { class: "bd-comment-name" }, c.name || "anônimo");
+  }
+
+  function bodyNode(c) {
+    var p = el("p", { class: "bd-comment-body" });
+    if (window.BDAccount && window.BDAccount.appendBodyWithMentions) {
+      window.BDAccount.appendBodyWithMentions(p, c.body || "", c.mencoes || {});
+    } else {
+      p.appendChild(document.createTextNode(c.body || ""));
+    }
+    return p;
+  }
+
   function buildForm(page, parentId, onDone) {
     var status = el("p", { class: "bd-comments-status", role: "status" });
     var nameInput = el("input", {
@@ -63,12 +82,14 @@
       autocomplete: "nickname",
       placeholder: "anônimo",
     });
+    var nameLabel = el("label", { class: "bd-name-field" }, "Nome (opcional)", nameInput);
+    var asUser = el("p", { class: "bd-as-user" });
     var bodyInput = el("textarea", {
       name: "body",
       maxlength: "2000",
       required: "required",
       rows: "5",
-      placeholder: "Escreva seu comentário",
+      placeholder: "Escreva seu comentário. Você pode mencionar com >>Nome ou @Nome.",
     });
     var hp = el("input", {
       type: "text",
@@ -82,11 +103,27 @@
     var form = el(
       "form",
       { class: parentId ? "bd-comment-reply-form" : "bd-comments-form" },
-      el("label", null, "Nome (opcional)", nameInput),
+      asUser,
+      nameLabel,
       el("label", null, "Comentário", bodyInput),
       hp,
       el("div", { class: "bd-comments-actions" }, submit, status)
     );
+
+    function applyUser() {
+      if (currentUser && currentUser.username && window.BDAccount) {
+        nameLabel.style.display = "none";
+        asUser.style.display = "";
+        while (asUser.firstChild) asUser.removeChild(asUser.firstChild);
+        asUser.appendChild(document.createTextNode("Comentar como "));
+        asUser.appendChild(window.BDAccount.userLink(currentUser.username, currentUser.is_admin));
+      } else {
+        nameLabel.style.display = "";
+        asUser.style.display = "none";
+      }
+    }
+    applyUser();
+
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       status.textContent = "";
@@ -122,6 +159,7 @@
             return;
           }
           form.reset();
+          applyUser();
           status.textContent = "Comentário enviado.";
           status.classList.add("ok");
           if (typeof onDone === "function") onDone();
@@ -142,14 +180,8 @@
     var item = el(
       "li",
       { class: "bd-comment", dataset: { id: c.id } },
-      el(
-        "p",
-        { class: "bd-comment-meta" },
-        el("span", { class: "bd-comment-name" }, c.name || "anônimo"),
-        " · ",
-        el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))
-      ),
-      el("p", { class: "bd-comment-body" }, c.body || ""),
+      el("p", { class: "bd-comment-meta" }, authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
+      bodyNode(c),
       replyWrap
     );
     if (!c.parent_id) {
@@ -247,14 +279,24 @@
     reload();
   }
 
-  function init() {
-    var nodes = document.querySelectorAll(".bd-comments");
-    for (var i = 0; i < nodes.length; i++) mount(nodes[i]);
+  function start() {
+    var go = function () {
+      var nodes = document.querySelectorAll(".bd-comments");
+      for (var i = 0; i < nodes.length; i++) mount(nodes[i]);
+    };
+    if (window.BDAccount && window.BDAccount.me) {
+      window.BDAccount.me().then(function (user) {
+        currentUser = user;
+        go();
+      });
+    } else {
+      go();
+    }
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", start);
   } else {
-    init();
+    start();
   }
 })();
