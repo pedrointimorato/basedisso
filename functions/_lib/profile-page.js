@@ -9,8 +9,8 @@ export function profilePageHtml({ title, initialPath }) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${safeTitle}</title>
-    <link rel="stylesheet" href="/style.css?v=20261123s">
-    <link rel="stylesheet" href="/account.css?v=20261123s">
+    <link rel="stylesheet" href="/style.css?v=20261123b">
+    <link rel="stylesheet" href="/account.css?v=20261123b">
     <link rel="stylesheet" href="/comments.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -19,10 +19,10 @@ export function profilePageHtml({ title, initialPath }) {
         <div class="left-area">
             <nav class="navbar">
                 <div class="nav-container">
-                    <div class="nav-search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" class="nav-search-input" placeholder="base de busca">
-                    </div>
+                    <form class="nav-search-box" action="/busca" method="get" role="search">
+                        <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="search" name="q" class="nav-search-input" placeholder="base de busca" autocomplete="off" enterkeyhint="search">
+                    </form>
                     <div class="nav-icons">
                         <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
                         <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
@@ -30,7 +30,6 @@ export function profilePageHtml({ title, initialPath }) {
                         <a href="/adm/" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
                     </div>
                     <div class="nav-right">
-                        <button class="btn-add-question">Apoiar</button>
                         <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
         <i class="fa-solid fa-sliders"></i></button>
                     </div>
@@ -100,8 +99,8 @@ export function profilePageHtml({ title, initialPath }) {
             </footer>
         </aside>
     </div>
-    <script src="/script.js?v=20261123s"></script>
-    <script src="/account.js?v=20261123s"></script>
+    <script src="/script.js?v=20261123b"></script>
+    <script src="/account.js?v=20261123b"></script>
     <script src="/perfil.js"></script>
 </body>
 </html>`;

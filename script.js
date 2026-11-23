@@ -206,3 +206,12 @@ document.addEventListener("DOMContentLoaded", () => {
         mudarAbaSidebar("ofertas", "ADM", btn ? { currentTarget: btn } : null);
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const hash = location.hash || "";
+    if (!hash.startsWith("#post-") && !hash.startsWith("#c-")) return;
+    const alvo = document.getElementById(hash.slice(1));
+    if (!alvo) return;
+    alvo.classList.add("busca-target");
+    alvo.scrollIntoView({ block: "start" });
+});

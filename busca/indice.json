@@ -1,0 +1,234 @@
+[
+  {
+    "id": "post-como-organizar-a-semana-em-15-minutos",
+    "tipo": "publicacao",
+    "title": "Como organizar a semana em 15 minutos",
+    "author": "Ana Ribeiro",
+    "url": "/#post-como-organizar-a-semana-em-15-minutos",
+    "body": "Reserve um momento no domingo para listar as três prioridades da semana. O resto vira complemento. Separe tarefas por contexto: casa, trabalho e estudos. Assim fica mais fácil encaixar cada uma no dia certo."
+  },
+  {
+    "id": "post-mesa-organizada-menos-objetos-mais-foco",
+    "tipo": "publicacao",
+    "title": "Mesa organizada: menos objetos, mais foco.",
+    "author": "Marcos Lima",
+    "url": "/#post-mesa-organizada-menos-objetos-mais-foco",
+    "body": "Mesa organizada: menos objetos, mais foco."
+  },
+  {
+    "id": "post-checklist-do-dia",
+    "tipo": "publicacao",
+    "title": "Checklist do dia",
+    "author": "basedisso",
+    "url": "/#post-checklist-do-dia",
+    "body": "Responder e-mails Revisar agenda Organizar arquivos"
+  },
+  {
+    "id": "post-planejamento-mensal-em-3-passos",
+    "tipo": "publicacao",
+    "title": "Planejamento mensal em 3 passos",
+    "author": "Carla Souza",
+    "url": "/#post-planejamento-mensal-em-3-passos",
+    "body": "Planejamento mensal em 3 passos"
+  },
+  {
+    "id": "post-caderno-de-anotacoes-e-lista-de-metas",
+    "tipo": "publicacao",
+    "title": "Caderno de anotações e lista de metas.",
+    "author": "Rafael Dias",
+    "url": "/#post-caderno-de-anotacoes-e-lista-de-metas",
+    "body": "Caderno de anotações e lista de metas."
+  },
+  {
+    "id": "post-qual-seu-melhor-horario-para-focar",
+    "tipo": "publicacao",
+    "title": "Qual seu melhor horário para focar?",
+    "author": "basedisso",
+    "url": "/#post-qual-seu-melhor-horario-para-focar",
+    "body": "Manhã Tarde Noite"
+  },
+  {
+    "id": "post-metodo-2-minutos",
+    "tipo": "publicacao",
+    "title": "Método 2 minutos",
+    "author": "Júlia Mendes",
+    "url": "/#post-metodo-2-minutos",
+    "body": "Se uma tarefa leva menos de dois minutos, faça agora. Pequenas pendências acumuladas pesam mais do que parecem."
+  },
+  {
+    "id": "post-estante-por-categorias-livros-caixas-e-etiquetas",
+    "tipo": "publicacao",
+    "title": "Estante por categorias: livros, caixas e etiquetas.",
+    "author": "Paulo Neves",
+    "url": "/#post-estante-por-categorias-livros-caixas-e-etiquetas",
+    "body": "Estante por categorias: livros, caixas e etiquetas."
+  },
+  {
+    "id": "post-pomodoro",
+    "tipo": "publicacao",
+    "title": "Pomodoro",
+    "author": "Timer Foco",
+    "url": "/#post-pomodoro",
+    "body": ""
+  },
+  {
+    "id": "post-rotina-rapida-de-limpeza-da-mesa",
+    "tipo": "publicacao",
+    "title": "Rotina rápida de limpeza da mesa",
+    "author": "Lucas Prado",
+    "url": "/#post-rotina-rapida-de-limpeza-da-mesa",
+    "body": "Rotina rápida de limpeza da mesa"
+  },
+  {
+    "id": "post-digital-tambem-precisa-de-faxina",
+    "tipo": "publicacao",
+    "title": "Digital também precisa de faxina",
+    "author": "Fernanda Alves",
+    "url": "/#post-digital-tambem-precisa-de-faxina",
+    "body": "Arquivos soltos na área de trabalho são a gaveta bagunçada do computador. Crie três pastas: Ativo, Arquivo e Lixeira. Revise toda sexta-feira e esvazie o que não usa mais. Faça o mesmo com abas abertas do navegador."
+  },
+  {
+    "id": "post-calendario",
+    "tipo": "publicacao",
+    "title": "Calendário",
+    "author": "basedisso",
+    "url": "/#post-calendario",
+    "body": ""
+  },
+  {
+    "id": "post-um-cantinho-verde-ajuda-a-manter-a-calma",
+    "tipo": "publicacao",
+    "title": "Um cantinho verde ajuda a manter a calma.",
+    "author": "Gabriela Rocha",
+    "url": "/#post-um-cantinho-verde-ajuda-a-manter-a-calma",
+    "body": "Um cantinho verde ajuda a manter a calma."
+  },
+  {
+    "id": "satira-feed",
+    "tipo": "satira",
+    "title": "Sátiras",
+    "author": "",
+    "url": "/s/",
+    "body": "Sátiras Um feed de trabalhos satíricos. A peça em destaque é a Bíblia Amarela, da wiki do r/BrasilSocial. A Bíblia Amarela Escritura based a orientação para a verdade, sabedoria e glória."
+  },
+  {
+    "id": "satira-biblia-amarela",
+    "tipo": "satira",
+    "title": "A Bíblia Amarela",
+    "author": "Intimorato",
+    "url": "/s/biblia-amarela.html",
+    "body": "&quot;A biblia amarela&quot; é um projeto textual satírico composto por uma série de livros a fim de promover críticas, sátiras e pontuações ao MBL/MISSÃO e seus livros de propostas entitulados de &quot;livro amarelo&quot;. Originalmente hospedado na wiki do r/BrasilSocial e com seus fundamentos escritos por >>Intimorato. Que pretende atrair contribuidores para o projeto. Escritura based a orientação para a verdade, sabedoria e glória. Wiki do r/BrasilSocial."
+  },
+  {
+    "id": "satira-genese",
+    "tipo": "satira",
+    "title": "Gênese do movimento",
+    "author": "Intimorato",
+    "url": "/s/biblia-amarela.html#genese",
+    "body": "Texto da wiki do r/BrasilSocial, por >>Intimorato ."
+  },
+  {
+    "id": "satira-capitulo-i",
+    "tipo": "satira",
+    "title": "Capítulo I",
+    "author": "Intimorato",
+    "url": "/s/biblia-amarela.html#capitulo-i",
+    "body": "No princípio era o Petê, que moldou o estado à sua imagem, fazendo tudo de ruim que não resolveram e também que ocasionaram ser culpa deles. Nesse tempo o Petê revolucionou a corrupção. O Petê governava de acordo com que suas oferendas para a COLIGAÇÃO lhe permitia. O Culto dos peteístas ao Petê era grande e inabalável, mas as desvenças estavam crescendo e um belo dia a oferenda incluía 20 centavos. A sensação de livre mobilidade popular se esvaiu. Sobreveio o presságio de impeachment, a gestão de Dima Rostef entrou em crise, sob a liderança de Renã Satan surgiu o movimento cujo preceito é libertar os bestas e trazer á tona a besta interior de cada indivíduo."
+  },
+  {
+    "id": "satira-movimento-besta-livre",
+    "tipo": "satira",
+    "title": "Movimento besta livre",
+    "author": "Intimorato",
+    "url": "/s/biblia-amarela.html#movimento-besta-livre",
+    "body": "M. ême = Me B. besta(s) = be L. éli = li E viu o criador que o movimento era bom para toda sorte de enganar trouxas e sequestrar pautas. E se fez mister para o mebéli tomar frente na conclusão do impeachment ou pelo menos fazer presença que pudesse ser vendida como decisiva no processo. Então se espetaculou uma caminhada até a capital para entregar o pedido de expulsão ao presidente da câmara de puteiros."
+  },
+  {
+    "id": "satira-capitulo-ii",
+    "tipo": "satira",
+    "title": "Capítulo II",
+    "author": "Intimorato",
+    "url": "/s/biblia-amarela.html#capitulo-ii",
+    "body": "Entre pedaladas, jornadas juninas e jatos lavadores, o impeachment se consumou. Fontes: wiki da Bíblia Amarela · Gênese do movimento"
+  },
+  {
+    "id": "ferramenta-area-de-transferencia",
+    "tipo": "ferramenta",
+    "title": "Área de transferência",
+    "author": "",
+    "url": "/f/clipboard.html",
+    "body": "Cole um texto, gere um código ou um link e recupere depois neste ou em outro aparelho. Área de transferência clipboard colar texto link Texto ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-sorteador-de-numeros",
+    "tipo": "ferramenta",
+    "title": "Sorteador de números",
+    "author": "",
+    "url": "/f/sorteador.html",
+    "body": "Sorteie um ou vários números em um intervalo, com ou sem repetição. Sorteador de números aleatório rifa bingo intervalo Sorteio ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-sorteio-de-nomes",
+    "tipo": "ferramenta",
+    "title": "Sorteio de nomes",
+    "author": "",
+    "url": "/f/",
+    "body": "Cole uma lista de nomes e sorteie um ou mais ganhadores. Sorteio de nomes lista participantes Sorteio ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-cara-ou-coroa",
+    "tipo": "ferramenta",
+    "title": "Cara ou coroa",
+    "author": "",
+    "url": "/f/",
+    "body": "Lance uma moeda virtual para decidir entre duas opções. Cara ou coroa moeda Sorteio ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-dados",
+    "tipo": "ferramenta",
+    "title": "Dados",
+    "author": "",
+    "url": "/f/",
+    "body": "Role um ou mais dados (d6, d20 e outros) e some o resultado. Dados dado rolagem Sorteio ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-contador-de-palavras",
+    "tipo": "ferramenta",
+    "title": "Contador de palavras",
+    "author": "",
+    "url": "/f/",
+    "body": "Conte palavras, caracteres e linhas de um texto colado. Contador de palavras caracteres linhas Texto ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-gerador-de-senha",
+    "tipo": "ferramenta",
+    "title": "Gerador de senha",
+    "author": "",
+    "url": "/f/",
+    "body": "Crie senhas fortes com tamanho e tipos de caractere à sua escolha. Gerador de senha aleatória Produtividade ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-pomodoro",
+    "tipo": "ferramenta",
+    "title": "Pomodoro",
+    "author": "",
+    "url": "/f/",
+    "body": "Timer de foco e pausa para organizar o trabalho em blocos. Pomodoro timer foco Produtividade ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-conversor-de-unidades",
+    "tipo": "ferramenta",
+    "title": "Conversor de unidades",
+    "author": "",
+    "url": "/f/",
+    "body": "Converta comprimento, peso, temperatura e outras unidades. Conversor de unidades medida Conversão ferramenta ferramentas"
+  },
+  {
+    "id": "ferramenta-painel",
+    "tipo": "ferramenta",
+    "title": "Ferramentas",
+    "author": "",
+    "url": "/f/",
+    "body": "Painel com utilitários rápidos: área de transferência, sorteador de números e outras prévias."
+  }
+]

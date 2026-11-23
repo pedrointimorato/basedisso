@@ -179,7 +179,7 @@
     var replyWrap = el("div");
     var item = el(
       "li",
-      { class: "bd-comment", dataset: { id: c.id } },
+      { class: "bd-comment", id: c.id ? "c-" + c.id : undefined, dataset: { id: c.id } },
       el("p", { class: "bd-comment-meta" }, authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
       bodyNode(c),
       replyWrap
