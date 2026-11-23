@@ -1,4 +1,4 @@
-import { errorJson, json } from "../_lib/shared.js";
+import { json } from "../_lib/shared.js";
 
 const Q_MIN = 2;
 const Q_MAX = 80;
@@ -12,8 +12,8 @@ function fold(s) {
     .toLowerCase();
 }
 
-function escapeLike(s) {
-  return String(s).replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_");
+function sanitizeLike(s) {
+  return String(s).replace(/[\\%_]/g, "");
 }
 
 function termsOf(q) {
@@ -92,30 +92,47 @@ export async function onRequestGet(context) {
     sqlFold("IFNULL(u.username, '')"),
   ];
   const termClause = terms
-    .map(() => `(${foldedCols.map((c) => `${c} LIKE ? ESCAPE '\\\\'`).join(" OR ")})`)
+    .map(() => `(${foldedCols.map((c) => `${c} LIKE ?`).join(" OR ")})`)
     .join(" AND ");
   const binds = [];
   for (const term of terms) {
-    const pat = `%${escapeLike(term)}%`;
+    const safe = sanitizeLike(term);
+    if (safe.length < Q_MIN) continue;
+    const pat = `%${safe}%`;
     binds.push(pat, pat, pat);
   }
+  if (!binds.length) {
+    return json({ q, comentarios: [] });
+  }
+
+  const selectSql = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, u.username
+       FROM comments c
+       LEFT JOIN users u ON u.id = c.user_id`;
 
   let results;
   try {
     const out = await env.DB.prepare(
-      `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, u.username
-       FROM comments c
-       LEFT JOIN users u ON u.id = c.user_id
+      `${selectSql}
        WHERE c.hidden = 0
          AND (${termClause})
        ORDER BY c.created_at DESC
-       LIMIT ?`
+       LIMIT 40`
     )
-      .bind(...binds, RESULT_MAX)
+      .bind(...binds)
       .all();
     results = out.results || [];
   } catch (err) {
-    return errorJson("Não foi possível buscar comentários.", 500);
+    try {
+      const out = await env.DB.prepare(
+        `${selectSql}
+         WHERE c.hidden = 0
+         ORDER BY c.created_at DESC
+         LIMIT 400`
+      ).all();
+      results = out.results || [];
+    } catch {
+      return json({ q, comentarios: [] });
+    }
   }
 
   const comentarios = [];
