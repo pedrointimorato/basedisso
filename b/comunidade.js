@@ -110,7 +110,10 @@
     }
   }
 
+  var loadSeq = 0;
+
   function loadPosts(slug, host, emptyText) {
+    var seq = ++loadSeq;
     return fetch("/api/comunidades/" + encodeURIComponent(slug) + "/posts", {
       credentials: "same-origin",
       headers: { Accept: "application/json" },
@@ -121,6 +124,7 @@
         });
       })
       .then(function (out) {
+        if (seq !== loadSeq) return;
         while (host.firstChild) host.removeChild(host.firstChild);
         if (!out.res.ok) {
           host.appendChild(
@@ -139,6 +143,7 @@
         bindVotes(host);
       })
       .catch(function () {
+        if (seq !== loadSeq) return;
         while (host.firstChild) host.removeChild(host.firstChild);
         host.appendChild(el("p", { class: "or-empty" }, "Falha de rede ao carregar as postagens."));
       });
