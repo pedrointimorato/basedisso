@@ -1,6 +1,6 @@
-import { escapeHtml } from "../../../../_lib/shared.js";
-import { getCommunity, communityHref, postHref, publicPost, UUID_RE } from "../../../../_lib/comunidades.js";
-import { getVisiblePost } from "../../../../_lib/posts.js";
+import { escapeHtml } from "../../../_lib/shared.js";
+import { getCommunity, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
+import { getVisiblePost } from "../../../_lib/posts.js";
 
 const V = "20261123c";
 

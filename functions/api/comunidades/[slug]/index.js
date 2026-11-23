@@ -1,6 +1,6 @@
-import { errorJson, json } from "../../_lib/shared.js";
-import { getCommunity, communityHref, publicPost } from "../../_lib/comunidades.js";
-import { listVisiblePosts } from "../../_lib/posts.js";
+import { errorJson, json } from "../../../_lib/shared.js";
+import { getCommunity, communityHref, publicPost } from "../../../_lib/comunidades.js";
+import { listVisiblePosts } from "../../../_lib/posts.js";
 
 export async function onRequestGet(context) {
   const { env, params } = context;
