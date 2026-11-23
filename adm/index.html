@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>adm — basedisso</title>
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="/account.css">
+    <link rel="stylesheet" href="/style.css?v=20261123s">
+    <link rel="stylesheet" href="/account.css?v=20261123s">
     <link rel="stylesheet" href="adm.css">
     <link rel="stylesheet" href="../comments.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -227,30 +227,19 @@
         </div>
 
         <aside class="right-sidebar">
-            
             <div class="sidebar-header">
-                <h2 id="sidebar-tab-title">ADM</h2>
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
                 <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
-<a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
-                 <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
                 <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
-
             </div>
-            
             <div class="sidebar-body">
-                
-                                <div class="sidebar-tab-content" id="tab-meu">
+                <div class="sidebar-tab-content active" id="tab-meu">
                     <div class="sidebar-block sidebar-account-block">
                         <div class="sidebar-account" data-sidebar-account></div>
                     </div>
-                    <div class="sidebar-block sidebar-history-block">
-                        <h3>Histórico</h3>
-                        <h3 class="sidebar-slogan">Nossa base é organizar</h3>
-                        <p class="sidebar-history-sub">Visto recentemente</p>
-                        <ul class="tab-list"></ul>
-                    </div>
                 </div>
-
                 <div class="sidebar-tab-content" id="tab-configuracoes">
                     <div class="sidebar-block">
                         <h3>Preferências do Sistema</h3>
@@ -270,20 +259,17 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="sidebar-tab-content active" id="tab-ofertas">
+                <div class="sidebar-tab-content" id="tab-ofertas">
                     <div class="sidebar-block adm-box">
                         <h3>ADM</h3>
                         <p>Alguma queixa, elogio, sugestão ou oferta?<br>
                         Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
-                        <a class="btn-adm-page" href="index.html">abrir página do adm</a>
+                        <a class="btn-adm-page" href="/adm/">abrir página do adm</a>
                     </div>
                 </div>
-
             </div>
-
             <footer class="sidebar-footer">
-                <button class="footer-tab-btn" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
                     <i class="fa-solid fa-user"></i>
                     <span>Meu</span>
                 </button>
@@ -291,7 +277,7 @@
                     <i class="fa-solid fa-sliders"></i>
                     <span>Ajustes</span>
                 </button>
-                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
                     <i class="fa-regular fa-envelope"></i>
                     <span>ADM</span>
                 </button>
@@ -300,9 +286,9 @@
 
     </div>
 
-    <script src="../script.js"></script>
+    <script src="/script.js?v=20261123s"></script>
     <script src="adm.js"></script>
-    <script src="/account.js"></script>
+    <script src="/account.js?v=20261123s"></script>
     <script src="../comments.js"></script>
 </body>
 </html>

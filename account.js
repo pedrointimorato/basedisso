@@ -154,6 +154,7 @@
         );
         box.appendChild(row);
       } else {
+        box.appendChild(el("p", { class: "sidebar-acesso-label" }, "Acesso sem conta"));
         var actions = el("div", { class: "sidebar-account-actions" },
           el("a", { href: "/entrar", class: "sidebar-btn-entrar" }, "Entrar"),
           el("a", { href: "/cadastro", class: "sidebar-btn-cadastro" }, "Cadastrar")

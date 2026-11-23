@@ -56,6 +56,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 350px;
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .left-area {
@@ -221,13 +222,13 @@ body {
     position: fixed;
     right: 0;
     top: 0;
+    bottom: 0;
     width: 350px;
-    height: 100vh;
-    height: 100dvh;
-    max-height: 100vh;
-    max-height: 100dvh;
+    height: auto;
+    max-height: none;
     display: flex;
     flex-direction: column;
+    min-height: 0;
     overflow: hidden;
     z-index: 1001;
 }
@@ -486,11 +487,11 @@ body {
         flex-direction: column;
         right: -350px; /* Joga a sidebar totalmente para fora da tela (direita) */
         top: 0;
+        bottom: 0;
         width: 310px; /* Um pouco mais estreita no mobile */
-        height: 100vh;
-        height: 100dvh;
-        max-height: 100vh;
-        max-height: 100dvh;
+        height: auto;
+        max-height: none;
+        min-height: 0;
         overflow: hidden;
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
         transition: right 0.3s ease; /* Animação suave de deslize */
@@ -690,33 +691,46 @@ body {
 /* Conta e Apoiar na aba Meu / cabeçalho da sidebar */
 .sidebar-account-block { margin-bottom: 18px; }
 .sidebar-account { margin-bottom: 12px; }
+.sidebar-acesso-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin: 0 0 10px;
+}
 .sidebar-account-actions {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-.sidebar-account-actions a {
+.sidebar-account-actions a,
+a.sidebar-btn-entrar,
+a.sidebar-btn-cadastro {
     display: block;
     text-align: center;
     text-decoration: none;
+    -webkit-appearance: none;
+    appearance: none;
+    font-family: inherit;
     font-weight: 700;
     font-size: 14px;
-    padding: 8px 12px;
+    line-height: 1.2;
+    padding: 9px 12px;
     border-radius: 4px;
     box-sizing: border-box;
+    width: 100%;
 }
-.sidebar-btn-entrar {
+a.sidebar-btn-entrar {
     background-color: var(--accent-red);
     color: #fff;
     border: none;
 }
-.sidebar-btn-entrar:hover { background-color: var(--accent-red-hover); color: #fff; }
-.sidebar-btn-cadastro {
-    background-color: var(--bg-card);
+a.sidebar-btn-entrar:hover { background-color: var(--accent-red-hover); color: #fff; }
+a.sidebar-btn-cadastro {
+    background-color: var(--bg-card, #fff);
     color: var(--accent-red);
     border: 1px solid var(--accent-red);
 }
-.sidebar-btn-cadastro:hover { background-color: var(--bg-global); }
+a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--accent-red); }
 .sidebar-account-user {
     display: flex;
     align-items: center;
