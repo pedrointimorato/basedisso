@@ -148,6 +148,8 @@
     if (tipo === "satira") return "Sátira";
     if (tipo === "ferramenta") return "Ferramenta";
     if (tipo === "comentario") return "Comentário";
+    if (tipo === "comunidade") return "Comunidade";
+    if (tipo === "postagem") return "Postagem";
     return "Resultado";
   }
 
@@ -215,16 +217,19 @@
     return Array.isArray(data) ? data : data.itens || data.items || [];
   }
 
-  async function loadComments(q) {
+  async function loadRemote(q) {
     try {
       var res = await fetch(API_URL + "?q=" + encodeURIComponent(q), {
         headers: { Accept: "application/json" },
       });
-      if (!res.ok) return [];
+      if (!res.ok) return { comentarios: [], postagens: [] };
       var data = await res.json();
-      return Array.isArray(data.comentarios) ? data.comentarios : [];
+      return {
+        comentarios: Array.isArray(data.comentarios) ? data.comentarios : [],
+        postagens: Array.isArray(data.postagens) ? data.postagens : [],
+      };
     } catch (e) {
-      return [];
+      return { comentarios: [], postagens: [] };
     }
   }
 
@@ -283,15 +288,17 @@
     }
     var terms = termsOf(q);
     setStatus(status, "Buscando…");
-    Promise.all([loadIndice(), loadComments(q)])
+    Promise.all([loadIndice(), loadRemote(q)])
       .then(function (parts) {
         var itens = parts[0].filter(function (item) {
           return matchesItem(item, terms);
         });
-        var comentarios = parts[1] || [];
+        var api = parts[1] || {};
+        var comentarios = api.comentarios || (Array.isArray(parts[1]) ? parts[1] : []);
+        var postagens = api.postagens || [];
         var seen = {};
         var all = [];
-        itens.concat(comentarios).forEach(function (item) {
+        itens.concat(postagens).concat(comentarios).forEach(function (item) {
           var key = (item.tipo || "") + "|" + (item.url || "") + "|" + (item.id || item.title);
           if (seen[key]) return;
           seen[key] = true;

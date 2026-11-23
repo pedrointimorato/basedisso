@@ -264,3 +264,96 @@
     padding-top: 10px;
     border-top: 1px solid #d4e6d4;
 }
+
+/* Painel /b e formulário de postagem */
+.or-empty {
+    font-size: 13px;
+    color: var(--or-muted);
+    padding: 12px 8px 18px;
+    margin: 0;
+}
+.or-submit {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    margin: 8px 0 14px;
+    padding: 12px 12px 10px;
+}
+.or-submit h2 {
+    font-size: 14px;
+    margin: 0 0 8px;
+    color: #000;
+}
+.or-submit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.or-submit-form label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.or-submit-form input[type="text"],
+.or-submit-form input[type="url"],
+.or-submit-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font: 13px verdana, arial, helvetica, sans-serif;
+    padding: 6px 8px;
+    border: 1px solid #a8b8c8;
+    border-radius: 2px;
+    background: #fff;
+    color: #000;
+}
+.or-submit-form textarea { min-height: 90px; resize: vertical; }
+.or-submit-form button[type="submit"] {
+    appearance: none;
+    border: 1px solid #5f99cf;
+    background: #cee3f8;
+    color: #369;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+.or-submit-form button[type="submit"]:hover { background: #b9d3ef; }
+.or-submit-form button[type="submit"]:disabled { opacity: 0.7; cursor: wait; }
+.or-submit-note {
+    font-size: 11px;
+    color: #555;
+    margin: 0 0 8px;
+}
+.or-as-user { font-size: 12px; margin: 0; color: #333; }
+.or-panel-list { display: flex; flex-direction: column; gap: 10px; padding: 12px 8px 24px; }
+.or-sub {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    padding: 12px 14px;
+}
+.or-sub:hover { border-color: #5f99cf; background: #f5f9fc; }
+.or-sub-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0000ff;
+    margin: 0 0 4px;
+}
+.or-sub-desc { font-size: 13px; color: #333; margin: 0 0 6px; line-height: 1.4; }
+.or-sub-meta { font-size: 11px; color: #888; margin: 0; }
+.or-post-body {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 10px 0 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.or-post-link { font-size: 13px; margin: 0 0 12px; }
+.or-post-link a { color: #0000ff; }
+.or-back { font-size: 12px; margin: 0 0 10px; }
+.or-back a { color: #369; }

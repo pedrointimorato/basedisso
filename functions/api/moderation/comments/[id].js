@@ -38,9 +38,19 @@ export async function onRequestDelete(context) {
 
   const existing = await env.DB.prepare("SELECT id FROM comments WHERE id = ?").bind(id).first();
   if (!existing) return errorJson("Comentário não encontrado.", 404);
-  await env.DB.batch([
-    env.DB.prepare("DELETE FROM comments WHERE parent_id = ?").bind(id),
-    env.DB.prepare("DELETE FROM comments WHERE id = ?").bind(id),
-  ]);
+  const ids = [id];
+  let frontier = [id];
+  while (frontier.length) {
+    const placeholders = frontier.map(() => "?").join(",");
+    const { results } = await env.DB.prepare(
+      `SELECT id FROM comments WHERE parent_id IN (${placeholders})`
+    )
+      .bind(...frontier)
+      .all();
+    const next = (results || []).map((r) => r.id).filter((x) => !ids.includes(x));
+    ids.push(...next);
+    frontier = next;
+  }
+  await env.DB.batch(ids.map((cid) => env.DB.prepare("DELETE FROM comments WHERE id = ?").bind(cid)));
   return json({ ok: true, apagado: true });
 }

@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>adm — basedisso</title>
-    <link rel="stylesheet" href="/style.css?v=20261123b">
-    <link rel="stylesheet" href="/account.css?v=20261123b">
-    <link rel="stylesheet" href="adm.css">
-    <link rel="stylesheet" href="../comments.css">
+    <title>b/adm — basedisso</title>
+    <link rel="stylesheet" href="/style.css?v=20261123c">
+    <link rel="stylesheet" href="/account.css?v=20261123c">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261123c">
+    <link rel="stylesheet" href="/comments.css?v=20261123c">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -17,19 +17,17 @@
         <div class="left-area">
             <nav class="navbar">
                 <div class="nav-container">
-                    
                     <form class="nav-search-box" action="/busca" method="get" role="search">
                         <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
                         <input type="search" name="q" class="nav-search-input" placeholder="base de busca" autocomplete="off" enterkeyhint="search">
                     </form>
-
                     <div class="nav-icons">
-                        <a href="../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
-                        <a href="../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
-                        <a href="../f/index.html" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
-                        <a href="index.html" class="nav-icon-link active"><i class="fa-solid fa-users"></i></a>
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/b/" class="nav-icon-link"><span class="nav-letter-icon">B</span></a>
+                        <a href="/b/adm/" class="nav-icon-link active"><i class="fa-solid fa-users"></i></a>
                     </div>
-
                     <div class="nav-right">
                         <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
         <i class="fa-solid fa-sliders"></i></button>
@@ -40,23 +38,45 @@
             <main class="main-content adm-main">
                 <div class="oldreddit">
                     <header class="or-header">
-                        <div class="or-sr-bar">basedisso &nbsp;·&nbsp; <a href="index.html">r/adm</a></div>
+                        <div class="or-sr-bar">basedisso &nbsp;·&nbsp; <a href="/b/">comunidades</a> &nbsp;·&nbsp; <a href="/b/adm/">b/adm</a></div>
                         <div class="or-header-main">
-                            <a class="or-snoo" href="index.html" aria-label="r/adm">b</a>
-                            <h1 class="or-pagename"><a href="index.html">adm</a></h1>
+                            <a class="or-snoo" href="/b/adm/" aria-label="b/adm">b</a>
+                            <h1 class="or-pagename"><a href="/b/adm/">adm</a></h1>
                             <ul class="or-tabmenu">
-                                <li class="selected"><a href="index.html">links</a></li>
-                                <li><a href="#or-listing">novos</a></li>
-                                <li><a href="#or-listing">em alta</a></li>
-                                <li><a href="#or-listing">controversos</a></li>
-                                <li><a href="#or-listing">topo</a></li>
+                                <li class="selected"><a href="/b/adm/">links</a></li>
+                                <li><a href="#bd-posts">novos</a></li>
+                                <li><a href="#criar">criar</a></li>
                             </ul>
                         </div>
                     </header>
 
                     <div class="or-wrap">
                         <div class="or-listing" id="or-listing">
-                    <article class="or-thing or-stickied">
+                        <section class="or-submit" id="criar">
+                            <h2>Criar postagem</h2>
+                            <p class="or-submit-note">Pode postar anônimo ou com um nome opcional. Se estiver em conta, a postagem sai como &gt;&gt;seu nome.</p>
+                            <form class="or-submit-form" id="bd-post-form" data-community="adm">
+                                <p class="or-as-user" data-as-user style="display:none"></p>
+                                <label data-name-field>Nome (opcional)
+                                    <input type="text" name="name" maxlength="80" autocomplete="nickname" placeholder="anônimo">
+                                </label>
+                                <label>Título
+                                    <input type="text" name="title" maxlength="200" required placeholder="Título da postagem">
+                                </label>
+                                <label>Texto
+                                    <textarea name="body" maxlength="2000" rows="5" placeholder="Escreva o texto da postagem."></textarea>
+                                </label>
+                                <label>Link (opcional)
+                                    <input type="url" name="link" maxlength="500" placeholder="https://">
+                                </label>
+                                <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                                <div class="bd-comments-actions">
+                                    <button type="submit">Publicar</button>
+                                    <p class="bd-comments-status" data-post-status role="status"></p>
+                                </div>
+                            </form>
+                        </section>
+<article class="or-thing or-stickied">
                         <div class="or-rank">•</div>
                         <div class="or-midcol">
                             <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
@@ -75,134 +95,131 @@
                         </div>
                     </article>
 
-                    <article class="or-thing">
+                        <div id="bd-posts" data-community="adm"></div>
+
+<article class="or-thing">
                         <div class="or-rank">1</div>
                         <div class="or-midcol">
                             <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
                             <div class="or-score" title="pontuação">1</div>
                             <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
                         </div>
-                        <a class="or-thumb" href="../index.html" style="background:#b92b27" aria-hidden="true"><i class="fa-solid fa-house"></i></a>
+                        <a class="or-thumb" href="/" style="background:#b92b27" aria-hidden="true"><i class="fa-solid fa-house"></i></a>
                         <div class="or-entry">
-                            <p class="or-title"><a href="../index.html">Feed principal do basedisso</a> <span class="or-domain">(basedisso.com)</span></p>
+                            <p class="or-title"><a href="/">Feed principal do basedisso</a> <span class="or-domain">(basedisso.com)</span></p>
                             <p class="or-tagline">enviado há 2 dias por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">A página inicial, com o feed em grade.</p>
                             <ul class="or-buttons">
-                                <li><a href="../index.html">o feed</a></li>
-                                <li><a href="../index.html">compartilhar</a></li>
+                                <li><a href="/">o feed</a></li>
+                                <li><a href="/">compartilhar</a></li>
                                 <li><button type="button" class="or-save">salvar</button></li>
                             </ul>
                         </div>
                     </article>
-
-                    <article class="or-thing">
+<article class="or-thing">
                         <div class="or-rank">2</div>
                         <div class="or-midcol">
                             <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
                             <div class="or-score" title="pontuação">1</div>
                             <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
                         </div>
-                        <a class="or-thumb" href="../f/" style="background:#1a73e8" aria-hidden="true"><i class="fa-solid fa-screwdriver-wrench"></i></a>
+                        <a class="or-thumb" href="/f/" style="background:#1a73e8" aria-hidden="true"><i class="fa-solid fa-screwdriver-wrench"></i></a>
                         <div class="or-entry">
-                            <p class="or-title"><a href="../f/">Painel de ferramentas</a> <span class="or-domain">(basedisso.com/f)</span></p>
+                            <p class="or-title"><a href="/f/">Painel de ferramentas</a> <span class="or-domain">(basedisso.com/f)</span></p>
                             <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">A área /f/, com as ferramentas do site.</p>
                             <ul class="or-buttons">
-                                <li><a href="../f/">ferramentas</a></li>
-                                <li><a href="../f/">compartilhar</a></li>
+                                <li><a href="/f/">ferramentas</a></li>
+                                <li><a href="/f/">compartilhar</a></li>
                                 <li><button type="button" class="or-save">salvar</button></li>
                             </ul>
                         </div>
                     </article>
-
-                    <article class="or-thing">
+<article class="or-thing">
                         <div class="or-rank">3</div>
                         <div class="or-midcol">
                             <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
                             <div class="or-score" title="pontuação">1</div>
                             <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
                         </div>
-                        <a class="or-thumb" href="../f/clipboard.html" style="background:#c4920c" aria-hidden="true"><i class="fa-solid fa-clipboard"></i></a>
+                        <a class="or-thumb" href="/f/clipboard.html" style="background:#c4920c" aria-hidden="true"><i class="fa-solid fa-clipboard"></i></a>
                         <div class="or-entry">
-                            <p class="or-title"><a href="../f/clipboard.html">Área de transferência</a> <span class="or-domain">(basedisso.com/f)</span></p>
+                            <p class="or-title"><a href="/f/clipboard.html">Área de transferência</a> <span class="or-domain">(basedisso.com/f)</span></p>
                             <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">Cole um texto, gere um código ou um link.</p>
                             <ul class="or-buttons">
-                                <li><a href="../f/clipboard.html">ferramenta</a></li>
-                                <li><a href="../f/clipboard.html">compartilhar</a></li>
+                                <li><a href="/f/clipboard.html">ferramenta</a></li>
+                                <li><a href="/f/clipboard.html">compartilhar</a></li>
                                 <li><button type="button" class="or-save">salvar</button></li>
                             </ul>
                         </div>
                     </article>
-
-                    <article class="or-thing">
+<article class="or-thing">
                         <div class="or-rank">4</div>
                         <div class="or-midcol">
                             <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
                             <div class="or-score" title="pontuação">1</div>
                             <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
                         </div>
-                        <a class="or-thumb" href="../f/sorteador.html" style="background:#3f5d48" aria-hidden="true"><i class="fa-solid fa-hashtag"></i></a>
+                        <a class="or-thumb" href="/f/sorteador.html" style="background:#3f5d48" aria-hidden="true"><i class="fa-solid fa-hashtag"></i></a>
                         <div class="or-entry">
-                            <p class="or-title"><a href="../f/sorteador.html">Sorteador de números</a> <span class="or-domain">(basedisso.com/f)</span></p>
+                            <p class="or-title"><a href="/f/sorteador.html">Sorteador de números</a> <span class="or-domain">(basedisso.com/f)</span></p>
                             <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">Sorteie números em um intervalo, com ou sem repetição.</p>
                             <ul class="or-buttons">
-                                <li><a href="../f/sorteador.html">ferramenta</a></li>
-                                <li><a href="../f/sorteador.html">compartilhar</a></li>
+                                <li><a href="/f/sorteador.html">ferramenta</a></li>
+                                <li><a href="/f/sorteador.html">compartilhar</a></li>
                                 <li><button type="button" class="or-save">salvar</button></li>
                             </ul>
                         </div>
                     </article>
-
-                    <article class="or-thing">
+<article class="or-thing">
                         <div class="or-rank">5</div>
                         <div class="or-midcol">
                             <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
                             <div class="or-score" title="pontuação">1</div>
                             <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
                         </div>
-                        <a class="or-thumb" href="../s/" style="background:#5c3d8a" aria-hidden="true"><i class="fa-solid fa-masks-theater"></i></a>
+                        <a class="or-thumb" href="/s/" style="background:#5c3d8a" aria-hidden="true"><i class="fa-solid fa-masks-theater"></i></a>
                         <div class="or-entry">
-                            <p class="or-title"><a href="../s/">Feed de sátiras</a> <span class="or-domain">(basedisso.com/s)</span></p>
+                            <p class="or-title"><a href="/s/">Feed de sátiras</a> <span class="or-domain">(basedisso.com/s)</span></p>
                             <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">Trabalhos satíricos publicados no site.</p>
                             <ul class="or-buttons">
-                                <li><a href="../s/">sátiras</a></li>
-                                <li><a href="../s/">compartilhar</a></li>
+                                <li><a href="/s/">sátiras</a></li>
+                                <li><a href="/s/">compartilhar</a></li>
                                 <li><button type="button" class="or-save">salvar</button></li>
                             </ul>
                         </div>
                     </article>
-
-                    <article class="or-thing">
+<article class="or-thing">
                         <div class="or-rank">6</div>
                         <div class="or-midcol">
                             <button type="button" class="or-arrow or-up" aria-label="voto positivo"></button>
                             <div class="or-score" title="pontuação">1</div>
                             <button type="button" class="or-arrow or-down" aria-label="voto negativo"></button>
                         </div>
-                        <a class="or-thumb" href="../s/biblia-amarela.html" style="background:#e3b210" aria-hidden="true"><i class="fa-solid fa-book"></i></a>
+                        <a class="or-thumb" href="/s/biblia-amarela.html" style="background:#e3b210" aria-hidden="true"><i class="fa-solid fa-book"></i></a>
                         <div class="or-entry">
-                            <p class="or-title"><a href="../s/biblia-amarela.html">A Bíblia Amarela</a> <span class="or-domain">(basedisso.com/s)</span></p>
+                            <p class="or-title"><a href="/s/biblia-amarela.html">A Bíblia Amarela</a> <span class="or-domain">(basedisso.com/s)</span></p>
                             <p class="or-tagline">enviado há 1 dia por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a></p>
                             <p class="or-exp">Texto da wiki do r/BrasilSocial, por <a href="/@Intimorato" class="user-mention">>>Intimorato</a>.</p>
                             <ul class="or-buttons">
-                                <li><a href="../s/biblia-amarela.html">leitura</a></li>
-                                <li><a href="../s/biblia-amarela.html">compartilhar</a></li>
+                                <li><a href="/s/biblia-amarela.html">leitura</a></li>
+                                <li><a href="/s/biblia-amarela.html">compartilhar</a></li>
                                 <li><button type="button" class="or-save">salvar</button></li>
                             </ul>
                         </div>
                     </article>
 
-                        <section class="or-selfpost" id="aviso">
+<section class="or-selfpost" id="aviso">
                             <h2 class="or-selfpost-title">Alguma queixa, elogio, sugestão ou oferta?</h2>
                             <p class="or-tagline"><span class="or-sticky-tag">announcement</span> enviado por <a href="/@Intimorato" class="or-author user-mention">>>Intimorato</a> <span class="or-mod" title="moderador">[M]</span></p>
                             <div class="or-md or-selfpost-body">
                                 <p>Alguma queixa, elogio, sugestão ou oferta?</p>
                                 <p>Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
                             </div>
-                            <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="/adm" data-title="Comentários"></div>
+                            <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="/b/adm" data-title="Comentários"></div>
                         </section>
                         </div>
 
@@ -212,11 +229,11 @@
                             </div>
                             <div class="or-titlebox">
                                 <h2 class="or-side-name">adm</h2>
-                                <p class="or-side-meta">página do administrador · <a href="/@Intimorato" class="user-mention">>>Intimorato</a></p>
+                                <p class="or-side-meta">solicitações · <a href="/@Intimorato" class="user-mention">>>Intimorato</a></p>
                                 <div class="or-md">
-                                    <p>Alguma queixa, elogio, sugestão ou oferta?</p>
-                                    <p>Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
-                                    <p><a href="moderar/">moderação</a></p>
+                                    <p>Espaço para solicitações, queixas, elogios, sugestões ou ofertas. Qualquer pessoa pode criar uma postagem, anônima ou com nome.</p>
+                                    <p>Deixe um comentário no aviso fixado ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                                    <p><a href="/b/">todas as comunidades</a> · <a href="/b/adm/moderar/">moderação</a></p>
                                 </div>
                             </div>
                         </aside>
@@ -263,7 +280,7 @@
                         <h3>ADM</h3>
                         <p>Alguma queixa, elogio, sugestão ou oferta?<br>
                         Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
-                        <a class="btn-adm-page" href="/adm/">abrir página do adm</a>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
                     </div>
                 </div>
             </div>
@@ -285,9 +302,10 @@
 
     </div>
 
-    <script src="/script.js?v=20261123b"></script>
-    <script src="adm.js"></script>
-    <script src="/account.js?v=20261123b"></script>
-    <script src="../comments.js?v=20261123b"></script>
+    <script src="/script.js?v=20261123c"></script>
+    <script src="/b/comunidades-ui.js?v=20261123c"></script>
+    <script src="/b/comunidade.js?v=20261123c"></script>
+    <script src="/account.js?v=20261123c"></script>
+    <script src="/comments.js?v=20261123c"></script>
 </body>
 </html>

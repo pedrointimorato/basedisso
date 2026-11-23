@@ -9,8 +9,8 @@ export function profilePageHtml({ title, initialPath }) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${safeTitle}</title>
-    <link rel="stylesheet" href="/style.css?v=20261123b">
-    <link rel="stylesheet" href="/account.css?v=20261123b">
+    <link rel="stylesheet" href="/style.css?v=20261123c">
+    <link rel="stylesheet" href="/account.css?v=20261123c">
     <link rel="stylesheet" href="/comments.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -27,7 +27,8 @@ export function profilePageHtml({ title, initialPath }) {
                         <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
                         <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
                         <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
-                        <a href="/adm/" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                        <a href="/b/" class="nav-icon-link"><span class="nav-letter-icon">B</span></a>
+                        <a href="/b/adm/" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
                     </div>
                     <div class="nav-right">
                         <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
@@ -79,7 +80,7 @@ export function profilePageHtml({ title, initialPath }) {
                         <h3>ADM</h3>
                         <p>Alguma queixa, elogio, sugestão ou oferta?<br>
                         Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
-                        <a class="btn-adm-page" href="/adm/">abrir página do adm</a>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
                     </div>
                 </div>
             </div>
@@ -99,8 +100,8 @@ export function profilePageHtml({ title, initialPath }) {
             </footer>
         </aside>
     </div>
-    <script src="/script.js?v=20261123b"></script>
-    <script src="/account.js?v=20261123b"></script>
+    <script src="/script.js?v=20261123c"></script>
+    <script src="/account.js?v=20261123c"></script>
     <script src="/perfil.js"></script>
 </body>
 </html>`;

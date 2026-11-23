@@ -184,31 +184,43 @@
       bodyNode(c),
       replyWrap
     );
-    if (!c.parent_id) {
-      var open = false;
-      var btn = el("button", { type: "button", class: "bd-comment-reply-btn" }, "responder");
-      replyWrap.appendChild(btn);
-      btn.addEventListener("click", function () {
-        if (open) {
-          while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
-          replyWrap.appendChild(btn);
-          open = false;
-          return;
-        }
-        open = true;
-        var cancel = el("button", { type: "button", class: "bd-comment-cancel" }, "cancelar");
-        var form = buildForm(page, c.id, reload);
-        cancel.addEventListener("click", function () {
-          while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
-          replyWrap.appendChild(btn);
-          open = false;
-        });
+    var open = false;
+    var btn = el("button", { type: "button", class: "bd-comment-reply-btn" }, "responder");
+    replyWrap.appendChild(btn);
+    btn.addEventListener("click", function () {
+      if (open) {
         while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
-        replyWrap.appendChild(form);
-        replyWrap.appendChild(cancel);
+        replyWrap.appendChild(btn);
+        open = false;
+        return;
+      }
+      open = true;
+      var cancel = el("button", { type: "button", class: "bd-comment-cancel" }, "cancelar");
+      var form = buildForm(page, c.id, reload);
+      cancel.addEventListener("click", function () {
+        while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
+        replyWrap.appendChild(btn);
+        open = false;
       });
-    }
+      while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
+      replyWrap.appendChild(form);
+      replyWrap.appendChild(cancel);
+    });
     return item;
+  }
+
+  function appendThread(list, comment, page, reload, byParent, depth) {
+    var item = renderComment(comment, page, reload);
+    var kids = byParent[comment.id] || [];
+    if (kids.length) {
+      var subClass = "bd-comment-replies" + (depth >= 4 ? " bd-comment-replies-cap" : "");
+      var sub = el("ul", { class: subClass });
+      kids.forEach(function (k) {
+        appendThread(sub, k, page, reload, byParent, depth + 1);
+      });
+      item.appendChild(sub);
+    }
+    list.appendChild(item);
   }
 
   function renderList(root, comments, page, reload) {
@@ -228,16 +240,7 @@
       return;
     }
     tops.forEach(function (c) {
-      var item = renderComment(c, page, reload);
-      var kids = byParent[c.id] || [];
-      if (kids.length) {
-        var sub = el("ul", { class: "bd-comment-replies" });
-        kids.forEach(function (k) {
-          sub.appendChild(renderComment(k, page, reload));
-        });
-        item.appendChild(sub);
-      }
-      list.appendChild(item);
+      appendThread(list, c, page, reload, byParent, 0);
     });
     root.appendChild(list);
   }

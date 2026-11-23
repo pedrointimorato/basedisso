@@ -2,7 +2,8 @@
   "use strict";
 
   var PAGE_LABELS = {
-    "/adm": { href: "/adm/", label: "página do adm" },
+    "/adm": { href: "/b/adm/", label: "b/adm" },
+    "/b/adm": { href: "/b/adm/", label: "b/adm" },
     "/s": { href: "/s/", label: "sátiras" },
     "/s/biblia-amarela": { href: "/s/biblia-amarela.html", label: "A Bíblia Amarela" },
   };
@@ -21,7 +22,11 @@
   }
 
   function pageLink(page) {
-    var info = PAGE_LABELS[page] || { href: page || "#", label: page || "página" };
+    var info = PAGE_LABELS[page];
+    if (!info && page && /^\/b\/[a-z0-9_-]+\/p\/[0-9a-f-]+$/i.test(page)) {
+      info = { href: page, label: page.replace(/^\/b\//, "b/") };
+    }
+    if (!info) info = { href: page || "#", label: page || "página" };
     return el("a", { href: info.href }, info.label);
   }
 

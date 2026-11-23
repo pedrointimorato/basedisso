@@ -230,5 +230,29 @@
     "author": "",
     "url": "/f/",
     "body": "Painel com utilitários rápidos: área de transferência, sorteador de números e outras prévias."
+  },
+  {
+    "id": "comunidade-painel",
+    "tipo": "comunidade",
+    "title": "Comunidades",
+    "author": "",
+    "url": "/b/",
+    "body": "Painel de comunidades do basedisso. b/adm e b/atoa."
+  },
+  {
+    "id": "comunidade-adm",
+    "tipo": "comunidade",
+    "title": "b/adm",
+    "author": "Intimorato",
+    "url": "/b/adm/",
+    "body": "Solicitações, queixas, elogios, sugestões e ofertas ao administrador. Qualquer pessoa pode postar."
+  },
+  {
+    "id": "comunidade-atoa",
+    "tipo": "comunidade",
+    "title": "b/atoa — À toa",
+    "author": "",
+    "url": "/b/atoa/",
+    "body": "Off topic. Conversa à toa, sem assunto definido."
   }
 ]

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>b/atoa — À toa — basedisso</title>
+    <link rel="stylesheet" href="/style.css?v=20261123c">
+    <link rel="stylesheet" href="/account.css?v=20261123c">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261123c">
+    <link rel="stylesheet" href="/comments.css?v=20261123c">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <form class="nav-search-box" action="/busca" method="get" role="search">
+                        <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="search" name="q" class="nav-search-input" placeholder="base de busca" autocomplete="off" enterkeyhint="search">
+                    </form>
+                    <div class="nav-icons">
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/b/" class="nav-icon-link active"><span class="nav-letter-icon">B</span></a>
+                        <a href="/b/adm/" class="nav-icon-link"><i class="fa-solid fa-users"></i></a>
+                    </div>
+                    <div class="nav-right">
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content adm-main">
+                <div class="oldreddit">
+                    <header class="or-header">
+                        <div class="or-sr-bar">basedisso &nbsp;·&nbsp; <a href="/b/">comunidades</a> &nbsp;·&nbsp; <a href="/b/atoa/">b/atoa</a></div>
+                        <div class="or-header-main">
+                            <a class="or-snoo" href="/b/atoa/" aria-label="b/atoa">b</a>
+                            <h1 class="or-pagename"><a href="/b/atoa/">atoa</a></h1>
+                            <ul class="or-tabmenu">
+                                <li class="selected"><a href="/b/atoa/">links</a></li>
+                                <li><a href="#bd-posts">novos</a></li>
+                                <li><a href="#criar">criar</a></li>
+                            </ul>
+                        </div>
+                    </header>
+
+                    <div class="or-wrap">
+                        <div class="or-listing" id="or-listing">
+                        <section class="or-submit" id="criar">
+                            <h2>Criar postagem</h2>
+                            <p class="or-submit-note">Pode postar anônimo ou com um nome opcional. Se estiver em conta, a postagem sai como &gt;&gt;seu nome.</p>
+                            <form class="or-submit-form" id="bd-post-form" data-community="atoa">
+                                <p class="or-as-user" data-as-user style="display:none"></p>
+                                <label data-name-field>Nome (opcional)
+                                    <input type="text" name="name" maxlength="80" autocomplete="nickname" placeholder="anônimo">
+                                </label>
+                                <label>Título
+                                    <input type="text" name="title" maxlength="200" required placeholder="Título da postagem">
+                                </label>
+                                <label>Texto
+                                    <textarea name="body" maxlength="2000" rows="5" placeholder="Escreva o texto da postagem."></textarea>
+                                </label>
+                                <label>Link (opcional)
+                                    <input type="url" name="link" maxlength="500" placeholder="https://">
+                                </label>
+                                <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                                <div class="bd-comments-actions">
+                                    <button type="submit">Publicar</button>
+                                    <p class="bd-comments-status" data-post-status role="status"></p>
+                                </div>
+                            </form>
+                        </section>
+                        <div id="bd-posts" data-community="atoa"></div>
+                        </div>
+
+                        <aside class="or-side">
+                            <div class="or-spacer">
+                                <button type="button" class="or-subscribe" id="or-subscribe">inscrever-se</button>
+                            </div>
+                            <div class="or-titlebox">
+                                <h2 class="or-side-name">À toa</h2>
+                                <p class="or-side-meta">off topic · b/atoa</p>
+                                <div class="or-md">
+                                    <p>Comunidade livre, sem assunto definido. Qualquer pessoa pode criar uma postagem, anônima ou com nome.</p>
+                                    <p><a href="/b/">todas as comunidades</a> · <a href="/b/adm/">b/adm</a></p>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Modo Escuro</span>
+                                <input type="checkbox" id="theme-toggle">
+                            </label>
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                    </div>
+                </div>
+            </div>
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="/script.js?v=20261123c"></script>
+    <script src="/b/comunidades-ui.js?v=20261123c"></script>
+    <script src="/b/comunidade.js?v=20261123c"></script>
+    <script src="/account.js?v=20261123c"></script>
+</body>
+</html>

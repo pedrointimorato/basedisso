@@ -1,4 +1,6 @@
-const ALLOWED_PAGES = new Set(["/adm", "/s", "/s/biblia-amarela"]);
+import { getCommunity, UUID_RE } from "./comunidades.js";
+
+const FIXED_COMMENT_PAGES = new Set(["/s", "/s/biblia-amarela", "/b/adm"]);
 const NAME_MAX = 80;
 const BODY_MAX = 2000;
 const RATE_POST_PER_MIN = 3;
@@ -36,7 +38,13 @@ export function normalizePage(raw) {
   if (s.length > 1) s = s.replace(/\/+$/, "");
   s = s.replace(/\/{2,}/g, "/");
   if (s.length > 200 || s.includes("..") || /[^a-zA-Z0-9/_-]/.test(s)) return null;
-  return ALLOWED_PAGES.has(s) ? s : null;
+  if (s === "/adm") s = "/b/adm";
+  if (FIXED_COMMENT_PAGES.has(s)) return s;
+  const m = s.match(/^\/b\/([a-z][a-z0-9_-]{0,20})\/p\/([0-9a-f-]{36})$/i);
+  if (m && getCommunity(m[1]) && UUID_RE.test(m[2])) {
+    return `/b/${m[1].toLowerCase()}/p/${m[2].toLowerCase()}`;
+  }
+  return null;
 }
 
 export function sanitizeName(raw) {
@@ -142,7 +150,7 @@ export async function checkPostRate(db, ipHash) {
   }
   const perHour = await countRate(db, ipHash, "post", new Date(now - 60 * 60 * 1000).toISOString());
   if (perHour >= RATE_POST_PER_HOUR) {
-    return "Você atingiu o limite de comentários por hora. Tente mais tarde.";
+    return "Você atingiu o limite de envios por hora. Tente mais tarde.";
   }
   return null;
 }

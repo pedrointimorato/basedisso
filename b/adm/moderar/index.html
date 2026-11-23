@@ -4,31 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderação — basedisso</title>
-    <link rel="stylesheet" href="/style.css?v=20261123b">
-    <link rel="stylesheet" href="/account.css?v=20261123b">
+    <link rel="stylesheet" href="/style.css?v=20261123c">
+    <link rel="stylesheet" href="/account.css?v=20261123c">
     <link rel="stylesheet" href="moderar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-left">
-            <a href="../../index.html" class="nav-logo">basedisso</a>
+            <a href="/" class="nav-logo">basedisso</a>
             <form class="nav-search-box" action="/busca" method="get" role="search">
                 <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
                 <input type="search" name="q" class="nav-search-input" placeholder="base de busca" autocomplete="off" enterkeyhint="search">
             </form>
         </div>
         <div class="nav-right">
-            <a href="../../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
-            <a href="../../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
-            <a href="../../f/index.html" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
-            <a href="../" class="nav-icon-link active"><i class="fa-solid fa-users"></i></a>
+            <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+            <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+            <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+            <a href="/b/" class="nav-icon-link"><span class="nav-letter-icon">B</span></a>
+                        <a href="/b/adm/" class="nav-icon-link active"><i class="fa-solid fa-users"></i></a>
         </div>
     </nav>
 
     <main class="mod-main">
         <h1>Moderação</h1>
-        <p class="mod-lead">Entre com a senha de administração para moderar comentários e ver as reservas primordiais.</p>
+        <p class="mod-lead">Entre com a senha de administração para moderar comentários e postagens das comunidades, e ver as reservas primordiais.</p>
 
         <section class="mod-card" id="mod-login">
             <form id="mod-login-form">
@@ -44,10 +45,16 @@
         <section id="mod-panel">
             <div class="mod-actions">
                 <button type="button" class="mod-btn secondary" id="mod-logout">Sair</button>
-                <a class="mod-btn secondary" href="../" style="text-decoration:none;display:inline-block;">Voltar ao /adm</a>
+                <a class="mod-btn secondary" href="/b/adm/" style="text-decoration:none;display:inline-block;">Voltar ao b/adm</a>
             </div>
             <p class="mod-status" id="mod-list-status" role="status"></p>
             <div class="mod-card" id="mod-list"></div>
+            <div class="mod-posts">
+                <h2>Postagens das comunidades</h2>
+                <p class="mod-lead">Oculte ou apague postagens de b/adm e b/atoa. Os comentários da postagem apagada também são removidos.</p>
+                <p class="mod-status" id="mod-posts-status" role="status"></p>
+                <div class="mod-card" id="mod-posts-list"></div>
+            </div>
             <div class="mod-reservas">
                 <h2>Reservas de nomes primordiais</h2>
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
@@ -57,7 +64,7 @@
         </section>
     </main>
 
-    <script src="/account.js?v=20261123b"></script>
-    <script src="moderar.js"></script>
+    <script src="/account.js?v=20261123c"></script>
+    <script src="moderar.js?v=20261123c"></script>
 </body>
 </html>

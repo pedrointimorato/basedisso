@@ -65,6 +65,7 @@
         }
         document.body.classList.add("mod-in");
         while (listRoot.firstChild) listRoot.removeChild(listRoot.firstChild);
+        loadPosts();
         var items = out.data.comentarios || [];
         if (!items.length) {
           listRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhum comentário ainda."));
@@ -249,4 +250,86 @@
   }).then(function (res) {
     if (res.ok) loadList();
   });
+
+  var postsRoot = document.getElementById("mod-posts-list");
+  var postsStatus = document.getElementById("mod-posts-status");
+
+  function loadPosts() {
+    if (!postsRoot || !postsStatus) return;
+    setStatus(postsStatus, "Carregando…");
+    fetch("/api/moderation/posts?limit=100", {
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    })
+      .then(function (res) {
+        return res.json().then(function (data) {
+          return { res: res, data: data };
+        });
+      })
+      .then(function (out) {
+        if (out.res.status === 401) return;
+        if (!out.res.ok) {
+          setStatus(postsStatus, out.data && out.data.erro ? out.data.erro : "Falha ao listar postagens.", "erro");
+          return;
+        }
+        while (postsRoot.firstChild) postsRoot.removeChild(postsRoot.firstChild);
+        var items = out.data.postagens || [];
+        if (!items.length) {
+          postsRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhuma postagem ainda."));
+          setStatus(postsStatus, "");
+          return;
+        }
+        items.forEach(function (p) {
+          var hideBtn = el(
+            "button",
+            { type: "button", class: "mod-btn secondary" },
+            p.hidden ? "Mostrar" : "Ocultar"
+          );
+          var delBtn = el("button", { type: "button", class: "mod-btn danger" }, "Apagar");
+          hideBtn.addEventListener("click", function () {
+            fetch("/api/moderation/posts/" + encodeURIComponent(p.id), {
+              method: "PATCH",
+              credentials: "same-origin",
+              headers: { "Content-Type": "application/json", Accept: "application/json" },
+              body: JSON.stringify({ hidden: !p.hidden }),
+            }).then(function (res) {
+              if (res.ok) loadPosts();
+            });
+          });
+          delBtn.addEventListener("click", function () {
+            if (!confirm("Apagar esta postagem e os comentários dela?")) return;
+            fetch("/api/moderation/posts/" + encodeURIComponent(p.id), {
+              method: "DELETE",
+              credentials: "same-origin",
+              headers: { Accept: "application/json" },
+            }).then(function (res) {
+              if (res.ok) loadPosts();
+            });
+          });
+          postsRoot.appendChild(
+            el(
+              "div",
+              { class: "mod-item" },
+              el(
+                "p",
+                { class: "mod-meta" },
+                el("span", { class: "mod-name" }, p.name || "anônimo"),
+                " · ",
+                el("a", { class: "mod-page", href: p.url || ("/b/" + p.community + "/p/" + p.id) }, "b/" + p.community),
+                " · ",
+                fmtTime(p.created_at),
+                p.hidden ? el("span", { class: "mod-hidden-flag" }, "oculta") : null
+              ),
+              el("p", { class: "mod-body" }, p.title || ""),
+              p.body ? el("p", { class: "mod-body" }, p.body) : null,
+              el("div", { class: "mod-actions" }, hideBtn, delBtn)
+            )
+          );
+        });
+        setStatus(postsStatus, items.length + (items.length === 1 ? " postagem." : " postagens."));
+      })
+      .catch(function () {
+        setStatus(postsStatus, "Falha de rede ao carregar postagens.", "erro");
+      });
+  }
 })();

@@ -101,8 +101,19 @@ export async function onRequestPost(context) {
     if (!parent || parent.page !== page || parent.hidden) {
       return errorJson("O comentário original não foi encontrado.", 400);
     }
-    if (parent.parent_id) {
-      return errorJson("Só é possível responder a um comentário de primeiro nível.", 400);
+    let depth = 1;
+    let walk = parent;
+    while (walk.parent_id) {
+      depth += 1;
+      if (depth > 20) return errorJson("Esta thread já é profunda demais.", 400);
+      walk = await env.DB.prepare(
+        "SELECT id, page, parent_id, hidden FROM comments WHERE id = ?"
+      )
+        .bind(walk.parent_id)
+        .first();
+      if (!walk || walk.page !== page || walk.hidden) {
+        return errorJson("O comentário original não foi encontrado.", 400);
+      }
     }
   } else {
     parentId = null;

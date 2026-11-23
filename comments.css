@@ -166,3 +166,16 @@
     border-left: 1px dotted #d5d5d5;
 }
 .bd-comments-reddit .bd-comments-empty { font-size: 13px; color: #555; }
+
+/* Threads de qualquer profundidade: indentação limitada no mobile (~5 níveis) */
+.bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies,
+.bd-comment-replies-cap {
+    margin-left: 8px;
+}
+@media (max-width: 950px) {
+    .bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies,
+    .bd-comment-replies-cap {
+        margin-left: 0;
+        padding-left: 8px;
+    }
+}
