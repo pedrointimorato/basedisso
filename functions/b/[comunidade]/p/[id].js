@@ -109,7 +109,7 @@ export function postPageHtml({ community, post }) {
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=${V}">
     <link rel="stylesheet" href="/account.css?v=${V}">
-    <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261123e">
     <link rel="stylesheet" href="/comments.css?v=${V}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>

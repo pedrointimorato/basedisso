@@ -357,3 +357,49 @@
 .or-post-link a { color: #0000ff; }
 .or-back { font-size: 12px; margin: 0 0 10px; }
 .or-back a { color: #369; }
+
+
+.or-postar-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 0 6px;
+    padding: 0;
+}
+.or-postar-btn {
+    appearance: none;
+    background: #fff;
+    border: 1px solid #c4dbf1;
+    border-radius: 2px;
+    color: #369;
+    font: 700 12px verdana, arial, sans-serif;
+    padding: 3px 10px 4px;
+    cursor: pointer;
+    line-height: 1.3;
+}
+.or-postar-btn:hover {
+    background: #eff7ff;
+}
+.or-postar-btn[aria-expanded="true"] {
+    background: #eff7ff;
+    color: #ff4500;
+    border-color: #5f99cf;
+}
+.or-submit {
+    scroll-margin-top: 60px;
+}
+.or-submit[hidden] {
+    display: none !important;
+}
+.or-submit-cancel {
+    appearance: none;
+    border: 1px solid #ccc;
+    background: #f6f6f6;
+    color: #555;
+    font: 700 12px verdana, arial, sans-serif;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.or-submit-cancel:hover {
+    background: #ececec;
+}

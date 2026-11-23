@@ -274,6 +274,113 @@
       .catch(function () {});
   }
 
+
+  var COMPOSER_CLOSED = "[+] postar";
+  var COMPOSER_OPEN_LABEL = "[-] fechar";
+
+  function samePath(a, b) {
+    function norm(p) {
+      p = String(p || "/").replace(/\/+$/, "");
+      return p || "/";
+    }
+    return norm(a) === norm(b);
+  }
+
+  function isComposerOpen() {
+    var section = document.getElementById("criar");
+    return !!(section && !section.hasAttribute("hidden"));
+  }
+
+  function setComposerOpen(open, opts) {
+    opts = opts || {};
+    var section = document.getElementById("criar");
+    var btn = document.getElementById("or-postar-btn");
+    if (!section || !btn) return;
+    if (open) section.removeAttribute("hidden");
+    else section.setAttribute("hidden", "");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.textContent = open ? COMPOSER_OPEN_LABEL : COMPOSER_CLOSED;
+    var criarTab = document.querySelector('.or-tabmenu a[href="#criar"]');
+    if (criarTab && criarTab.parentElement) {
+      if (open) criarTab.parentElement.classList.add("selected");
+      else criarTab.parentElement.classList.remove("selected");
+    }
+    if (open && opts.focus !== false) {
+      var title = section.querySelector('input[name="title"]');
+      if (title) {
+        try {
+          title.focus({ preventScroll: true });
+        } catch (e) {
+          title.focus();
+        }
+      }
+    }
+    if (open && opts.scroll) {
+      if (typeof section.scrollIntoView === "function") {
+        try {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        } catch (e) {
+          section.scrollIntoView(true);
+        }
+      }
+    }
+    if (!open && location.hash === "#criar" && window.history && history.replaceState) {
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+  }
+
+  function isLocalCriarHref(href) {
+    if (!href) return false;
+    if (href === "#criar") return true;
+    try {
+      var u = new URL(href, location.href);
+      return u.hash === "#criar" && samePath(u.pathname, location.pathname);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function bindComposer() {
+    var section = document.getElementById("criar");
+    var btn = document.getElementById("or-postar-btn");
+    if (!section || !btn) return;
+
+    btn.addEventListener("click", function () {
+      var next = !isComposerOpen();
+      setComposerOpen(next, { focus: next, scroll: false });
+    });
+
+    document.addEventListener("click", function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest("a") : null;
+      if (!a) return;
+      if (ev.defaultPrevented || ev.button) return;
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+      if (!isLocalCriarHref(a.getAttribute("href") || a.href)) return;
+      ev.preventDefault();
+      setComposerOpen(true, { focus: true, scroll: true });
+      if (window.history && history.replaceState) {
+        history.replaceState(null, "", location.pathname + location.search + "#criar");
+      } else {
+        location.hash = "criar";
+      }
+    });
+
+    window.addEventListener("hashchange", function () {
+      if (location.hash === "#criar") setComposerOpen(true, { focus: true, scroll: true });
+    });
+
+    var cancel = section.querySelector("[data-post-cancel]");
+    if (cancel) {
+      cancel.addEventListener("click", function () {
+        setComposerOpen(false);
+      });
+    }
+
+    if (location.hash === "#criar") {
+      setComposerOpen(true, { focus: true, scroll: true });
+    }
+  }
+
   function start() {
     var host = document.getElementById("bd-posts");
     var form = document.getElementById("bd-post-form");
@@ -283,11 +390,13 @@
     }
     if (slug && form) {
       bindForm(form, slug, function () {
+        setComposerOpen(false);
         if (host) loadPosts(slug, host);
       });
     }
     var panel = document.getElementById("bd-comunidades");
     if (panel) loadPanel(panel);
+    bindComposer();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);

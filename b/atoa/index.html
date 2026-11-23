@@ -6,7 +6,7 @@
     <title>b/atoa — À toa — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261123c">
-    <link rel="stylesheet" href="/b/comunidades.css?v=20261123c">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261123e">
     <link rel="stylesheet" href="/comments.css?v=20261123c">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -52,7 +52,10 @@
 
                     <div class="or-wrap">
                         <div class="or-listing" id="or-listing">
-                        <section class="or-submit" id="criar">
+                        <div class="or-postar-bar">
+                            <button type="button" class="or-postar-btn" id="or-postar-btn" aria-expanded="false" aria-controls="criar">[+] postar</button>
+                        </div>
+                        <section class="or-submit" id="criar" hidden>
                             <h2>Criar postagem</h2>
                             <p class="or-submit-note">Pode postar anônimo ou com um nome opcional. Se estiver em conta, a postagem sai como &gt;&gt;seu nome.</p>
                             <form class="or-submit-form" id="bd-post-form" data-community="atoa">
@@ -72,6 +75,7 @@
                                 <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                                 <div class="bd-comments-actions">
                                     <button type="submit">Publicar</button>
+                                    <button type="button" class="or-submit-cancel" data-post-cancel>Cancelar</button>
                                     <p class="bd-comments-status" data-post-status role="status"></p>
                                 </div>
                             </form>
@@ -159,7 +163,7 @@
 
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=20261123c"></script>
-    <script src="/b/comunidade.js?v=20261123d"></script>
+    <script src="/b/comunidade.js?v=20261123e"></script>
     <script src="/account.js?v=20261123c"></script>
 </body>
 </html>
