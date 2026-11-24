@@ -509,3 +509,15 @@
 .bm-comm h4 a { color: #0000ff; text-decoration: none; }
 .bm-comm .bm-list { padding-left: 12px; }
 #bd-membros-page { align-self: stretch; width: 100%; }
+
+/* ---- membros por comunidade ---- */
+.or-modcount { color: #555; }
+.bm-foco { border: 1px solid #c4dbf1; background: #f5f9fc; padding: 8px 10px; }
+.bm-foco-links { font-size: 12px; margin: 0 0 8px; }
+.bm-foco-links a { color: #369; font-weight: 700; }
+.bm-h3 { font-size: 13px; margin: 10px 0 4px; color: #000; }
+.bm-h3 small { font-weight: 400; color: #888; font-size: 11px; margin-left: 4px; }
+.bm-label { margin: 6px 0 2px 12px; font-size: 11px; color: #888; font-weight: 700; }
+.bm-focus-link { font-size: 11px; color: #369 !important; margin-left: 4px; }
+.bm-comm { border-bottom: 1px solid #f0f0f0; padding-bottom: 6px; }
+#bm-todos[hidden], .bm-foco[hidden] { display: none; }

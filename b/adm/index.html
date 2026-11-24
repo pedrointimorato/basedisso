@@ -6,7 +6,7 @@
     <title>b/adm — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261123c">
-    <link rel="stylesheet" href="/b/comunidades.css?v=20261123h">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261123i">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -41,6 +41,10 @@
                         <div class="or-header-main">
                             <a class="or-snoo" href="/b/adm/" aria-label="b/adm">b</a>
                             <h1 class="or-pagename"><a href="/b/adm/">adm</a></h1>
+                            <div class="or-head-actions" data-comm-join="adm">
+                                <a class="or-members-link" href="/b/membros/?b=adm" title="Membros e ADMs de b/adm">&gt;&gt;&gt;</a>
+                                <button type="button" class="or-join-btn" data-comm-join-btn aria-pressed="false">unir-se</button>
+                            </div>
                             <ul class="or-tabmenu">
                                 <li class="selected"><a href="/b/adm/">links</a></li>
                                 <li><a href="#bd-posts">novos</a></li>
@@ -48,6 +52,7 @@
                             </ul>
                         </div>
                     </header>
+                    <p class="or-join-msg" data-comm-join-msg role="status" hidden></p>
 
                     <div class="or-wrap">
                         <div class="or-listing" id="or-listing">
@@ -242,7 +247,8 @@
                             <div class="or-modbox" data-community-adms="adm">
                                 <h3>moderação</h3>
                                 <p class="or-modlist" data-adms-list>carregando…</p>
-                                <p><a href="/b/membros/">&gt;&gt;&gt; membros e ADMs da base</a></p>
+                                <p class="or-modcount" data-members-count></p>
+                                <p><a href="/b/membros/?b=adm">&gt;&gt;&gt; membros e ADMs</a></p>
                             </div>
                         </aside>
                     </div>
@@ -313,8 +319,8 @@
 
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=20261123c"></script>
-    <script src="/b/comunidade.js?v=20261123h"></script>
-    <script src="/b/base.js?v=20261123h"></script>
+    <script src="/b/comunidade.js?v=20261123i"></script>
+    <script src="/b/base.js?v=20261123i"></script>
     <script src="/account.js?v=20261123c"></script>
     <script src="/comments.js?v=20261123f"></script>
 </body>

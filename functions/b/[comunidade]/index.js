@@ -21,6 +21,10 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
                         <div class="or-header-main">
                             <a class="or-snoo" href="${href}" aria-label="b/${slug}">b</a>
                             <h1 class="or-pagename"><a href="${href}">${slug}</a></h1>
+                            <div class="or-head-actions" data-comm-join="${slug}">
+                                <a class="or-members-link" href="/b/membros/?b=${slug}" title="Membros e ADMs de b/${slug}">&gt;&gt;&gt;</a>
+                                <button type="button" class="or-join-btn" data-comm-join-btn aria-pressed="false">unir-se</button>
+                            </div>
                             <ul class="or-tabmenu">
                                 <li class="selected"><a href="${href}">links</a></li>
                                 <li><a href="#bd-posts">novos</a></li>
@@ -28,6 +32,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
                             </ul>
                         </div>
                     </header>
+                    <p class="or-join-msg" data-comm-join-msg role="status" hidden></p>
                     <div class="or-wrap">
                         <div class="or-listing" id="or-listing">
                         <div class="or-postar-bar">
@@ -76,7 +81,8 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
                             <div class="or-modbox" data-community-adms="${slug}">
                                 <h3>moderação</h3>
                                 <p class="or-modlist" data-adms-list>carregando…</p>
-                                <p><a href="/b/membros/">&gt;&gt;&gt; membros e ADMs da base</a></p>
+                                <p class="or-modcount" data-members-count></p>
+                                <p><a href="/b/membros/?b=${slug}">&gt;&gt;&gt; membros e ADMs</a></p>
                             </div>
                         </aside>
                     </div>

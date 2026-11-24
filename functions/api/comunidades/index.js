@@ -9,9 +9,10 @@ import {
   STATIC_B_DIRS,
 } from "../../_lib/comunidades.js";
 import { denyUnlessSite, getAdminContext, listCommunityAdmins } from "../../_lib/admins.js";
+import { getSessionUser } from "../../_lib/auth.js";
 
 export async function onRequestGet(context) {
-  const { env } = context;
+  const { env, request } = context;
   if (!env.DB) {
     return json({
       comunidades: listCommunities().map((c) => ({
@@ -48,6 +49,26 @@ export async function onRequestGet(context) {
     adms = {};
   }
 
+  const memberCounts = {};
+  const mine = new Set();
+  try {
+    const { results: mc } = await env.DB.prepare(
+      "SELECT community_slug, COUNT(*) AS n FROM community_members GROUP BY community_slug"
+    ).all();
+    for (const r of mc || []) memberCounts[r.community_slug] = Number(r.n || 0);
+    const user = await getSessionUser(request, env);
+    if (user) {
+      const { results: my } = await env.DB.prepare(
+        "SELECT community_slug FROM community_members WHERE user_id = ?"
+      )
+        .bind(user.id)
+        .all();
+      for (const r of my || []) mine.add(r.community_slug);
+    }
+  } catch {
+    /* tabela ausente em ambiente local */
+  }
+
   const comunidades = catalog.map((c) => {
     const posts = bySlug[c.slug] || { n: 0, last_at: null };
     let last = posts.last_at;
@@ -67,6 +88,8 @@ export async function onRequestGet(context) {
       post_count: posts.n + (c.slug === "adm" ? 1 : 0),
       last_activity: last,
       created_at: c.created_at || null,
+      total_membros: memberCounts[c.slug] || 0,
+      membro: mine.has(c.slug),
       adms: (adms[c.slug] || []).map((a) => ({
         username: a.username,
         is_primordial: a.is_primordial,

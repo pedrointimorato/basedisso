@@ -136,3 +136,13 @@ INSERT OR IGNORE INTO community_admins (community_slug, user_id, added_by, creat
   SELECT 'adm', id, 'seed', '2026-11-23T00:00:00.000Z' FROM users WHERE username_lc = 'intimorato';
 INSERT OR IGNORE INTO community_admins (community_slug, user_id, added_by, created_at)
   SELECT 'atoa', id, 'seed', '2026-11-23T00:00:00.000Z' FROM users WHERE username_lc = 'intimorato';
+
+-- Membros por comunidade /b/<slug> (idempotente)
+CREATE TABLE IF NOT EXISTS community_members (
+  community_slug TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  joined_at TEXT NOT NULL,
+  PRIMARY KEY (community_slug, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_community_members_user ON community_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_community_members_joined ON community_members(community_slug, joined_at);

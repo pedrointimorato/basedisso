@@ -6,7 +6,7 @@
     <title>Membros e ADMs da base — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261123c">
-    <link rel="stylesheet" href="/b/comunidades.css?v=20261123h">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261123i">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -49,25 +49,35 @@
                     </header>
                     <div class="or-wrap">
                         <div class="or-listing" id="bd-membros-page">
+                            <section class="bm-section bm-foco" id="bm-foco" hidden>
+                                <h2 id="bm-foco-title">b/…</h2>
+                                <p class="bm-foco-links"><a href="/b/membros/">ver todos (base e /b/)</a> · <a id="bm-foco-href" href="/b/">abrir a comunidade</a></p>
+                                <h3 class="bm-h3">ADMs</h3>
+                                <ul class="bm-list" id="bm-foco-adms"></ul>
+                                <h3 class="bm-h3">Membros <small id="bm-foco-total"></small></h3>
+                                <ul class="bm-list" id="bm-foco-membros"></ul>
+                            </section>
+                            <div id="bm-todos">
                             <section class="bm-section">
                                 <h2>ADMs da base <small>administram o site inteiro</small></h2>
                                 <ul class="bm-list" id="bm-adms-base"><li class="bm-empty">carregando…</li></ul>
                             </section>
                             <section class="bm-section">
-                                <h2>ADMs dos /b/ <small>moderam cada comunidade</small></h2>
+                                <h2>Comunidades (/b/) <small>ADMs e membros de cada uma</small></h2>
                                 <div id="bm-adms-b"><p class="bm-empty">carregando…</p></div>
                             </section>
                             <section class="bm-section">
-                                <h2>Membros <small id="bm-membros-total"></small></h2>
+                                <h2>Membros da base <small id="bm-membros-total"></small></h2>
                                 <ul class="bm-list" id="bm-membros"><li class="bm-empty">carregando…</li></ul>
                             </section>
+                            </div>
                         </div>
                         <aside class="or-side">
                             <div class="or-titlebox">
                                 <h2 class="or-side-name">Membros</h2>
                                 <p class="or-side-meta">base de comunidades</p>
                                 <div class="or-md">
-                                    <p>Quem clicou em <b>unir-se</b> no painel /b aparece aqui como membro. Os ADMs da base cuidam do site inteiro e podem criar novas /b/.</p>
+                                    <p>Quem clicou em <b>unir-se</b> no painel /b é membro da base; quem se uniu a uma comunidade aparece nela. Os ADMs da base cuidam do site inteiro e podem criar novas /b/.</p>
                                     <p><a href="/b/">voltar ao painel</a></p>
                                 </div>
                             </div>
@@ -140,7 +150,7 @@
 
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=20261123c"></script>
-    <script src="/b/base.js?v=20261123h"></script>
+    <script src="/b/base.js?v=20261123i"></script>
     <script src="/account.js?v=20261123c"></script>
     <script src="/comments.js?v=20261123f"></script>
 </body>

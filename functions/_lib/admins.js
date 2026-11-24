@@ -146,3 +146,20 @@ export async function listMembers(db, limit = 500) {
     membros: (results || []).map((r) => ({ ...userOut(r), joined_at: r.joined_at })),
   };
 }
+
+export async function listCommunityMembers(db, limit = 1000) {
+  const { results } = await db
+    .prepare(
+      `SELECT m.community_slug, u.username, u.is_admin, u.is_primordial, u.primordial_n, m.joined_at
+       FROM community_members m JOIN users u ON u.id = m.user_id
+       ORDER BY m.community_slug ASC, m.joined_at DESC
+       LIMIT ?`
+    )
+    .bind(limit)
+    .all();
+  const by = {};
+  for (const r of results || []) {
+    (by[r.community_slug] = by[r.community_slug] || []).push({ ...userOut(r), joined_at: r.joined_at });
+  }
+  return by;
+}

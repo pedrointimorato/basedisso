@@ -80,6 +80,10 @@ export function postPageHtml({ community, post }) {
                         <div class="or-header-main">
                             <a class="or-snoo" href="${hrefComm}" aria-label="b/${escapeHtml(slug)}">b</a>
                             <h1 class="or-pagename"><a href="${hrefComm}">${commName}</a></h1>
+                            <div class="or-head-actions" data-comm-join="${escapeHtml(slug)}">
+                                <a class="or-members-link" href="/b/membros/?b=${escapeHtml(slug)}" title="Membros e ADMs de b/${escapeHtml(slug)}">&gt;&gt;&gt;</a>
+                                <button type="button" class="or-join-btn" data-comm-join-btn aria-pressed="false">unir-se</button>
+                            </div>
                             <ul class="or-tabmenu">
                                 <li><a href="${hrefComm}">links</a></li>
                                 <li class="selected"><a href="${hrefPost}">comentários</a></li>
@@ -87,6 +91,7 @@ export function postPageHtml({ community, post }) {
                             </ul>
                         </div>
                     </header>
+                    <p class="or-join-msg" data-comm-join-msg role="status" hidden></p>
                     <div class="or-wrap">
                         <div class="or-listing">
                             <p class="or-back"><a href="${hrefComm}">← b/${escapeHtml(slug)}</a></p>
@@ -110,7 +115,8 @@ export function postPageHtml({ community, post }) {
                             <div class="or-modbox" data-community-adms="${escapeHtml(slug)}">
                                 <h3>moderação</h3>
                                 <p class="or-modlist" data-adms-list>carregando…</p>
-                                <p><a href="/b/membros/">&gt;&gt;&gt; membros e ADMs da base</a></p>
+                                <p class="or-modcount" data-members-count></p>
+                                <p><a href="/b/membros/?b=${escapeHtml(slug)}">&gt;&gt;&gt; membros e ADMs</a></p>
                             </div>
                         </aside>
                     </div>

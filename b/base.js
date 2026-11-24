@@ -65,6 +65,11 @@
     }
   }
 
+  function membrosLabel(n) {
+    n = Number(n || 0);
+    return n === 1 ? "1 membro" : n + " membros";
+  }
+
   function userNode(u, opts) {
     opts = opts || {};
     var wrap = el("span", { class: "bm-user" },
@@ -155,6 +160,72 @@
     });
   }
 
+  /* ---------- unir-se a cada /b/<slug> ---------- */
+  function loginParts(slug) {
+    return [
+      "Entre na sua conta para se unir a b/" + slug + ". ",
+      el("a", { href: "/entrar/" }, "Entrar"),
+      " · ",
+      el("a", { href: "/cadastro/" }, "Cadastrar"),
+    ];
+  }
+
+  function setCount(slug, n) {
+    var boxes = document.querySelectorAll('[data-community-adms="' + slug + '"] [data-members-count]');
+    Array.prototype.forEach.call(boxes, function (b) { b.textContent = membrosLabel(n); });
+  }
+
+  function bindCommJoin() {
+    var wrap = document.querySelector("[data-comm-join]");
+    if (!wrap) return;
+    var slug = wrap.getAttribute("data-comm-join");
+    var btn = wrap.querySelector("[data-comm-join-btn]");
+    var msg = document.querySelector("[data-comm-join-msg]");
+    if (!btn || !slug) return;
+    var url = "/api/comunidades/" + encodeURIComponent(slug) + "/membro";
+    var state = { logado: false, membro: false };
+    btn.title = "Unir-se a b/" + slug;
+    getJson(url).then(function (out) {
+      if (!out.res.ok) return;
+      state = out.data;
+      setJoin(btn, !!state.membro);
+      btn.title = state.membro ? "Você é membro de b/" + slug + ". Clique para sair." : "Unir-se a b/" + slug;
+      setCount(slug, state.total_membros);
+    }).catch(function () {});
+    btn.addEventListener("click", function () {
+      if (!state.logado) {
+        showJoinMsg(msg, loginParts(slug));
+        return;
+      }
+      btn.disabled = true;
+      getJson(url, { method: state.membro ? "DELETE" : "POST" })
+        .then(function (out) {
+          if (out.res.status === 401) {
+            state.logado = false;
+            showJoinMsg(msg, loginParts(slug));
+            return;
+          }
+          if (!out.res.ok) {
+            showJoinMsg(msg, [out.data.erro || "Não foi possível atualizar agora."]);
+            return;
+          }
+          state = out.data;
+          setJoin(btn, !!state.membro);
+          btn.title = state.membro ? "Você é membro de b/" + slug + ". Clique para sair." : "Unir-se a b/" + slug;
+          setCount(slug, state.total_membros);
+          showJoinMsg(msg, state.membro
+            ? ["Você agora é membro de b/" + slug + ". ", el("a", { href: "/b/membros/?b=" + slug }, "ver membros")]
+            : null);
+        })
+        .catch(function () {
+          showJoinMsg(msg, ["Falha de rede. Tente de novo."]);
+        })
+        .then(function () {
+          btn.disabled = false;
+        });
+    });
+  }
+
   /* ---------- comunidades (painel + abas + ADMs por comunidade) ---------- */
   var commsPromise = null;
   function loadComms(force) {
@@ -180,6 +251,8 @@
           el("p", { class: "or-sub-meta" },
             el("span", { "data-count": "" }, n === 1 ? "1 postagem" : n + " postagens"),
             " · ",
+            el("span", { "data-members": "" }, membrosLabel(c.total_membros)),
+            " · ",
             el("span", { "data-activity": "" }, c.last_activity ? "atividade " + relativeTime(c.last_activity) : "sem atividade recente"),
             c.adms && c.adms.length ? " · moderação: " + c.adms.map(function (a) { return ">>" + a.username; }).join(", ") : null
           )
@@ -203,6 +276,8 @@
     items.forEach(function (c) { by[c.slug] = c; });
     Array.prototype.forEach.call(boxes, function (box) {
       var c = by[box.getAttribute("data-community-adms")];
+      var cnt = box.querySelector("[data-members-count]");
+      if (cnt && c) cnt.textContent = membrosLabel(c.total_membros);
       var list = box.querySelector("[data-adms-list]");
       if (!list) return;
       clear(list);
@@ -298,13 +373,54 @@
       });
       if (!(d.adms_base || []).length) sBase.appendChild(el("li", { class: "bm-empty" }, "Nenhum ADM."));
       clear(sComm);
-      (d.adms_comunidades || []).forEach(function (c) {
+      function memberList(list, emptyText) {
         var ul = el("ul", { class: "bm-list" });
-        (c.adms || []).forEach(function (u) { ul.appendChild(el("li", null, userNode(u))); });
-        if (!(c.adms || []).length) ul.appendChild(el("li", { class: "bm-empty" }, "Nenhum ADM definido."));
+        (list || []).forEach(function (u) {
+          ul.appendChild(el("li", null, userNode(u), u.joined_at ? el("span", { class: "bm-when" }, " · entrou " + relativeTime(u.joined_at)) : null));
+        });
+        if (!(list || []).length) ul.appendChild(el("li", { class: "bm-empty" }, emptyText));
+        return ul;
+      }
+      var comms = d.membros_comunidades || d.adms_comunidades || [];
+      comms.forEach(function (c) {
+        var adms = el("ul", { class: "bm-list" });
+        (c.adms || []).forEach(function (u) { adms.appendChild(el("li", null, userNode(u))); });
+        if (!(c.adms || []).length) adms.appendChild(el("li", { class: "bm-empty" }, "Nenhum ADM definido."));
         sComm.appendChild(el("div", { class: "bm-comm", "data-slug": c.slug },
-          el("h4", null, el("a", { href: c.href }, "b/" + c.slug)), ul));
+          el("h4", null, el("a", { href: c.href }, "b/" + c.slug), " ",
+            el("a", { class: "bm-focus-link", href: "/b/membros/?b=" + encodeURIComponent(c.slug) }, ">>>")),
+          el("p", { class: "bm-label" }, "ADMs"), adms,
+          el("p", { class: "bm-label" }, "Membros · " + membrosLabel(c.total_membros)),
+          memberList(c.membros, "Nenhum membro ainda.")));
       });
+      var focoSlug = (new URLSearchParams(location.search).get("b") || "").trim().toLowerCase();
+      var foco = focoSlug ? comms.filter(function (c) { return c.slug === focoSlug; })[0] : null;
+      var focoSec = document.getElementById("bm-foco");
+      var todos = document.getElementById("bm-todos");
+      if (focoSlug && focoSec) {
+        focoSec.hidden = false;
+        if (todos) todos.hidden = true;
+        var ft = document.getElementById("bm-foco-title");
+        if (!foco) {
+          ft.textContent = "b/" + focoSlug + " não encontrada";
+          document.getElementById("bm-foco-href").hidden = true;
+        } else {
+          ft.textContent = "b/" + foco.slug + (foco.name && foco.name !== foco.slug ? " — " + foco.name : "");
+          document.title = "Membros de b/" + foco.slug + " — basedisso";
+          document.getElementById("bm-foco-href").href = foco.href;
+          var fa = document.getElementById("bm-foco-adms");
+          clear(fa);
+          (foco.adms || []).forEach(function (u) { fa.appendChild(el("li", null, userNode(u))); });
+          if (!(foco.adms || []).length) fa.appendChild(el("li", { class: "bm-empty" }, "Nenhum ADM definido."));
+          document.getElementById("bm-foco-total").textContent = membrosLabel(foco.total_membros);
+          var fm = document.getElementById("bm-foco-membros");
+          clear(fm);
+          var ml = memberList(foco.membros, "Nenhum membro ainda. Clique em unir-se em b/" + foco.slug + ".");
+          while (ml.firstChild) fm.appendChild(ml.firstChild);
+        }
+        var pn = document.querySelector(".or-pagename a");
+        if (pn && foco) pn.textContent = ">>> b/" + foco.slug;
+      }
       var total = Number(d.total_membros || 0);
       count.textContent = total === 1 ? "1 membro" : total + " membros";
       clear(sMem);
@@ -321,6 +437,7 @@
 
   function start() {
     bindJoin();
+    bindCommJoin();
     bindCreate();
     if (document.getElementById("bd-comunidades") || document.querySelector("[data-comm-tabs]") || document.querySelector("[data-community-adms]")) {
       refreshComms(false);
