@@ -75,11 +75,17 @@ export async function nextPrimordialN(db) {
   await db
     .prepare("INSERT OR IGNORE INTO counters (name, value) VALUES ('primordial', 0)")
     .run();
+  // Sequência única compartilhada entre reservas pagas e cadastros por código de convite:
+  // sempre acima do maior #N já usado em users ou reservations (instrução única = atômica no D1).
   const row = await db
-    .prepare("UPDATE counters SET value = value + 1 WHERE name = 'primordial' RETURNING value")
+    .prepare(
+      `UPDATE counters SET value = MAX(value,
+         COALESCE((SELECT MAX(primordial_n) FROM users), 0),
+         COALESCE((SELECT MAX(primordial_n) FROM reservations), 0)) + 1
+       WHERE name = 'primordial' RETURNING value`
+    )
     .first();
   if (row && row.value != null) return Number(row.value);
-  // Fallback if RETURNING is unavailable
   const cur = await db.prepare("SELECT value FROM counters WHERE name = 'primordial'").first();
   const n = Number(cur?.value || 0) + 1;
   await db.prepare("UPDATE counters SET value = ? WHERE name = 'primordial'").bind(n).run();
@@ -336,8 +342,8 @@ export async function claimReservation(env, request, { password, token, reservat
   const n = row.primordial_n || (await nextPrimordialN(env.DB));
   try {
     await env.DB.prepare(
-      `INSERT INTO users (id, username, username_lc, password_hash, email, is_admin, is_primordial, primordial_n, created_at)
-       VALUES (?, ?, ?, ?, ?, 0, 1, ?, ?)`
+      `INSERT INTO users (id, username, username_lc, password_hash, email, is_admin, is_primordial, primordial_n, created_at, is_paid_primordial)
+       VALUES (?, ?, ?, ?, ?, 0, 1, ?, ?, 1)`
     )
       .bind(userId, row.username, row.username_lc, passwordHash, row.email || null, n, createdAt)
       .run();
@@ -359,6 +365,7 @@ export async function claimReservation(env, request, { password, token, reservat
       username: row.username,
       is_admin: false,
       is_primordial: true,
+      is_paid_primordial: true,
       primordial_n: n,
       created_at: createdAt,
     },

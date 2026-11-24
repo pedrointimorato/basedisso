@@ -217,8 +217,141 @@
 
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
+    if (codeInput && CODE_RE.test(codeInput.value.trim()) && document.activeElement &&
+        (document.activeElement === codeInput || document.activeElement === codePass)) {
+      submitCodigo();
+      return;
+    }
     submitReserva("pix");
   });
+
+  /* ---------- Código de convite/acesso ---------- */
+  var CODE_RE = /^[A-Za-z0-9]{6}$/;
+  var codeInput = document.getElementById("reserva-codigo");
+  var codeFeedback = document.getElementById("codigo-feedback");
+  var codeExtra = document.getElementById("codigo-extra");
+  var codePass = document.getElementById("codigo-senha");
+  var codeBtn = document.getElementById("codigo-btn");
+  var codeStatus = document.getElementById("codigo-status");
+  var codeTimer = null;
+  var codeSeq = 0;
+
+  function fmtLeft(ms) {
+    if (ms <= 0) return "agora";
+    var min = Math.floor(ms / 60000);
+    var d = Math.floor(min / 1440);
+    var h = Math.floor((min % 1440) / 60);
+    var m = min % 60;
+    if (d > 0) return d + "d " + h + "h";
+    if (h > 0) return h + "h " + (m < 10 ? "0" : "") + m + "min";
+    return Math.max(m, 1) + " min";
+  }
+
+  function validateCode() {
+    var v = codeInput.value.trim();
+    var seq = ++codeSeq;
+    if (!v) {
+      setMsg(codeFeedback, "");
+      codeExtra.hidden = true;
+      return;
+    }
+    if (v.length < 6) {
+      setMsg(codeFeedback, "O código tem 6 caracteres (letras e/ou números).", "");
+      codeExtra.hidden = true;
+      return;
+    }
+    codeExtra.hidden = false;
+    if (!CODE_RE.test(v)) {
+      setMsg(codeFeedback, "Use apenas letras e números (6 caracteres).", "erro");
+      return;
+    }
+    setMsg(codeFeedback, "Verificando código…", "");
+    fetch("/api/convites/validar?code=" + encodeURIComponent(v), {
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (seq !== codeSeq) return;
+        if (data && data.valido) {
+          setMsg(codeFeedback, "Código válido · expira em " + fmtLeft(new Date(data.expires_at).getTime() - Date.now()) + ".", "ok");
+        } else {
+          setMsg(codeFeedback, (data && data.motivo) || "Código inválido.", "erro");
+        }
+      })
+      .catch(function () { if (seq === codeSeq) setMsg(codeFeedback, ""); });
+  }
+
+  function submitCodigo() {
+    setMsg(codeStatus, "");
+    var nome = userInput.value.trim();
+    var code = codeInput.value.trim();
+    if (!USERNAME_RE.test(nome)) {
+      setMsg(codeStatus, "O nome deve ter 3 a 20 caracteres (letras, números ou _).", "erro");
+      userInput.focus();
+      return;
+    }
+    if (!CODE_RE.test(code)) {
+      setMsg(codeStatus, "O código tem 6 caracteres: letras e/ou números.", "erro");
+      codeInput.focus();
+      return;
+    }
+    if (codePass.value.length < 8) {
+      setMsg(codeStatus, "A senha deve ter pelo menos 8 caracteres.", "erro");
+      codePass.focus();
+      return;
+    }
+    codeBtn.disabled = true;
+    fetch("/api/auth/signup-codigo", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        username: nome,
+        email: emailInput.value.trim(),
+        password: codePass.value,
+        code: code,
+        website: form.website.value,
+      }),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { res: res, data: data }; }); })
+      .then(function (out) {
+        if (!out.res.ok) {
+          setMsg(codeStatus, (out.data && out.data.erro) || "Não foi possível criar a conta.", "erro");
+          return;
+        }
+        var u = out.data.usuario || {};
+        setMsg(codeStatus, "Conta criada! Você é o primordial #" + u.primordial_n + ". Abrindo seu perfil…", "ok");
+        setTimeout(function () { location.href = "/@" + encodeURIComponent(u.username || nome); }, 900);
+      })
+      .catch(function () { setMsg(codeStatus, "Falha de rede. Tente de novo.", "erro"); })
+      .then(function () { codeBtn.disabled = false; });
+  }
+
+  if (codeInput) {
+    codeInput.addEventListener("input", function () {
+      var clean = codeInput.value.replace(/\s+/g, "").toUpperCase();
+      if (clean !== codeInput.value) codeInput.value = clean;
+      clearTimeout(codeTimer);
+      codeTimer = setTimeout(validateCode, 250);
+    });
+    codeBtn.addEventListener("click", submitCodigo);
+    window.BDCadastro = {
+      usarCodigo: function (code) {
+        codeInput.value = String(code || "").toUpperCase();
+        validateCode();
+        codeInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        codeInput.classList.remove("codigo-flash");
+        void codeInput.offsetWidth;
+        codeInput.classList.add("codigo-flash");
+        setTimeout(function () {
+          try { (userInput.value.trim() ? codePass : userInput).focus({ preventScroll: true }); } catch (e) {}
+        }, 500);
+      },
+    };
+    var pre = (location.search.match(/[?&]codigo=([A-Za-z0-9]{6})/) || [])[1];
+    if (pre) { codeInput.value = pre.toUpperCase(); validateCode(); }
+  }
 
   if (cardBtn) {
     cardBtn.addEventListener("click", function () {
@@ -228,6 +361,11 @@
         return;
       }
       if (!form.reportValidity()) return;
+      if (!emailInput.value.trim()) {
+        setMsg(status, "Informe um e-mail válido.", "erro");
+        emailInput.focus();
+        return;
+      }
       submitReserva("card");
     });
   }

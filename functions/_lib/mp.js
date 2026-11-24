@@ -248,3 +248,52 @@ export async function verifyMpSignature(request, env, dataId) {
   }
   return { ok: true, manifest };
 }
+
+/** Pix com valor livre (caixas de acesso coletivo). */
+export async function createCustomPixPayment(env, { amountCents, description, externalReference, email, expiresAt, idempotencyKey }) {
+  const notificationUrl = "https://basedisso.com/api/mp/webhook";
+  const expiration = expiresAt || new Date(Date.now() + 30 * 60 * 1000).toISOString();
+  const amount = Math.round(Number(amountCents)) / 100;
+  if (isMockMp(env)) {
+    return {
+      id: `pix-mock-${externalReference}`,
+      status: "pending",
+      qr_code: `00020126MOCKPIX${externalReference}5204000053039865802BR5913BASEDISSO PIX6009SAOPAULO62070503***6304MOCK`,
+      qr_code_base64: MOCK_QR_PNG,
+      date_of_expiration: expiration,
+    };
+  }
+  const body = {
+    transaction_amount: amount,
+    description,
+    payment_method_id: "pix",
+    payer: { email },
+    external_reference: externalReference,
+    notification_url: notificationUrl,
+    date_of_expiration: expiration,
+  };
+  const res = await fetch("https://api.mercadopago.com/v1/payments", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.MP_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+      "X-Idempotency-Key": String(idempotencyKey || externalReference),
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  const qr = pixQrFromPayment(data);
+  if (!res.ok || !qr.qr_code) {
+    const err = new Error("mp_pix_failed");
+    err.detail = data;
+    err.public = publicMpError(data);
+    throw err;
+  }
+  return {
+    id: data.id != null ? String(data.id) : null,
+    status: data.status || "pending",
+    qr_code: qr.qr_code,
+    qr_code_base64: qr.qr_code_base64,
+    date_of_expiration: data.date_of_expiration || expiration,
+  };
+}

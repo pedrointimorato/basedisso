@@ -10,7 +10,7 @@ export function profilePageHtml({ title, initialPath }) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${safeTitle}</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
-    <link rel="stylesheet" href="/account.css?v=20261123c">
+    <link rel="stylesheet" href="/account.css?v=20261124a">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -101,7 +101,7 @@ export function profilePageHtml({ title, initialPath }) {
         </aside>
     </div>
     <script src="/script.js?v=20261123c"></script>
-    <script src="/account.js?v=20261123c"></script>
+    <script src="/account.js?v=20261124a"></script>
     <script src="/comments.js?v=20261123f"></script>
     <script src="/perfil.js"></script>
 </body>

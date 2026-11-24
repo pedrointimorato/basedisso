@@ -109,3 +109,53 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 #mod-res-list { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
 .mod-main { box-sizing: border-box; overflow-x: hidden; }
 .mod-table-scroll { overflow-x: auto; max-width: 100%; }
+/* Códigos + caixas (ADM do site) */
+.mc-num { width: 100%; max-width: 160px; box-sizing: border-box; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px; font: inherit; background: var(--search-bg); color: var(--text-primary); }
+.mc-unit { width: auto; margin-bottom: 0; display: inline-block; }
+.mod-card input.mc-code-input { max-width: 200px; font-family: ui-monospace, monospace; letter-spacing: 0.2em; text-transform: uppercase; }
+.mod-card input.mc-code-input::placeholder { letter-spacing: normal; text-transform: none; font-family: inherit; }
+.mc-item { border-top: 1px solid var(--border-subtle); padding: 12px 0; }
+.mc-item:first-child { border-top: 0; padding-top: 0; }
+.mc-head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.mc-code { font-family: ui-monospace, monospace; font-weight: 800; font-size: 16px; letter-spacing: 0.15em; color: var(--text-primary); }
+.mc-kind { font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 3px; padding: 1px 6px; border: 1px solid currentColor; }
+.mc-kind.adm { color: var(--accent-red); }
+.mc-kind.primordial { color: #6b4fa8; }
+.mc-kind.collective { color: #1f7a33; }
+.mc-st { font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.mc-st.ativo { color: #228822; }
+.mc-st.expirado, .mc-st.esgotado { color: var(--text-light); }
+.mc-st.revogado { color: #8a1f1c; }
+.mc-meta { font-size: 12px; color: var(--text-secondary); margin: 4px 0 0; }
+.mc-reds { list-style: none; margin: 6px 0 0; padding: 0; font-size: 13px; }
+.mc-reds li { padding: 2px 0; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.mc-flag { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #8a5a12; background: #fff4dc; border: 1px solid #e8c879; border-radius: 3px; padding: 0 5px; }
+.mc-head .mod-btn-sm { margin-left: auto; }
+.mx-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 760px) { .mx-grid { grid-template-columns: 1fr 1fr; } }
+.mx-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; min-width: 0; }
+.mx-card.pausada { opacity: 0.75; border-style: dashed; }
+.mx-top { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.mx-valor { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+.mx-dur { font-size: 12px; color: var(--text-secondary); }
+.mx-estado { margin-left: auto; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.mx-estado.aberta { color: #228822; }
+.mx-estado.espera { color: #8a5a12; }
+.mx-estado.travada, .mx-estado.pausada { color: #8a1f1c; }
+.mx-bar { height: 8px; border-radius: 999px; background: var(--border-color); overflow: hidden; margin: 10px 0 4px; }
+.mx-bar > span { display: block; height: 100%; background: #228822; border-radius: 999px; }
+.mx-line { font-size: 13px; margin: 4px 0 0; color: var(--text-primary); }
+.mx-line.sub { color: var(--text-secondary); font-size: 12px; }
+.mx-code { font-family: ui-monospace, monospace; font-weight: 800; letter-spacing: 0.12em; color: #1d4d1d; }
+.mx-toggles { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.mx-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.mx-toggle input { width: 16px; height: 16px; accent-color: var(--accent-red); }
+.mx-h3 { font-size: 15px; margin: 18px 0 8px; color: var(--text-primary); }
+.mx-contrib { overflow-x: auto; }
+.mx-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
+.mx-table th, .mx-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+.mx-table th { font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
+.mx-st { font-weight: 700; }
+.mx-st.paid { color: #228822; }
+.mx-st.pending { color: #8a5a12; }
+.mx-st.expired, .mx-st.failed { color: var(--text-light); }

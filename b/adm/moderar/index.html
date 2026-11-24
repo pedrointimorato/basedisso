@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
-    <link rel="stylesheet" href="/account.css?v=20261123c">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261123h">
+    <link rel="stylesheet" href="/account.css?v=20261124a">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124a">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -64,6 +64,8 @@
                 <a href="#mod-sec-comentarios">Comentários</a>
                 <a href="#mod-sec-posts">Postagens</a>
                 <a href="#mod-sec-res" data-site-only>Reservas</a>
+                <a href="#sec-convites" data-site-only>Códigos</a>
+                <a href="#sec-caixas" data-site-only>Caixas</a>
             </nav>
 
             <div class="mod-section" id="mod-sec-site" data-site-only>
@@ -135,10 +137,45 @@
                 <p class="mod-status" id="mod-res-status" role="status"></p>
                 <div class="mod-card" id="mod-res-list"></div>
             </div>
+            <div class="mod-section" id="sec-convites" data-site-only>
+                <h2>Códigos de convite/acesso</h2>
+                <p class="mod-lead">Códigos de 6 caracteres (letras e/ou números). Quem entra por código vira primordial (não pagante). Cada código aceita 1 cadastro por rede (IP).</p>
+                <div class="mod-card">
+                    <form id="mc-form" class="mod-stack-form">
+                        <label for="mc-dur">Duração do código de ADM</label>
+                        <div class="mod-row">
+                            <input id="mc-dur" type="number" min="1" step="1" value="24" required inputmode="numeric" class="mc-num">
+                            <select id="mc-unit" class="mod-select mc-unit" aria-label="Unidade">
+                                <option value="minutes">minutos</option>
+                                <option value="hours" selected>horas</option>
+                                <option value="days">dias</option>
+                            </select>
+                        </div>
+                        <label for="mc-code">Código personalizado (opcional)</label>
+                        <input id="mc-code" type="text" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="vazio = automático" class="mc-code-input">
+                        <label for="mc-max">Limite de usos (opcional)</label>
+                        <input id="mc-max" type="number" min="1" step="1" inputmode="numeric" placeholder="sem limite" class="mc-num">
+                        <div class="mod-actions"><button type="submit" class="mod-btn">Gerar código</button></div>
+                    </form>
+                    <p class="mod-status" id="mc-status" role="status"></p>
+                </div>
+                <p class="mod-status" id="mc-list-status" role="status"></p>
+                <div class="mod-card mc-list" id="mc-list"></div>
+            </div>
+
+            <div class="mod-section" id="sec-caixas" data-site-only>
+                <h2>Caixas de acesso coletivo</h2>
+                <p class="mod-lead">A espera conta a partir da abertura da caixa anterior da mesma classe. Com a reabertura travada, nenhuma caixa nova abre sozinha até um ADM abrir manualmente.</p>
+                <p class="mod-status" id="mx-status" role="status"></p>
+                <div class="mx-grid" id="mx-grid"></div>
+                <h3 class="mx-h3">Contribuições recentes (Pix)</h3>
+                <div class="mod-card mx-contrib" id="mx-contrib"></div>
+            </div>
         </section>
     </main>
 
-    <script src="/account.js?v=20261123c"></script>
-    <script src="/b/adm/moderar/moderar.js?v=20261123h"></script>
+    <script src="/account.js?v=20261124a"></script>
+    <script src="/b/adm/moderar/moderar-convites.js?v=20261124a"></script>
+    <script src="/b/adm/moderar/moderar.js?v=20261124a"></script>
 </body>
 </html>

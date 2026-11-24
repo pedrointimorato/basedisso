@@ -153,6 +153,13 @@
           el("button", { type: "button", class: "btn-account-sair", onClick: logout }, "Sair")
         );
         box.appendChild(row);
+        var links = el("div", { class: "sidebar-account-links" },
+          el("a", { href: "/convites/", class: "sidebar-link-sutil" }, "Códigos de convite")
+        );
+        if (user.is_site_admin) {
+          links.appendChild(el("a", { href: "/b/adm/moderar/", class: "sidebar-link-sutil" }, "Moderação"));
+        }
+        box.appendChild(links);
       } else {
         box.appendChild(el("p", { class: "sidebar-acesso-label" }, "Acesso sem conta"));
         var actions = el("div", { class: "sidebar-account-actions" },

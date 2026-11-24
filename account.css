@@ -276,3 +276,6 @@
 @media (max-width: 640px) {
     .pix-qr { width: 200px; height: 200px; }
 }
+.sidebar-account-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+.sidebar-link-sutil { font-size: 12px; color: var(--text-secondary, #636466); text-decoration: none; }
+.sidebar-link-sutil:hover { color: var(--accent-red, #b92b27); text-decoration: underline; }

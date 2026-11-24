@@ -24,6 +24,8 @@ export async function onRequestGet(context) {
     usuario.is_site_admin = isSite;
     usuario.admin_communities = comms;
     usuario.is_member = membro;
+    usuario.is_paid_primordial = Number(row.is_paid_primordial) === 1;
+    usuario.can_generate_invites = usuario.is_paid_primordial || isSite;
   }
   return json({ usuario, is_site_admin: isSite, admin_communities: comms, is_member: membro });
 }

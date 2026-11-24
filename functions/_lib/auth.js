@@ -194,13 +194,14 @@ export async function destroySession(db, request) {
 
 export function publicUser(row) {
   if (!row) return null;
-  return {
+  const out = {
     username: row.username,
     is_admin: Boolean(row.is_admin),
     is_primordial: Boolean(row.is_primordial),
     primordial_n: row.primordial_n == null ? null : Number(row.primordial_n),
     created_at: row.created_at || null,
   };
+  return out;
 }
 
 export async function getSessionUser(request, env) {
@@ -210,7 +211,7 @@ export async function getSessionUser(request, env) {
   if (!token) return null;
   const id = await sha256Hex(token);
   const row = await env.DB.prepare(
-    `SELECT u.id, u.username, u.username_lc, u.is_admin, u.is_primordial, u.primordial_n, u.created_at, s.expires_at
+    `SELECT u.id, u.username, u.username_lc, u.is_admin, u.is_primordial, u.primordial_n, u.is_paid_primordial, u.created_at, s.expires_at
      FROM sessions s
      JOIN users u ON u.id = s.user_id
      WHERE s.id = ?`

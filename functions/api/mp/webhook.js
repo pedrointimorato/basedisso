@@ -7,6 +7,7 @@ import {
   verifyMpSignature,
 } from "../../_lib/mp.js";
 import { expireHolds, markReservationPaid } from "../../_lib/reservas.js";
+import { confirmBoxContribution } from "../../_lib/caixas.js";
 
 export async function onRequestGet() {
   return json({ ok: true });
@@ -50,12 +51,26 @@ export async function onRequestPost(context) {
   if (String(payment.status || "").toLowerCase() !== "approved") {
     return json({ ok: true, ignored: true, status: payment.status || null }, 200);
   }
+  const ref = String(payment.external_reference || "").trim();
+  if (!ref) return json({ ok: true, ignored: true, reason: "no_reference" }, 200);
+
+  // Contribuições das caixas de acesso coletivo (valor livre, mínimo R$ 1).
+  if (ref.startsWith("caixa:")) {
+    const contribution = await env.DB.prepare("SELECT * FROM collective_contributions WHERE id = ?")
+      .bind(ref.slice(6))
+      .first();
+    if (!contribution) return json({ ok: true, ignored: true, reason: "unknown_reference" }, 200);
+    if (String(payment.currency_id || "BRL").toUpperCase() !== "BRL" ||
+        !(Number(payment.transaction_amount) + 0.001 >= Number(contribution.amount_cents) / 100)) {
+      return json({ ok: true, ignored: true, reason: "amount" }, 200);
+    }
+    const out = await confirmBoxContribution(env.DB, contribution.id, { paymentId });
+    return json({ ok: true, caixa: true, idempotent: Boolean(out.idempotent) }, 200);
+  }
+
   if (!paymentAmountOk(payment)) {
     return json({ ok: true, ignored: true, reason: "amount" }, 200);
   }
-
-  const ref = String(payment.external_reference || "").trim();
-  if (!ref) return json({ ok: true, ignored: true, reason: "no_reference" }, 200);
 
   await expireHolds(env.DB);
   const row = await env.DB.prepare("SELECT * FROM reservations WHERE id = ?").bind(ref).first();

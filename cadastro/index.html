@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuários primordiais — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
-    <link rel="stylesheet" href="/account.css?v=20261123c">
+    <link rel="stylesheet" href="/account.css?v=20261124a">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
+    <link rel="stylesheet" href="/cadastro/cadastro.css?v=20261124a">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -30,12 +31,12 @@
                     </div>
                 </div>
             </nav>
-            <main class="auth-main">
+            <main class="auth-main cadastro-main">
                 <section class="auth-card reserva-card">
                     <p class="reserva-kicker">Série limitada</p>
                     <h1>Usuários primordiais</h1>
-                    <p class="auth-lead">Os primeiros nomes do basedisso formam a série dos <strong>usuários primordiais</strong>. Cada nome é único, aparece no site como <strong>&gt;&gt;Nome</strong>, tem perfil em <strong>/@Nome</strong> e leva o selo <strong>primordial #N</strong> — o número da ordem de pagamento.</p>
-                    <p class="auth-lead">A reserva custa <strong>R$&nbsp;5,00</strong> por nome e ajuda a manter o projeto. O pagamento é feito no Mercado Pago (Pix ou cartão). O nome fica reservado por cerca de 30 minutos até a confirmação.</p>
+                    <p class="auth-lead">A série #primordiais está aberta para cadastro. Por enquanto é a única forma de entrar oficialmente para a rede basedisso.com.</p>
+                    <p class="auth-lead">Você pode entrar pagando a inscrição individual, ou por um código de convite/acesso.</p>
                     <div id="claim-box" class="claim-box" hidden>
                         <h2>Reivindicar &gt;&gt;Intimorato</h2>
                         <p>Você está com a sessão de moderação ativa. Defina uma senha sua para reivindicar a conta de administrador (sem pagamento).</p>
@@ -52,8 +53,18 @@
                         <label for="reserva-username">Nome que você quer reservar</label>
                         <input id="reserva-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="20" inputmode="text" autocapitalize="off" spellcheck="false" placeholder="3 a 20 letras, números ou _">
                         <p class="auth-status" id="reserva-disponivel" role="status"></p>
-                        <label for="reserva-email">E-mail (obrigatório, para o Pix e o comprovante)</label>
-                        <input id="reserva-email" name="email" type="email" autocomplete="email" required>
+                        <label for="reserva-email">E-mail (obrigatório para Pix/cartão; opcional com código)</label>
+                        <input id="reserva-email" name="email" type="email" autocomplete="email">
+                        <label for="reserva-codigo">Código de convite/acesso (opcional)</label>
+                        <input id="reserva-codigo" name="codigo" type="text" class="codigo-input" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" placeholder="6 dígitos: letras e/ou números">
+                        <p class="auth-status" id="codigo-feedback" role="status"></p>
+                        <div id="codigo-extra" class="codigo-extra" hidden>
+                            <label for="codigo-senha">Senha</label>
+                            <input id="codigo-senha" name="senha" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder="mínimo de 8 caracteres">
+                            <button type="button" class="auth-submit codigo-submit" id="codigo-btn">Criar conta com código</button>
+                            <p class="auth-status" id="codigo-status" role="status"></p>
+                            <p class="codigo-ou">ou entre pagando a inscrição individual:</p>
+                        </div>
                         <input type="text" name="website" class="bd-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                         <button type="submit" class="auth-submit" id="reserva-btn">Pagar com Pix · R$ 5</button>
                         <button type="button" class="auth-secondary" id="reserva-card-btn">Pagar com cartão</button>
@@ -70,6 +81,12 @@
                         <p class="auth-status" id="pix-status" role="status">Aguardando o pagamento…</p>
                     </div>
                     <p class="auth-alt">Já tem conta? <a href="/entrar">Entrar</a>.</p>
+                </section>
+                <section class="auth-card caixas-card" id="caixas">
+                    <p class="reserva-kicker">Acesso coletivo</p>
+                    <h2 class="caixas-titulo">Caixas de acesso coletivo</h2>
+                    <p class="auth-lead caixas-lead">Contribua via Pix (a partir de R$ 1) para completar uma caixa; quando ela atinge a meta, gera um código de acesso aberto pelo tempo da classe.</p>
+                    <div class="caixas-grid" id="caixas-grid"><p class="caixas-vazio">Carregando caixas…</p></div>
                 </section>
             </main>
 
@@ -135,8 +152,9 @@
         </aside>
     </div>
     <script src="/script.js?v=20261123c"></script>
-    <script src="/account.js?v=20261123c"></script>
+    <script src="/account.js?v=20261124a"></script>
     <script src="/comments.js?v=20261123f"></script>
-    <script src="/cadastro/cadastro.js?v=20261122p"></script>
+    <script src="/cadastro/cadastro.js?v=20261124a"></script>
+    <script src="/cadastro/caixas.js?v=20261124a"></script>
 </body>
 </html>
