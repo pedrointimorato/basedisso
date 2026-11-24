@@ -1,6 +1,6 @@
 import { escapeHtml } from "../../_lib/shared.js";
-import { NAV, SIDEBAR, V, headHtml, htmlResponse, notFoundHtml } from "../../_lib/page-shell.js";
-import { communityHref, getCommunityDb, NEW_SLUG_RE, RESERVED_SLUGS, STATIC_B_DIRS } from "../../_lib/comunidades.js";
+import { NAV, SIDEBAR, V, communityCardHtml, headHtml, htmlResponse, notFoundHtml } from "../../_lib/page-shell.js";
+import { communityCard, communityHref, getCommunityDb, NEW_SLUG_RE, RESERVED_SLUGS, STATIC_B_DIRS } from "../../_lib/comunidades.js";
 
 export function communityPageHtml(community) {
   const slug = escapeHtml(community.slug);
@@ -66,15 +66,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
                         <div id="bd-posts" data-community="${slug}"></div>
                         </div>
                         <aside class="or-side">
-                            <div class="or-titlebox">
-                                <h2 class="or-side-name">${name}</h2>
-                                <p class="or-side-meta">b/${slug}</p>
-                                <div class="or-md">
-                                    ${desc ? `<p>${desc}</p>` : ""}
-                                    <p>Qualquer pessoa pode criar uma postagem, anônima ou com nome.</p>
-                                    <p><a href="/b/">todas as comunidades</a> · <a href="/b/membros/">membros</a></p>
-                                </div>
-                            </div>
+                            ${communityCardHtml(communityCard(community), `<a href="/b/">todas as comunidades</a> · <a href="/b/membros/?b=${slug}">membros</a>`)}
                             <div class="or-modbox" data-community-adms="${slug}">
                                 <h3>moderação</h3>
                                 <p class="or-modlist" data-adms-list>carregando…</p>

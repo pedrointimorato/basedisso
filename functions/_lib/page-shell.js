@@ -1,6 +1,6 @@
 import { escapeHtml } from "./shared.js";
 
-export const V = "20261123k";
+export const V = "20261123m";
 
 export const SIDEBAR = `<aside class="right-sidebar">
             <div class="sidebar-header">
@@ -102,4 +102,22 @@ export function htmlResponse(html, status = 200) {
 
 export function notFoundHtml(msg = "Página não encontrada.") {
   return htmlResponse(`<!DOCTYPE html><html lang="pt-BR">${headHtml("Não encontrado — basedisso")}<body><div class="site-container layout-default" id="siteContainer"><div class="left-area">${NAV}<main class="main-content adm-main"><div class="oldreddit"><div class="or-wrap"><div class="or-listing"><p>${escapeHtml(msg)}</p><p><a href="/b/">voltar ao painel de comunidades</a></p></div></div></div></main></div>${SIDEBAR}</div><script src="/script.js?v=20261123c"></script><script src="/account.js?v=20261123c"></script><script src="/comments.js?v=20261123f"></script></body></html>`, 404);
+}
+
+// Texto de cartão: parágrafos separados por linha em branco, quebras simples como <br>.
+export function cardBodyHtml(text) {
+  const parts = String(text || "").split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  return parts.map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`).join("\n");
+}
+
+export function communityCardHtml(card, linksHtml) {
+  const slug = escapeHtml(card.slug);
+  return `<div class="or-titlebox" data-card="community" data-card-slug="${slug}">
+                                <div class="or-card-head"><h2 class="or-side-name" data-card-title>${escapeHtml(card.title)}</h2><button type="button" class="or-card-edit" data-card-edit hidden>editar</button></div>
+                                <p class="or-side-meta" data-card-subtitle>${escapeHtml(card.subtitle || "")}</p>
+                                <div class="or-md">
+                                    <div class="or-card-body" data-card-body>${cardBodyHtml(card.body)}</div>
+                                    <p class="or-card-links">${linksHtml}</p>
+                                </div>
+                            </div>`;
 }

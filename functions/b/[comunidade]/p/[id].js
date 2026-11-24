@@ -1,6 +1,6 @@
 import { escapeHtml } from "../../../_lib/shared.js";
-import { SIDEBAR, V } from "../../../_lib/page-shell.js";
-import { getCommunityDb, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
+import { SIDEBAR, V, communityCardHtml } from "../../../_lib/page-shell.js";
+import { communityCard, getCommunityDb, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
 import { getVisiblePost } from "../../../_lib/posts.js";
 
 function relativeOrIso(iso) {
@@ -105,14 +105,7 @@ export function postPageHtml({ community, post }) {
                             </article>
                         </div>
                         <aside class="or-side">
-                            <div class="or-titlebox">
-                                <h2 class="or-side-name">${commName}</h2>
-                                <p class="or-side-meta">b/${escapeHtml(slug)}</p>
-                                <div class="or-md">
-                                    <p>${escapeHtml(community.description)}</p>
-                                    <p><a href="${hrefComm}">voltar à comunidade</a> · <a href="/b/">painel</a></p>
-                                </div>
-                            </div>
+                            ${communityCardHtml(communityCard(community), `<a href="${hrefComm}">voltar à comunidade</a> · <a href="/b/">todas as comunidades</a>`)}
                             <div class="or-modbox" data-community-adms="${escapeHtml(slug)}">
                                 <h3>moderação</h3>
                                 <p class="or-modlist" data-adms-list>carregando…</p>

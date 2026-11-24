@@ -39,12 +39,14 @@ function rowToCommunity(row) {
   const base = COMMUNITIES[row.slug];
   return {
     slug: row.slug,
-    name: base ? base.name : row.name,
+    name: row.name || (base ? base.name : row.slug),
     title: base ? base.title : row.slug,
     description: base ? base.description : row.description || "",
     posting: row.posting || "open",
     created_at: row.created_at || null,
     created_by: row.created_by || null,
+    subtitle: row.subtitle || null,
+    sidebar_text: row.sidebar_text || null,
     dynamic: !base,
   };
 }
@@ -78,6 +80,52 @@ export async function listCommunitiesDb(db) {
   const list = rows.map(rowToCommunity);
   for (const c of listCommunities()) if (!seen.has(c.slug)) list.unshift({ ...c, dynamic: false });
   return list;
+}
+
+export const CARD_DEFAULTS = {
+  adm: {
+    subtitle: "solicitações · >>Intimorato",
+    body: "Espaço para solicitações, queixas, elogios, sugestões ou ofertas. Qualquer pessoa pode criar uma postagem, anônima ou com nome.\n\nDeixe um comentário no aviso fixado ou me envie um e-mail: Intimorato@mail.ru",
+  },
+  atoa: {
+    subtitle: "off topic · b/atoa",
+    body: "Comunidade livre, sem assunto definido. Qualquer pessoa pode criar uma postagem, anônima ou com nome.",
+  },
+};
+
+export const PANEL_DEFAULT = {
+  title: "Comunidades",
+  subtitle: "painel do basedisso",
+  body: "Um espaço para comunidades no estilo do fórum antigo. Entre em uma delas para ler e criar postagens.",
+};
+
+export const CARD_LIMITS = { title: 80, subtitle: 120, body: 2000 };
+
+// Cartão lateral da comunidade (título, subtítulo, texto) com padrões.
+export function communityCard(c) {
+  const d = CARD_DEFAULTS[c.slug] || {};
+  return {
+    slug: c.slug,
+    title: c.name || c.slug,
+    subtitle: c.subtitle || d.subtitle || `b/${c.slug}`,
+    body: c.sidebar_text || d.body || c.description || "",
+  };
+}
+
+export function cleanCardInput(data) {
+  const line = (v) => String(v ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim();
+  const title = line(data?.title);
+  const subtitle = line(data?.subtitle);
+  const body = String(data?.body ?? "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  if (!title) return { erro: "Informe o título." };
+  if (title.length > CARD_LIMITS.title) return { erro: `Título longo demais (máx. ${CARD_LIMITS.title}).` };
+  if (subtitle.length > CARD_LIMITS.subtitle) return { erro: `Subtítulo longo demais (máx. ${CARD_LIMITS.subtitle}).` };
+  if (body.length > CARD_LIMITS.body) return { erro: `Texto longo demais (máx. ${CARD_LIMITS.body}).` };
+  return { title, subtitle, body };
 }
 
 export function postPageKey(slug, id) {

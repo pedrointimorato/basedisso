@@ -505,3 +505,26 @@
 .bm-focus-link { font-size: 11px; color: #369 !important; margin-left: 4px; }
 .bm-comm { border-bottom: 1px solid #f0f0f0; padding-bottom: 6px; }
 #bm-todos[hidden], .bm-foco[hidden] { display: none; }
+
+/* ---- cartões editáveis ---- */
+.or-card-head { display: flex; align-items: baseline; gap: 8px; }
+.or-card-head .or-side-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.or-card-edit {
+    appearance: none; background: none; border: 0; padding: 0;
+    font: 700 11px verdana, arial, sans-serif; color: #369; cursor: pointer;
+}
+.or-card-edit:hover { text-decoration: underline; color: #ff4500; }
+.or-titlebox.is-editing [data-card-subtitle],
+.or-titlebox.is-editing [data-card-body] { display: none; }
+.or-card-form { margin: 6px 0 10px; display: flex; flex-direction: column; gap: 6px; }
+.or-card-form label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; font-weight: 700; color: #555; }
+.or-card-form input, .or-card-form textarea {
+    font: 12px verdana, arial, sans-serif; padding: 5px 6px; border: 1px solid #ccc; border-radius: 2px;
+    width: 100%; box-sizing: border-box; background: #fff; color: #222;
+}
+.or-card-form textarea { resize: vertical; min-height: 90px; }
+.or-card-hint { margin: 0; font-size: 10px; color: #888; }
+.or-card-form .bd-comments-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.or-card-form button { font: 700 12px verdana, arial, sans-serif; padding: 4px 10px; cursor: pointer; }
+.or-card-body p:last-child { margin-bottom: 8px; }
+.or-side-meta[hidden] { display: none; }

@@ -309,6 +309,139 @@
     });
   }
 
+
+  /* ---------- cartões editáveis (painel /b e cada /b/<slug>) ---------- */
+  var TOKEN_RE = /(https?:\/\/[^\s<]+[^\s<.,;:!?)\]]|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|>>[A-Za-z0-9_]{3,20})/g;
+
+  function appendInline(node, text) {
+    var str = String(text || "");
+    var last = 0;
+    str.replace(TOKEN_RE, function (m, _g, idx) {
+      if (idx > last) node.appendChild(document.createTextNode(str.slice(last, idx)));
+      if (m.indexOf(">>") === 0) {
+        node.appendChild(el("a", { class: "user-mention", href: "/@" + m.slice(2) }, m));
+      } else if (/^https?:/i.test(m)) {
+        node.appendChild(el("a", { href: m, rel: "noopener noreferrer" }, m));
+      } else {
+        node.appendChild(el("a", { href: "mailto:" + m }, m));
+      }
+      last = idx + m.length;
+      return m;
+    });
+    if (last < str.length) node.appendChild(document.createTextNode(str.slice(last)));
+  }
+
+  function renderBody(node, text) {
+    clear(node);
+    String(text || "").split(/\n{2,}/).forEach(function (para) {
+      para = para.trim();
+      if (!para) return;
+      var p = el("p");
+      para.split("\n").forEach(function (line, i) {
+        if (i) p.appendChild(el("br"));
+        appendInline(p, line);
+      });
+      node.appendChild(p);
+    });
+  }
+
+  function renderCard(card, data) {
+    var t = card.querySelector("[data-card-title]");
+    var st = card.querySelector("[data-card-subtitle]");
+    var b = card.querySelector("[data-card-body]");
+    if (t) t.textContent = data.title || "";
+    if (st) {
+      clear(st);
+      appendInline(st, data.subtitle || "");
+      st.hidden = !data.subtitle;
+    }
+    if (b) renderBody(b, data.body || "");
+  }
+
+  function bindCard(card) {
+    var kind = card.getAttribute("data-card");
+    var slug = card.getAttribute("data-card-slug");
+    var url = kind === "panel" ? "/api/b/cartao" : "/api/comunidades/" + encodeURIComponent(slug) + "/cartao";
+    var current = null;
+    getJson(url).then(function (out) {
+      if (!out.res.ok) return;
+      current = out.data;
+      renderCard(card, current);
+    }).catch(function () {});
+    me().then(function (info) {
+      if (!info) return;
+      var can = kind === "panel"
+        ? !!info.is_site_admin
+        : !!info.is_site_admin || (info.admin_communities || []).indexOf(slug) !== -1;
+      if (!can) return;
+      var btn = card.querySelector("[data-card-edit]");
+      if (!btn) return;
+      btn.hidden = false;
+      var form = null;
+      btn.addEventListener("click", function () {
+        if (form) {
+          form.remove();
+          form = null;
+          card.classList.remove("is-editing");
+          btn.textContent = "editar";
+          return;
+        }
+        var data = current || {
+          title: (card.querySelector("[data-card-title]") || {}).textContent || "",
+          subtitle: (card.querySelector("[data-card-subtitle]") || {}).textContent || "",
+          body: Array.prototype.map.call(card.querySelectorAll("[data-card-body] p"), function (p) { return p.innerText; }).join("\n\n"),
+        };
+        var ti = el("input", { type: "text", name: "title", maxlength: "80", required: "required" });
+        ti.value = data.title || "";
+        var si = el("input", { type: "text", name: "subtitle", maxlength: "120" });
+        si.value = data.subtitle || "";
+        var bi = el("textarea", { name: "body", maxlength: "2000", rows: "6" });
+        bi.value = data.body || "";
+        var status = el("p", { class: "bd-comments-status", role: "status" });
+        var cancel = el("button", { type: "button", class: "or-card-cancel" }, "Cancelar");
+        form = el("form", { class: "or-card-form" },
+          el("label", null, "Título", ti),
+          el("label", null, "Subtítulo", si),
+          el("label", null, "Texto", bi),
+          el("p", { class: "or-card-hint" }, "Deixe uma linha em branco entre parágrafos."),
+          el("div", { class: "bd-comments-actions" }, el("button", { type: "submit" }, "Salvar"), cancel, status)
+        );
+        cancel.addEventListener("click", function () { btn.click(); });
+        form.addEventListener("submit", function (ev) {
+          ev.preventDefault();
+          status.textContent = "Salvando…";
+          status.className = "bd-comments-status";
+          getJson(url, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: ti.value, subtitle: si.value, body: bi.value }),
+          }).then(function (out) {
+            if (!out.res.ok) {
+              status.textContent = out.data.erro || "Não foi possível salvar.";
+              status.className = "bd-comments-status is-error";
+              return;
+            }
+            current = out.data;
+            renderCard(card, current);
+            btn.click();
+          }).catch(function () {
+            status.textContent = "Falha de rede.";
+            status.className = "bd-comments-status is-error";
+          });
+        });
+        var head = card.querySelector(".or-card-head");
+        head.parentNode.insertBefore(form, head.nextSibling);
+        card.classList.add("is-editing");
+        btn.textContent = "fechar";
+        ti.focus();
+      });
+    });
+  }
+
+  function bindCards() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-card]"), bindCard);
+  }
+
   /* ---------- página /b/membros/ ---------- */
   function renderMembros(root) {
     getJson("/api/membros").then(function (out) {
@@ -394,6 +527,7 @@
   function start() {
     bindCommJoin();
     bindCreate();
+    bindCards();
     if (document.getElementById("bd-comunidades") || document.querySelector("[data-comm-tabs]") || document.querySelector("[data-community-adms]")) {
       refreshComms(false);
     }
