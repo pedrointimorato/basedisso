@@ -67,7 +67,7 @@
         var items = out.data.comentarios || [];
         if (!items.length) {
           listRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhum comentário ainda."));
-          setStatus(listStatus, "");
+          setStatus(listStatus, "0 comentário(s).");
           return;
         }
         items.forEach(function (c) {
@@ -152,7 +152,7 @@
         var items = out.data.reservas || [];
         if (!items.length) {
           resRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhuma reserva ainda."));
-          setStatus(resStatus, "");
+          setStatus(resStatus, "0 reserva(s).");
           return;
         }
         var table = el("table", { class: "mod-res-table" });
@@ -444,7 +444,7 @@
         var items = out.data.postagens || [];
         if (!items.length) {
           postsRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhuma postagem ainda."));
-          setStatus(postsStatus, "");
+          setStatus(postsStatus, "0 postagens.");
           return;
         }
         items.forEach(function (p) {

@@ -73,7 +73,7 @@
       if (!out.res.ok) { setStatus(mcListStatus, out.data.erro || "Falha ao listar.", "erro"); return; }
       clear(mcList);
       var list = out.data.codigos || [];
-      if (!list.length) { mcList.appendChild(el("p", { class: "mod-empty" }, "Nenhum código ainda.")); setStatus(mcListStatus, ""); return; }
+      if (!list.length) { mcList.appendChild(el("p", { class: "mod-empty" }, "Nenhum código ainda.")); setStatus(mcListStatus, "0 códigos."); return; }
       list.forEach(function (c) {
         var head = el("div", { class: "mc-head" },
           el("span", { class: "mc-code" }, c.code),
