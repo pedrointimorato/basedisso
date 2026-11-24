@@ -6,7 +6,7 @@ import {
   normalizeEmail,
   normalizeUsername,
 } from "./auth.js";
-import { countRate, hashIp, recordRate } from "./shared.js";
+import { clientIp, countRate, hashIp, recordRate, sha256Hex } from "./shared.js";
 import { disponibilidadeErro, nameConflict, nextPrimordialN } from "./reservas.js";
 
 export const CODE_RE = /^[A-Za-z0-9]{6}$/;
@@ -20,6 +20,25 @@ export const MSG_SO_PAGANTES =
 const RATE_CODE_CHECK_10MIN = 40;
 const RATE_CODE_FAIL_15MIN = 15;
 const RATE_SIGNUP_CODE_HOUR = 10;
+
+/**
+ * Hash anônimo da "rede" para a trava de 1 cadastro por código: IPv4 completo ou o prefixo /64 do IPv6
+ * (um mesmo acesso IPv6 costuma ter um /64 inteiro e pode trocar de endereço à vontade dentro dele).
+ */
+export function networkOf(ip) {
+  const s = String(ip || "").trim().toLowerCase();
+  if (!s.includes(":")) return s;
+  const [head, tail = ""] = s.split("::");
+  const h = head ? head.split(":") : [];
+  const t = tail ? tail.split(":") : [];
+  const full = s.includes("::") ? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill("0"), ...t] : h;
+  return full.slice(0, 4).map((x) => x.replace(/^0+(?=.)/, "") || "0").join(":") + "::/64";
+}
+
+export async function networkHash(request, env) {
+  const salt = env.IP_HASH_SALT || env.ADMIN_TOKEN || "local-dev-salt";
+  return sha256Hex(`${salt}|net|${networkOf(clientIp(request))}`);
+}
 
 export function normalizeCode(raw) {
   const s = String(raw ?? "").trim();
@@ -191,9 +210,10 @@ export async function validateCodePublic(env, request, raw) {
     }[st];
     return { status: 200, body: { valido: false, motivo, status: st } };
   }
+  const netHash = await networkHash(request, env);
   const used = await db
     .prepare("SELECT 1 AS ok FROM invite_redemptions WHERE code_id = ? AND ip_hash = ?")
-    .bind(row.id, ipHash)
+    .bind(row.id, netHash)
     .first();
   if (used) {
     return { status: 200, body: { valido: false, motivo: "Este código já foi usado nesta rede.", status: "usado_rede" } };
@@ -255,9 +275,10 @@ export async function signupWithCode(env, request, data) {
     }[st] || "Código inválido.";
     return err(msg, st === "inexistente" ? 404 : 410);
   }
+  const netHash = await networkHash(request, env);
   const used = await db
     .prepare("SELECT 1 AS ok FROM invite_redemptions WHERE code_id = ? AND ip_hash = ?")
-    .bind(code.id, ipHash)
+    .bind(code.id, netHash)
     .first();
   if (used) return err("Este código já foi usado nesta rede.", 429);
 
@@ -300,7 +321,7 @@ export async function signupWithCode(env, request, data) {
   try {
     await db
       .prepare("INSERT INTO invite_redemptions (id, code_id, user_id, ip_hash, created_at) VALUES (?, ?, ?, ?, ?)")
-      .bind(crypto.randomUUID(), code.id, userId, ipHash, createdAt)
+      .bind(crypto.randomUUID(), code.id, userId, netHash, createdAt)
       .run();
   } catch (e) {
     await db.prepare("DELETE FROM users WHERE id = ?").bind(userId).run();
