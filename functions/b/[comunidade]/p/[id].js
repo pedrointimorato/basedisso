@@ -98,8 +98,6 @@ export function postPageHtml({ community, post }) {
   const link = post.link ? escapeHtml(post.link) : "";
   const domain = post.link ? escapeHtml(domainOf(post.link)) : "";
   const when = escapeHtml(relativeOrIso(post.created_at));
-  const admActive = slug === "adm" ? " active" : "";
-  const bActive = slug !== "adm" ? " active" : "";
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -126,8 +124,7 @@ export function postPageHtml({ community, post }) {
                         <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
                         <a href="/s/" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
                         <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
-                        <a href="/b/" class="nav-icon-link${bActive}"><span class="nav-letter-icon">B</span></a>
-                        <a href="/b/adm/" class="nav-icon-link${admActive}"><i class="fa-solid fa-users"></i></a>
+                        <a href="/b/" class="nav-icon-link active" title="Comunidades" aria-label="Comunidades"><i class="fa-solid fa-users"></i></a>
                     </div>
                     <div class="nav-right">
                         <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
