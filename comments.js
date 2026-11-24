@@ -73,7 +73,28 @@
     return p;
   }
 
-  function buildForm(page, parentId, onDone) {
+  var widgets = [];
+
+  function reloadWidgets(page) {
+    widgets.forEach(function (w) {
+      if (w.page === page && typeof w.reload === "function") w.reload();
+    });
+  }
+
+  function setSentStatus(status, formOnly) {
+    while (status.firstChild) status.removeChild(status.firstChild);
+    if (formOnly) {
+      status.appendChild(document.createTextNode("Comentário enviado para o post fixado em "));
+      status.appendChild(el("a", { href: "/b/adm/", class: "bd-comments-sent-link" }, "b/adm"));
+      status.appendChild(document.createTextNode("."));
+    } else {
+      status.appendChild(document.createTextNode("Comentário enviado."));
+    }
+    status.classList.add("ok");
+  }
+
+  function buildForm(page, parentId, onDone, opts) {
+    opts = opts || {};
     var status = el("p", { class: "bd-comments-status", role: "status" });
     var nameInput = el("input", {
       type: "text",
@@ -88,7 +109,7 @@
       name: "body",
       maxlength: "2000",
       required: "required",
-      rows: "5",
+      rows: opts.compact ? "3" : "5",
       placeholder: "Escreva seu comentário. Você pode mencionar com >>Nome ou @Nome.",
     });
     var hp = el("input", {
@@ -160,8 +181,7 @@
           }
           form.reset();
           applyUser();
-          status.textContent = "Comentário enviado.";
-          status.classList.add("ok");
+          setSentStatus(status, !!opts.formOnly);
           if (typeof onDone === "function") onDone();
         })
         .catch(function () {
@@ -196,7 +216,7 @@
       }
       open = true;
       var cancel = el("button", { type: "button", class: "bd-comment-cancel" }, "cancelar");
-      var form = buildForm(page, c.id, reload);
+      var form = buildForm(page, c.id, function () { reloadWidgets(page); });
       cancel.addEventListener("click", function () {
         while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
         replyWrap.appendChild(btn);
@@ -246,11 +266,16 @@
   }
 
   function mount(box) {
+    if (box.getAttribute("data-bd-mounted")) return;
+    box.setAttribute("data-bd-mounted", "1");
     var page = box.getAttribute("data-page") || "";
     var title = box.getAttribute("data-title") || "Comentários";
-    var listHost = el("div", { class: "bd-comments-thread" });
+    var formOnly = box.getAttribute("data-form-only") === "true";
+    var compact = formOnly || box.classList.contains("bd-comments-sidebar");
+    var listHost = formOnly ? null : el("div", { class: "bd-comments-thread" });
 
     function reload() {
+      if (formOnly || !listHost) return;
       fetch(API + "?page=" + encodeURIComponent(page), {
         credentials: "same-origin",
         headers: { Accept: "application/json" },
@@ -268,7 +293,9 @@
             );
             return;
           }
-          renderList(listHost, out.data.comentarios || [], page, reload);
+          renderList(listHost, out.data.comentarios || [], page, function () {
+            reloadWidgets(page);
+          });
         })
         .catch(function () {
           while (listHost.firstChild) listHost.removeChild(listHost.firstChild);
@@ -276,10 +303,17 @@
         });
     }
 
-    box.appendChild(el("h2", { class: "bd-comments-title" }, title));
-    box.appendChild(buildForm(page, null, reload));
-    box.appendChild(listHost);
-    reload();
+    widgets.push({ page: page, box: box, reload: reload, formOnly: formOnly });
+    if (!formOnly) box.appendChild(el("h2", { class: "bd-comments-title" }, title));
+    box.appendChild(
+      buildForm(page, null, function () {
+        reloadWidgets(page);
+      }, { formOnly: formOnly, compact: compact })
+    );
+    if (!formOnly) {
+      box.appendChild(listHost);
+      reload();
+    }
   }
 
   function start() {

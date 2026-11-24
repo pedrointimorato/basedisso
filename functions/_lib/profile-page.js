@@ -11,7 +11,7 @@ export function profilePageHtml({ title, initialPath }) {
     <title>${safeTitle}</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261123c">
-    <link rel="stylesheet" href="/comments.css">
+    <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -80,6 +80,7 @@ export function profilePageHtml({ title, initialPath }) {
                         <p>Alguma queixa, elogio, sugestão ou oferta?<br>
                         Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
                         <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                        <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
                     </div>
                 </div>
             </div>
@@ -101,6 +102,7 @@ export function profilePageHtml({ title, initialPath }) {
     </div>
     <script src="/script.js?v=20261123c"></script>
     <script src="/account.js?v=20261123c"></script>
+    <script src="/comments.js?v=20261123f"></script>
     <script src="/perfil.js"></script>
 </body>
 </html>`;

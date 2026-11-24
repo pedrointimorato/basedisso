@@ -179,3 +179,42 @@
         padding-left: 8px;
     }
 }
+
+
+/* Formulário compacto da aba ADM da sidebar: só envio, sem lista */
+.bd-comments-sidebar,
+.adm-box .bd-comments {
+    margin: 14px 0 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+.bd-comments-sidebar .bd-comments-form {
+    margin-bottom: 0;
+    gap: 6px;
+}
+.bd-comments-sidebar label { font-size: 12px; }
+.bd-comments-sidebar input[type="text"],
+.bd-comments-sidebar textarea {
+    font-size: 13px;
+    padding: 6px 8px;
+}
+.bd-comments-sidebar textarea { min-height: 72px; }
+.bd-comments-sidebar .bd-comments-submit {
+    font-size: 12px;
+    padding: 6px 10px;
+}
+.bd-comments-sidebar .bd-comments-status { font-size: 12px; line-height: 1.4; }
+.bd-comments-sidebar .bd-comments-sent-link {
+    color: var(--accent-red, #b92b27);
+    font-weight: 700;
+    text-decoration: underline;
+    word-break: break-all;
+}
+.bd-comments-sidebar .bd-comments-thread,
+.bd-comments-sidebar .bd-comment-list,
+.bd-comments-sidebar .bd-comments-empty,
+.bd-comments-sidebar .bd-comments-title {
+    display: none !important;
+}
