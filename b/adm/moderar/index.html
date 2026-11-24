@@ -6,7 +6,7 @@
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261124a">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124c">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124e">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -142,6 +142,7 @@
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
                 <div class="mod-countrow">
                     <p class="mod-status" id="mod-res-status" role="status"></p>
+                    <button type="button" class="mod-btn danger mod-btn-sm mod-res-limpar" id="mod-res-limpar" hidden>Excluir expirados (0)</button>
                     <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="reservas" aria-controls="mod-res-list" aria-expanded="true">Encolher</button>
                 </div>
                 <div class="mod-card" id="mod-res-list"></div>
@@ -193,7 +194,7 @@
 
     <script src="/account.js?v=20261124a"></script>
     <script src="/b/adm/moderar/moderar-convites.js?v=20261124d"></script>
-    <script src="/b/adm/moderar/moderar.js?v=20261124d"></script>
+    <script src="/b/adm/moderar/moderar.js?v=20261124e"></script>
     <script src="/b/adm/moderar/moderar-collapse.js?v=20261124c"></script>
 </body>
 </html>

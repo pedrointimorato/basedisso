@@ -1,4 +1,4 @@
-import { errorJson, json } from "../../_lib/shared.js";
+import { errorJson, isSameOrigin, json } from "../../_lib/shared.js";
 import { getAdminContext } from "../../_lib/admins.js";
 import { expireHolds } from "../../_lib/reservas.js";
 
@@ -23,4 +23,19 @@ export async function onRequestGet(context) {
   const stmt = env.DB.prepare(sql);
   const { results } = binds.length ? await stmt.bind(...binds).all() : await stmt.all();
   return json({ ok: true, reservas: results || [] });
+}
+
+// Exclui TODAS as reservas expiradas: DELETE /api/moderation/reservas?expired=1
+export async function onRequestDelete(context) {
+  const { request, env } = context;
+  const ctx = await getAdminContext(request, env);
+  if (!ctx.loggedIn) return errorJson("Não autorizado.", 401);
+  if (!ctx.site) return errorJson("Apenas ADMs do site.", 403);
+  if (!isSameOrigin(request)) return errorJson("Origem não permitida.", 403);
+  if (!env.DB) return errorJson("Serviço indisponível.", 503);
+  const url = new URL(request.url);
+  if (url.searchParams.get("expired") !== "1") return errorJson("Use ?expired=1 para excluir as reservas expiradas.", 400);
+  await expireHolds(env.DB);
+  const res = await env.DB.prepare("DELETE FROM reservations WHERE status = 'expired'").run();
+  return json({ ok: true, removidas: Number(res?.meta?.changes || 0) });
 }

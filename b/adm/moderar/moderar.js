@@ -133,6 +133,31 @@
   var resRoot = document.getElementById("mod-res-list");
   var resStatus = document.getElementById("mod-res-status");
 
+  var bulkBtn = document.getElementById("mod-res-limpar");
+  function updateBulk(n) {
+    if (!bulkBtn) return;
+    bulkBtn.hidden = !n;
+    bulkBtn.disabled = false;
+    bulkBtn.dataset.n = String(n);
+    bulkBtn.textContent = "Excluir expirados (" + n + ")";
+  }
+  if (bulkBtn) {
+    bulkBtn.addEventListener("click", function () {
+      var n = Number(bulkBtn.dataset.n || 0);
+      if (!n) return;
+      if (!confirm("Excluir " + n + (n === 1 ? " reserva expirada" : " reservas expiradas") + "? Reservas pagas, reivindicadas ou pendentes no prazo não são afetadas.")) return;
+      bulkBtn.disabled = true;
+      fetch("/api/moderation/reservas?expired=1", { method: "DELETE", credentials: "same-origin", headers: { Accept: "application/json" } })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (d) {
+            if (!res.ok) { bulkBtn.disabled = false; setStatus(resStatus, (d && d.erro) || "Não foi possível excluir.", "erro"); return; }
+            loadReservas();
+          });
+        })
+        .catch(function () { bulkBtn.disabled = false; setStatus(resStatus, "Falha de rede.", "erro"); });
+    });
+  }
+
   function loadReservas() {
     if (!resRoot) return;
     setStatus(resStatus, "Carregando reservas…");
@@ -153,6 +178,7 @@
         if (!items.length) {
           resRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhuma reserva ainda."));
           setStatus(resStatus, "0 reserva(s).");
+          updateBulk(0);
           return;
         }
         var table = el("table", { class: "mod-res-table" });
@@ -183,6 +209,23 @@
               });
             });
           }
+          var delBtn = null;
+          if (r.status === "expired") {
+            delBtn = el("button", { type: "button", class: "mod-btn danger mod-btn-sm mod-res-del", "data-id": r.id }, "Excluir");
+            delBtn.addEventListener("click", function () {
+              delBtn.disabled = true;
+              fetch("/api/moderation/reservas/" + encodeURIComponent(r.id), {
+                method: "DELETE",
+                credentials: "same-origin",
+                headers: { Accept: "application/json" },
+              }).then(function (res) {
+                return res.json().catch(function () { return {}; }).then(function (d) {
+                  if (res.ok) loadReservas();
+                  else { delBtn.disabled = false; setStatus(resStatus, (d && d.erro) || "Não foi possível excluir a reserva.", "erro"); }
+                });
+              }).catch(function () { delBtn.disabled = false; setStatus(resStatus, "Falha de rede.", "erro"); });
+            });
+          }
           tbody.appendChild(el("tr", null,
             el("td", null, ">>" + (r.username || "")),
             el("td", null, el("span", { class: "mod-res-status " + (r.status || "") }, r.status || "")),
@@ -190,13 +233,14 @@
             el("td", null, r.email || "—"),
             el("td", null, fmtTime(r.created_at)),
             el("td", null, r.paid_at ? fmtTime(r.paid_at) : "—"),
-            el("td", null, payBtn)
+            el("td", { class: "mod-res-acoes" }, payBtn, delBtn)
           ));
         });
         table.appendChild(thead);
         table.appendChild(tbody);
         resRoot.appendChild(el("div", { class: "mod-table-scroll" }, table));
         setStatus(resStatus, items.length + " reserva(s).");
+        updateBulk(items.filter(function (r) { return r.status === "expired"; }).length);
       })
       .catch(function () {
         setStatus(resStatus, "Falha de rede ao listar reservas.", "erro");
