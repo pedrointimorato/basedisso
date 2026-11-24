@@ -1,4 +1,4 @@
-/* Painel /b: unir-se/membro, lista dinâmica de comunidades, criação de /b (só ADM do site),
+/* Painel /b: unir-se/membro em cada /b/<slug>, lista dinâmica de comunidades, criação de /b (só ADM do site),
    ADMs de cada comunidade e a página /b/membros/. */
 (function () {
   "use strict";
@@ -112,52 +112,6 @@
     }
     parts.forEach(function (p) { node.appendChild(typeof p === "string" ? document.createTextNode(p) : p); });
     node.hidden = false;
-  }
-
-  function bindJoin() {
-    var btn = document.getElementById("base-join-btn");
-    if (!btn) return;
-    var msg = document.getElementById("base-join-msg");
-    var state = { logado: false, membro: false };
-    getJson("/api/base/membro").then(function (out) {
-      if (out.res.ok) {
-        state = out.data;
-        setJoin(btn, !!state.membro);
-      }
-    }).catch(function () {});
-    btn.addEventListener("click", function () {
-      if (!state.logado) {
-        showJoinMsg(msg, [
-          "Entre na sua conta para se unir. ",
-          el("a", { href: "/entrar/" }, "Entrar"),
-          " · ",
-          el("a", { href: "/cadastro/" }, "Cadastrar"),
-        ]);
-        return;
-      }
-      btn.disabled = true;
-      getJson("/api/base/membro", { method: state.membro ? "DELETE" : "POST" })
-        .then(function (out) {
-          if (out.res.status === 401) {
-            state.logado = false;
-            showJoinMsg(msg, ["Entre na sua conta para se unir. ", el("a", { href: "/entrar/" }, "Entrar"), " · ", el("a", { href: "/cadastro/" }, "Cadastrar")]);
-            return;
-          }
-          if (!out.res.ok) {
-            showJoinMsg(msg, [out.data.erro || "Não foi possível atualizar agora."]);
-            return;
-          }
-          state = out.data;
-          setJoin(btn, !!state.membro);
-          showJoinMsg(msg, state.membro ? ["Você agora é membro da base. ", el("a", { href: "/b/membros/" }, "ver membros")] : null);
-        })
-        .catch(function () {
-          showJoinMsg(msg, ["Falha de rede. Tente de novo."]);
-        })
-        .then(function () {
-          btn.disabled = false;
-        });
-    });
   }
 
   /* ---------- unir-se a cada /b/<slug> ---------- */
@@ -421,6 +375,7 @@
         var pn = document.querySelector(".or-pagename a");
         if (pn && foco) pn.textContent = ">>> b/" + foco.slug;
       }
+      if (count && sMem) {
       var total = Number(d.total_membros || 0);
       count.textContent = total === 1 ? "1 membro" : total + " membros";
       clear(sMem);
@@ -428,7 +383,8 @@
         sMem.appendChild(el("li", null, userNode(u), el("span", { class: "bm-when" }, " · entrou " + relativeTime(u.joined_at))));
       });
       if (!(d.membros || []).length) {
-        sMem.appendChild(el("li", { class: "bm-empty" }, "Nenhum membro ainda. Clique em unir-se no painel /b."));
+        sMem.appendChild(el("li", { class: "bm-empty" }, "Nenhum membro ainda."));
+      }
       }
     }).catch(function () {
       root.textContent = "Falha de rede.";
@@ -436,7 +392,6 @@
   }
 
   function start() {
-    bindJoin();
     bindCommJoin();
     bindCreate();
     if (document.getElementById("bd-comunidades") || document.querySelector("[data-comm-tabs]") || document.querySelector("[data-community-adms]")) {
