@@ -169,3 +169,9 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mc-result-link { font-size: 13px; margin: 6px 0 0; word-break: break-all; }
 .mc-result-link a { color: var(--accent-red); }
 .mc-result .mod-actions { margin-top: 8px; }
+/* Linha de contagem + Encolher/Expandir */
+.mod-countrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0 8px; min-height: 30px; }
+.mod-countrow .mod-status { margin: 0; flex: 1 1 auto; min-width: 0; }
+.mod-countrow .mod-collapse-btn { flex: 0 0 auto; margin-left: auto; min-width: 88px; }
+.mod-collapsible[hidden] { display: none !important; }
+.mx-h3 + .mod-countrow { margin-top: 4px; }

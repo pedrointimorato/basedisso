@@ -6,7 +6,7 @@
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261124a">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124b">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124c">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -122,19 +122,28 @@
             <div class="mod-section" id="mod-sec-comentarios">
                 <h2>Comentários</h2>
                 <p class="mod-lead" id="mod-comments-lead">Oculte ou apague comentários.</p>
-                <p class="mod-status" id="mod-list-status" role="status"></p>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="mod-list-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="comentarios" aria-controls="mod-list" aria-expanded="true">Encolher</button>
+                </div>
                 <div class="mod-card" id="mod-list"></div>
             </div>
             <div class="mod-section mod-posts" id="mod-sec-posts">
                 <h2>Postagens das comunidades</h2>
                 <p class="mod-lead">Oculte ou apague postagens. Os comentários da postagem apagada também são removidos.</p>
-                <p class="mod-status" id="mod-posts-status" role="status"></p>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="mod-posts-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="postagens" aria-controls="mod-posts-list" aria-expanded="true">Encolher</button>
+                </div>
                 <div class="mod-card" id="mod-posts-list"></div>
             </div>
             <div class="mod-section mod-reservas" id="mod-sec-res" data-site-only>
                 <h2>Reservas de nomes primordiais</h2>
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
-                <p class="mod-status" id="mod-res-status" role="status"></p>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="mod-res-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="reservas" aria-controls="mod-res-list" aria-expanded="true">Encolher</button>
+                </div>
                 <div class="mod-card" id="mod-res-list"></div>
             </div>
             <div class="mod-section" id="sec-convites" data-site-only>
@@ -160,7 +169,10 @@
                     <p class="mod-status" id="mc-status" role="status"></p>
                     <div class="mc-result" id="mc-result" hidden></div>
                 </div>
-                <p class="mod-status" id="mc-list-status" role="status"></p>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="mc-list-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="codigos" aria-controls="mc-list" aria-expanded="true">Encolher</button>
+                </div>
                 <div class="mod-card mc-list" id="mc-list"></div>
             </div>
 
@@ -170,13 +182,18 @@
                 <p class="mod-status" id="mx-status" role="status"></p>
                 <div class="mx-grid" id="mx-grid"></div>
                 <h3 class="mx-h3">Contribuições recentes (Pix)</h3>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="mx-contrib-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="contribuicoes" aria-controls="mx-contrib" aria-expanded="true">Encolher</button>
+                </div>
                 <div class="mod-card mx-contrib" id="mx-contrib"></div>
             </div>
         </section>
     </main>
 
     <script src="/account.js?v=20261124a"></script>
-    <script src="/b/adm/moderar/moderar-convites.js?v=20261124b"></script>
-    <script src="/b/adm/moderar/moderar.js?v=20261124a"></script>
+    <script src="/b/adm/moderar/moderar-convites.js?v=20261124c"></script>
+    <script src="/b/adm/moderar/moderar.js?v=20261124c"></script>
+    <script src="/b/adm/moderar/moderar-collapse.js?v=20261124c"></script>
 </body>
 </html>

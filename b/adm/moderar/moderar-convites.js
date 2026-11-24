@@ -236,6 +236,8 @@
 
   function renderContrib(list) {
     clear(mxContrib);
+    var mxCount = document.getElementById("mx-contrib-status");
+    if (mxCount) setStatus(mxCount, list.length + (list.length === 1 ? " contribuição." : " contribuições."));
     if (!list.length) { mxContrib.appendChild(el("p", { class: "mod-empty" }, "Nenhuma contribuição ainda.")); return; }
     var tb = el("tbody");
     list.forEach(function (c) {
