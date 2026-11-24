@@ -227,13 +227,13 @@
             });
           }
           tbody.appendChild(el("tr", null,
-            el("td", null, ">>" + (r.username || "")),
-            el("td", null, el("span", { class: "mod-res-status " + (r.status || "") }, r.status || "")),
-            el("td", null, r.primordial_n != null ? "#" + r.primordial_n : "—"),
-            el("td", null, r.email || "—"),
-            el("td", null, fmtTime(r.created_at)),
-            el("td", null, r.paid_at ? fmtTime(r.paid_at) : "—"),
-            el("td", { class: "mod-res-acoes" }, payBtn, delBtn)
+            el("td", { class: "mod-res-nome" }, ">>" + (r.username || "")),
+            el("td", { class: "mod-res-estado" }, el("span", { class: "mod-res-status " + (r.status || "") }, r.status || "")),
+            el("td", { "data-label": "Nº", class: r.primordial_n != null ? null : "mod-res-vazio" }, r.primordial_n != null ? "#" + r.primordial_n : "—"),
+            el("td", { "data-label": "E-mail", class: r.email ? null : "mod-res-vazio" }, r.email || "—"),
+            el("td", { "data-label": "Criada" }, fmtTime(r.created_at)),
+            el("td", { "data-label": "Pagamento", class: r.paid_at ? null : "mod-res-vazio" }, r.paid_at ? fmtTime(r.paid_at) : "—"),
+            el("td", { class: "mod-res-acoes" + (payBtn || delBtn ? "" : " mod-res-vazio") }, payBtn, delBtn)
           ));
         });
         table.appendChild(thead);

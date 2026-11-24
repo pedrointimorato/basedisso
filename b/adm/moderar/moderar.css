@@ -182,3 +182,19 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mod-countrow .mod-res-limpar[hidden] + .mod-collapse-btn { margin-left: auto; }
 .mod-res-acoes { white-space: nowrap; }
 .mod-res-acoes .mod-btn + .mod-btn { margin-left: 6px; }
+/* Reservas no celular: linhas viram cartões, ações sempre visíveis */
+@media (max-width: 600px) {
+    .mod-res-table { min-width: 0 !important; width: 100%; }
+    .mod-res-table thead { display: none; }
+    .mod-res-table, .mod-res-table tbody, .mod-res-table tr, .mod-res-table td { display: block; }
+    .mod-res-table tr { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+    .mod-res-table tr:last-child { border-bottom: 0; }
+    .mod-res-table td { border: 0 !important; padding: 0 !important; font-size: 13px; }
+    .mod-res-table td.mod-res-nome { font-weight: 700; font-size: 14px; word-break: break-all; }
+    .mod-res-table td[data-label]::before { content: attr(data-label) ": "; color: var(--text-secondary); }
+    .mod-res-table td.mod-res-vazio { display: none; }
+    .mod-res-table td[data-label="Criada"] { flex-basis: 100%; color: var(--text-secondary); font-size: 12px; }
+    .mod-res-table td[data-label="Criada"]::before { content: "Criada em "; }
+    .mod-res-table td.mod-res-acoes { flex-basis: 100%; margin-top: 4px; white-space: normal; display: flex; flex-wrap: wrap; gap: 6px; }
+    .mod-res-table td.mod-res-acoes .mod-btn + .mod-btn { margin-left: 0; }
+}
