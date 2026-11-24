@@ -6,7 +6,7 @@
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261124a">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124a">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -158,6 +158,7 @@
                         <div class="mod-actions"><button type="submit" class="mod-btn">Gerar código</button></div>
                     </form>
                     <p class="mod-status" id="mc-status" role="status"></p>
+                    <div class="mc-result" id="mc-result" hidden></div>
                 </div>
                 <p class="mod-status" id="mc-list-status" role="status"></p>
                 <div class="mod-card mc-list" id="mc-list"></div>
@@ -165,7 +166,7 @@
 
             <div class="mod-section" id="sec-caixas" data-site-only>
                 <h2>Caixas de acesso coletivo</h2>
-                <p class="mod-lead">A espera conta a partir da abertura da caixa anterior da mesma classe. Com a reabertura travada, nenhuma caixa nova abre sozinha até um ADM abrir manualmente.</p>
+                <p class="mod-lead">A espera conta a partir do primeiro Pix confirmado da caixa anterior da mesma classe. Com a reabertura travada, nenhuma caixa nova abre sozinha até um ADM abrir manualmente.</p>
                 <p class="mod-status" id="mx-status" role="status"></p>
                 <div class="mx-grid" id="mx-grid"></div>
                 <h3 class="mx-h3">Contribuições recentes (Pix)</h3>
@@ -175,7 +176,7 @@
     </main>
 
     <script src="/account.js?v=20261124a"></script>
-    <script src="/b/adm/moderar/moderar-convites.js?v=20261124a"></script>
+    <script src="/b/adm/moderar/moderar-convites.js?v=20261124b"></script>
     <script src="/b/adm/moderar/moderar.js?v=20261124a"></script>
 </body>
 </html>

@@ -159,3 +159,13 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mx-st.paid { color: #228822; }
 .mx-st.pending { color: #8a5a12; }
 .mx-st.expired, .mx-st.failed { color: var(--text-light); }
+.mc-head .mc-linkbtn { margin-left: auto; }
+.mc-head .mc-linkbtn + .mod-btn-sm { margin-left: 0; }
+.mc-result { margin-top: 14px; border: 1px dashed #228822; background: #effaef; border-radius: 8px; padding: 12px 14px; }
+[data-theme="dark"] .mc-result { background: #1d2a1d; }
+.mc-result-top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.mc-result-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #228822; letter-spacing: 0.05em; }
+.mc-result-code { font-size: 22px; }
+.mc-result-link { font-size: 13px; margin: 6px 0 0; word-break: break-all; }
+.mc-result-link a { color: var(--accent-red); }
+.mc-result .mod-actions { margin-top: 8px; }

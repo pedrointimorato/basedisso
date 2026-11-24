@@ -349,8 +349,18 @@
         }, 500);
       },
     };
-    var pre = (location.search.match(/[?&]codigo=([A-Za-z0-9]{6})/) || [])[1];
-    if (pre) { codeInput.value = pre.toUpperCase(); validateCode(); }
+    // Link de autocompletar: /cadastro/?codigo=XXXXXX (ou ?c=XXXXXX)
+    var params = new URLSearchParams(location.search);
+    var pre = String(params.get("codigo") || params.get("c") || params.get("CODIGO") || params.get("C") || "")
+      .replace(/[^A-Za-z0-9]/g, "")
+      .toUpperCase();
+    if (CODE_RE.test(pre)) {
+      codeInput.value = pre;
+      validateCode();
+      setTimeout(function () {
+        try { (userInput.value.trim() ? codePass : userInput).focus(); } catch (e) {}
+      }, 50);
+    }
   }
 
   if (cardBtn) {

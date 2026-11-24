@@ -162,3 +162,6 @@
     width: 100%;
 }
 .adm-code-row select { width: auto; flex: 0 0 auto; }
+.convite-link { font-size: 12px; margin: 4px 0 0; color: var(--text-secondary, #636466); word-break: break-all; }
+.convite-link a { color: var(--accent-red, #b92b27); }
+.convite-hist .ch-link { margin-left: auto; padding: 3px 9px; font-size: 12px; }

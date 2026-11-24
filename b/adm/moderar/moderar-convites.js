@@ -46,6 +46,21 @@
     });
   }
   var KIND = { adm: "ADM", primordial: "Primordial" };
+  function linkFor(code) { return location.origin + "/cadastro/?codigo=" + encodeURIComponent(code); }
+  function copy(text, btn, okLabel) {
+    function done() {
+      if (btn._orig == null) btn._orig = btn.textContent;
+      btn.textContent = okLabel;
+      clearTimeout(btn._t);
+      btn._t = setTimeout(function () { btn.textContent = btn._orig; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(function () {});
+  }
+  function linkBtn(code, cls) {
+    var b = el("button", { type: "button", class: cls || "mod-btn secondary mod-btn-sm", "data-link": linkFor(code) }, "Copiar link");
+    b.addEventListener("click", function () { copy(linkFor(code), b, "Link copiado!"); });
+    return b;
+  }
   function kindLabel(c) { return c.kind === "collective" ? "Caixa R$ " + c.tier_id : KIND[c.kind] || c.kind; }
 
   /* ---------- Códigos ---------- */
@@ -66,6 +81,7 @@
           el("span", { class: "mc-st " + c.status }, c.status)
         );
         if (c.status === "ativo") {
+          head.appendChild(linkBtn(c.code, "mod-btn secondary mod-btn-sm mc-linkbtn"));
           var rv = el("button", { type: "button", class: "mod-btn danger mod-btn-sm" }, "Revogar");
           rv.addEventListener("click", function () {
             if (!confirm("Revogar o código " + c.code + "? Ninguém mais poderá se cadastrar com ele.")) return;
@@ -102,6 +118,21 @@
     }).catch(function () { setStatus(mcListStatus, "Falha de rede.", "erro"); });
   }
 
+  function showResult(c) {
+    var box = document.getElementById("mc-result");
+    if (!box) return;
+    clear(box);
+    var url = linkFor(c.code);
+    var cp = el("button", { type: "button", class: "mod-btn mod-btn-sm" }, "Copiar código");
+    cp.addEventListener("click", function () { copy(c.code, cp, "Código copiado!"); });
+    box.appendChild(el("div", { class: "mc-result-top" },
+      el("span", { class: "mc-result-label" }, "Novo código · " + dur(c.duration_minutes) + (c.max_uses ? " · até " + c.max_uses + " usos" : "")),
+      el("span", { class: "mc-code mc-result-code" }, c.code)));
+    box.appendChild(el("p", { class: "mc-result-link" }, "Link de autocompletar: ", el("a", { href: url, target: "_blank", rel: "noopener" }, url)));
+    box.appendChild(el("div", { class: "mod-actions" }, cp, linkBtn(c.code, "mod-btn secondary mod-btn-sm")));
+    box.hidden = false;
+  }
+
   var mcForm = document.getElementById("mc-form");
   if (mcForm) {
     mcForm.addEventListener("submit", function (ev) {
@@ -117,6 +148,7 @@
       }).then(function (out) {
         if (!out.res.ok) { setStatus(st, out.data.erro || "Não foi possível gerar.", "erro"); return; }
         setStatus(st, "Código " + out.data.codigo.code + " criado (expira " + fmt(out.data.codigo.expires_at) + ").", "ok");
+        showResult(out.data.codigo);
         document.getElementById("mc-code").value = "";
         loadCodes();
       }).catch(function () { setStatus(st, "Falha de rede.", "erro"); });
@@ -145,12 +177,16 @@
       var pct = Math.min(100, (box.raised_cents / box.goal_cents) * 100);
       card.appendChild(el("div", { class: "mx-bar" }, el("span", { style: "width:" + pct.toFixed(1) + "%" })));
       card.appendChild(el("p", { class: "mx-line" }, "Rodada #" + box.round_n + ": " + brl(box.raised_cents) + " / " + brl(box.goal_cents)));
-      card.appendChild(el("p", { class: "mx-line sub" }, "Aberta em " + fmt(box.opened_at) + " · próxima pode abrir a partir de " + fmt(new Date(new Date(box.opened_at).getTime() + t.cooldown_minutes * 60000).toISOString())));
+      card.appendChild(el("p", { class: "mx-line sub" }, box.first_pix_at
+        ? "1º Pix em " + fmt(box.first_pix_at) + " · próxima pode abrir a partir de " + fmt(new Date(new Date(box.first_pix_at).getTime() + t.cooldown_minutes * 60000).toISOString())
+        : "Aberta em " + fmt(box.opened_at) + " · espera começa no 1º Pix"));
     } else if (t.ultima) {
       card.appendChild(el("p", { class: "mx-line" }, "Última: rodada #" + t.ultima.round_n + " (" + (t.ultima.status === "funded" ? "completa" : "fechada") + ")"));
       if (t.next_open_at) {
         var left = new Date(t.next_open_at).getTime() - Date.now();
-        card.appendChild(el("p", { class: "mx-line sub" }, left > 0 ? "Espera termina em " + clock(left) + " (" + fmt(t.next_open_at) + ")" : "Espera concluída" + (t.auto_reopen ? "" : " · aguardando ADM")));
+        card.appendChild(el("p", { class: "mx-line sub" }, "1º Pix em " + fmt(t.ultima.first_pix_at) + " · " + (left > 0 ? "espera termina em " + clock(left) + " (" + fmt(t.next_open_at) + ")" : "espera concluída" + (t.auto_reopen ? "" : " · aguardando ADM"))));
+      } else {
+        card.appendChild(el("p", { class: "mx-line sub" }, "Sem Pix na rodada anterior · sem espera" + (t.auto_reopen ? "" : " · aguardando ADM")));
       }
     } else {
       card.appendChild(el("p", { class: "mx-line sub" }, "Nenhuma rodada ainda."));

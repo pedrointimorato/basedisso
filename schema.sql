@@ -244,7 +244,8 @@ CREATE TABLE IF NOT EXISTS collective_boxes (
   status TEXT NOT NULL,
   opened_at TEXT NOT NULL,
   funded_at TEXT,
-  code_id TEXT
+  code_id TEXT,
+  first_pix_at TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_collective_boxes_tier_status ON collective_boxes(tier_id, status);
 CREATE INDEX IF NOT EXISTS idx_collective_boxes_tier_opened ON collective_boxes(tier_id, opened_at);
@@ -268,3 +269,13 @@ CREATE TABLE IF NOT EXISTS collective_contributions (
 CREATE INDEX IF NOT EXISTS idx_collective_contrib_box ON collective_contributions(box_id);
 CREATE INDEX IF NOT EXISTS idx_collective_contrib_status ON collective_contributions(status);
 CREATE INDEX IF NOT EXISTS idx_collective_contrib_payment ON collective_contributions(mp_payment_id);
+
+-- Espera das caixas conta a partir do 1º Pix confirmado (aplicado uma vez, verificando PRAGMA table_info(collective_boxes) antes):
+-- ALTER TABLE collective_boxes ADD COLUMN first_pix_at TEXT;
+-- Backfill não destrutivo:
+UPDATE collective_boxes SET first_pix_at = (
+  SELECT MIN(COALESCE(c.paid_at, c.created_at)) FROM collective_contributions c
+  WHERE c.box_id = collective_boxes.id AND c.status = 'paid')
+WHERE first_pix_at IS NULL
+  AND EXISTS (SELECT 1 FROM collective_contributions c WHERE c.box_id = collective_boxes.id AND c.status = 'paid');
+UPDATE collective_boxes SET first_pix_at = COALESCE(funded_at, opened_at) WHERE first_pix_at IS NULL AND status = 'funded';

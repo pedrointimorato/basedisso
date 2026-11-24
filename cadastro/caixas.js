@@ -58,8 +58,14 @@
   }
   function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
 
-  function copy(text, btn) {
-    function done() { var o = btn.textContent; btn.textContent = "Copiado"; setTimeout(function () { btn.textContent = o; }, 1500); }
+  function linkFor(code) { return location.origin + "/cadastro/?codigo=" + encodeURIComponent(code); }
+  function copy(text, btn, okLabel) {
+    function done() {
+      if (btn._orig == null) btn._orig = btn.textContent;
+      btn.textContent = okLabel || "Copiado";
+      clearTimeout(btn._t);
+      btn._t = setTimeout(function () { btn.textContent = btn._orig; }, 1600);
+    }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(function () {});
     else {
       var ta = el("textarea", { readonly: "readonly" }); ta.value = text; document.body.appendChild(ta); ta.select();
@@ -231,18 +237,21 @@
       cp.addEventListener("click", function () { copy(code.code, cp); });
       var usar = el("button", { type: "button", class: "caixa-btn primario" }, "Usar este código");
       usar.addEventListener("click", function () { usarCodigo(code.code); });
+      var cpl = el("button", { type: "button", class: "caixa-btn", "data-link": linkFor(code.code) }, "Copiar link");
+      cpl.addEventListener("click", function () { copy(linkFor(code.code), cpl, "Link copiado!"); });
       c.dyn.appendChild(el("div", { class: "caixa-codigo" },
         el("div", { class: "caixa-codigo-top" },
           el("span", { class: "caixa-codigo-label" }, "Código ativo" + (code.round_n ? " · rodada #" + code.round_n : "")),
           timerNode
         ),
         el("div", { class: "caixa-codigo-valor" }, code.code),
-        el("div", { class: "caixa-codigo-acoes" }, cp, usar)
+        el("div", { class: "caixa-codigo-acoes" }, cp, cpl, usar)
       ));
     });
 
     if (t.estado === "espera" && t.next_open_at) {
-      c.dyn.appendChild(el("p", { class: "caixa-status", "data-abre": t.next_open_at }, "Próxima caixa abre em " + humanLeft(new Date(t.next_open_at).getTime() - now())));
+      c.dyn.appendChild(el("p", { class: "caixa-status", "data-abre": t.next_open_at, title: "A espera conta a partir do 1º Pix confirmado da caixa anterior." }, "Próxima caixa abre em " + humanLeft(new Date(t.next_open_at).getTime() - now())));
+      c.dyn.appendChild(el("p", { class: "caixa-recentes" }, "A espera começou no 1º Pix da rodada anterior."));
     } else if (t.estado === "travada") {
       c.dyn.appendChild(el("p", { class: "caixa-status travada" }, "Aguardando liberação dos ADMs"));
     }

@@ -71,10 +71,10 @@ export async function fundBox(db, boxId) {
   const now = new Date().toISOString();
   const box = await db
     .prepare(
-      `UPDATE collective_boxes SET status = 'funded', funded_at = ?
+      `UPDATE collective_boxes SET status = 'funded', funded_at = ?, first_pix_at = COALESCE(first_pix_at, ?)
        WHERE id = ? AND status = 'open' AND raised_cents >= goal_cents RETURNING *`
     )
-    .bind(now, boxId)
+    .bind(now, now, boxId)
     .first();
   if (!box) return null;
   const surplus = Math.max(0, Number(box.raised_cents) - Number(box.goal_cents));
@@ -95,6 +95,12 @@ export async function fundBox(db, boxId) {
   return { box: { ...box, raised_cents: box.goal_cents, code_id: code.id }, code, surplus };
 }
 
+/** Próxima abertura permitida: 1º Pix confirmado + espera da classe (null enquanto não houver Pix). */
+export function nextOpenFor(box, tier) {
+  if (!box || !box.first_pix_at) return null;
+  return addMinutesIso(box.first_pix_at, Number(tier.cooldown_minutes));
+}
+
 /** Abre caixas preguiçosamente (sem cron): espera contada a partir da abertura da anterior da mesma classe. */
 export async function syncCollectiveBoxes(db) {
   const now = new Date().toISOString();
@@ -109,8 +115,9 @@ export async function syncCollectiveBoxes(db) {
     if (latest && latest.status === "open") continue;
     if (!Number(tier.auto_reopen)) continue;
     if (latest) {
-      const nextOpen = addMinutesIso(latest.opened_at, Number(tier.cooldown_minutes));
-      if (now < nextOpen) continue;
+      // A espera conta a partir do 1º Pix confirmado da caixa anterior (sem Pix = sem espera).
+      const nextOpen = nextOpenFor(latest, tier);
+      if (nextOpen && now < nextOpen) continue;
     }
     await openBoxForTier(db, tier.id);
   }
@@ -131,17 +138,16 @@ export async function tierView(db, tier, { admin = false } = {}) {
   const ativos = (codes || [])
     .filter((c) => codeStatus(c, now) === "ativo")
     .map((c) => ({ id: c.id, code: c.code_upper, expires_at: c.expires_at, uses_count: Number(c.uses_count || 0), round_n: c.round_n == null ? null : Number(c.round_n) }));
-  let nextOpenAt = null;
+  const nextOpenAt = latest ? nextOpenFor(latest, tier) : null;
   let estado = "aberta";
   if (!Number(tier.enabled)) estado = "pausada";
   else if (!open) {
-    if (latest) nextOpenAt = addMinutesIso(latest.opened_at, Number(tier.cooldown_minutes));
     if (!Number(tier.auto_reopen)) estado = "travada";
     else estado = "espera";
   }
   const { results: recent } = await db
     .prepare(
-      `SELECT round_n, status, goal_cents, raised_cents, opened_at, funded_at FROM collective_boxes
+      `SELECT round_n, status, goal_cents, raised_cents, opened_at, funded_at, first_pix_at FROM collective_boxes
        WHERE tier_id = ? AND status != 'open' ORDER BY opened_at DESC LIMIT 3`
     )
     .bind(tier.id)
@@ -163,11 +169,13 @@ export async function tierView(db, tier, { admin = false } = {}) {
           goal_cents: Number(open.goal_cents),
           raised_cents: Number(open.raised_cents),
           opened_at: open.opened_at,
+          first_pix_at: open.first_pix_at || null,
         }
       : null,
     ultima: latest
-      ? { round_n: Number(latest.round_n), status: latest.status, opened_at: latest.opened_at, funded_at: latest.funded_at || null }
+      ? { round_n: Number(latest.round_n), status: latest.status, opened_at: latest.opened_at, funded_at: latest.funded_at || null, first_pix_at: latest.first_pix_at || null }
       : null,
+    first_pix_at: latest ? latest.first_pix_at || null : null,
     next_open_at: nextOpenAt,
     codigos_ativos: ativos,
     rodadas_recentes: (recent || []).map((r) => ({
@@ -177,6 +185,7 @@ export async function tierView(db, tier, { admin = false } = {}) {
       raised_cents: Number(r.raised_cents),
       opened_at: r.opened_at,
       funded_at: r.funded_at || null,
+      first_pix_at: r.first_pix_at || null,
     })),
   };
   if (admin) out.carryover_cents = Number(tier.carryover_cents || 0);
@@ -209,14 +218,18 @@ export async function confirmBoxContribution(db, contributionId, { paymentId = n
   }
   const amount = Number(contrib.amount_cents);
   let box = await db
-    .prepare("UPDATE collective_boxes SET raised_cents = raised_cents + ? WHERE id = ? AND status = 'open' RETURNING *")
-    .bind(amount, contrib.box_id)
+    .prepare(
+      "UPDATE collective_boxes SET raised_cents = raised_cents + ?, first_pix_at = COALESCE(first_pix_at, ?) WHERE id = ? AND status = 'open' RETURNING *"
+    )
+    .bind(amount, contrib.paid_at || now, contrib.box_id)
     .first();
   if (!box) {
     // A caixa original já fechou/completou antes do Pix cair: credita a caixa aberta da classe ou o saldo da classe.
     box = await db
-      .prepare("UPDATE collective_boxes SET raised_cents = raised_cents + ? WHERE tier_id = ? AND status = 'open' RETURNING *")
-      .bind(amount, contrib.tier_id)
+      .prepare(
+        "UPDATE collective_boxes SET raised_cents = raised_cents + ?, first_pix_at = COALESCE(first_pix_at, ?) WHERE tier_id = ? AND status = 'open' RETURNING *"
+      )
+      .bind(amount, contrib.paid_at || now, contrib.tier_id)
       .first();
     if (!box) {
       await db

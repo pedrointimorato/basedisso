@@ -39,23 +39,33 @@
   }
   var ST = { ativo: "ativo", expirado: "expirado", revogado: "revogado", esgotado: "esgotado" };
 
-  function copy(text, btn) {
-    if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () {
-      var o = btn.textContent; btn.textContent = "Copiado"; setTimeout(function () { btn.textContent = o; }, 1500);
-    }).catch(function () {});
+  function linkFor(code) { return location.origin + "/cadastro/?codigo=" + encodeURIComponent(code); }
+  function copy(text, btn, okLabel) {
+    function done() {
+      if (btn._orig == null) btn._orig = btn.textContent;
+      btn.textContent = okLabel || "Copiado";
+      clearTimeout(btn._t);
+      btn._t = setTimeout(function () { btn.textContent = btn._orig; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(function () {});
+  }
+  function linkBtn(code, cls) {
+    var b = el("button", { type: "button", class: cls || "caixa-btn", "data-link": linkFor(code) }, "Copiar link");
+    b.addEventListener("click", function () { copy(linkFor(code), b, "Link copiado!"); });
+    return b;
   }
 
-  function codeBox(code, label) {
+  function codeBox(code, label, copyLabel) {
     var timer = el("span", { class: "caixa-codigo-timer", "data-expira": code.expires_at });
-    var cp = el("button", { type: "button", class: "caixa-btn" }, "Copiar");
-    cp.addEventListener("click", function () { copy(code.code, cp); });
-    var link = el("button", { type: "button", class: "caixa-btn" }, "Copiar link");
-    link.addEventListener("click", function () { copy(location.origin + "/cadastro/?codigo=" + code.code, link); });
+    var cp = el("button", { type: "button", class: "caixa-btn" }, copyLabel || "Copiar");
+    cp.addEventListener("click", function () { copy(code.code, cp, "Código copiado!"); });
+    var url = linkFor(code.code);
     return el("div", { class: "caixa-codigo convite-ativo" },
       el("div", { class: "caixa-codigo-top" }, el("span", { class: "caixa-codigo-label" }, label || "Seu código ativo"), timer),
       el("div", { class: "caixa-codigo-valor" }, code.code),
       el("p", { class: "caixa-recentes" }, "Expira " + fmt(code.expires_at) + " · " + code.uses_count + (code.uses_count === 1 ? " uso" : " usos") + (code.max_uses ? " de " + code.max_uses : "")),
-      el("div", { class: "caixa-codigo-acoes" }, cp, link)
+      el("p", { class: "convite-link" }, "Link de cadastro: ", el("a", { href: url }, url)),
+      el("div", { class: "caixa-codigo-acoes" }, cp, linkBtn(code.code))
     );
   }
 
@@ -66,7 +76,8 @@
       ul.appendChild(el("li", null,
         el("span", { class: "ch-code" }, c.code),
         el("span", { class: "ch-st " + c.status }, ST[c.status] || c.status),
-        el("span", { class: "ch-meta" }, (c.kind === "adm" ? "ADM · " + durLabel(c.duration_minutes) : "primordial · 24h") + " · criado " + fmt(c.created_at) + " · " + c.uses_count + (c.uses_count === 1 ? " uso" : " usos"))
+        el("span", { class: "ch-meta" }, (c.kind === "adm" ? "ADM · " + durLabel(c.duration_minutes) : "primordial · 24h") + " · criado " + fmt(c.created_at) + " · " + c.uses_count + (c.uses_count === 1 ? " uso" : " usos")),
+        c.status === "ativo" ? linkBtn(c.code, "caixa-btn ch-link") : null
       ));
     });
     return ul;
@@ -164,7 +175,7 @@
           st.textContent = "Código criado."; st.className = "auth-status ok";
           var res = document.getElementById("adm-code-result");
           clear(res);
-          res.appendChild(codeBox(out.data.codigo, "Código de ADM · " + durLabel(out.data.codigo.duration_minutes)));
+          res.appendChild(codeBox(out.data.codigo, "Novo código de ADM · " + durLabel(out.data.codigo.duration_minutes), "Copiar código"));
           document.getElementById("adm-code-custom").value = "";
           load();
         })
