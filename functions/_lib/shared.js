@@ -1,4 +1,4 @@
-import { getCommunity, UUID_RE } from "./comunidades.js";
+import { SLUG_RE, UUID_RE } from "./comunidades.js";
 
 const FIXED_COMMENT_PAGES = new Set(["/s", "/s/biblia-amarela", "/b/adm"]);
 const NAME_MAX = 80;
@@ -40,8 +40,8 @@ export function normalizePage(raw) {
   if (s.length > 200 || s.includes("..") || /[^a-zA-Z0-9/_-]/.test(s)) return null;
   if (s === "/adm") s = "/b/adm";
   if (FIXED_COMMENT_PAGES.has(s)) return s;
-  const m = s.match(/^\/b\/([a-z][a-z0-9_-]{0,20})\/p\/([0-9a-f-]{36})$/i);
-  if (m && getCommunity(m[1]) && UUID_RE.test(m[2])) {
+  const m = s.match(/^\/b\/([a-z0-9][a-z0-9_-]{0,23})\/p\/([0-9a-f-]{36})$/i);
+  if (m && SLUG_RE.test(m[1].toLowerCase()) && UUID_RE.test(m[2])) {
     return `/b/${m[1].toLowerCase()}/p/${m[2].toLowerCase()}`;
   }
   return null;

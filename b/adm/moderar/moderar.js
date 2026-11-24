@@ -54,7 +54,7 @@
         });
       })
       .then(function (out) {
-        if (out.res.status === 401) {
+        if (out.res.status === 401 || out.res.status === 403) {
           document.body.classList.remove("mod-in");
           setStatus(loginStatus, "Entre novamente.", "erro");
           return;
@@ -63,9 +63,7 @@
           setStatus(listStatus, out.data && out.data.erro ? out.data.erro : "Falha ao listar.", "erro");
           return;
         }
-        document.body.classList.add("mod-in");
         while (listRoot.firstChild) listRoot.removeChild(listRoot.firstChild);
-        loadPosts();
         var items = out.data.comentarios || [];
         if (!items.length) {
           listRoot.appendChild(el("p", { class: "mod-empty" }, "Nenhum comentário ainda."));
@@ -124,7 +122,6 @@
           );
         });
         setStatus(listStatus, items.length + " comentário(s).");
-        loadReservas();
       })
       .catch(function () {
         setStatus(listStatus, "Falha de rede.", "erro");
@@ -198,7 +195,7 @@
         });
         table.appendChild(thead);
         table.appendChild(tbody);
-        resRoot.appendChild(table);
+        resRoot.appendChild(el("div", { class: "mod-table-scroll" }, table));
         setStatus(resStatus, items.length + " reserva(s).");
       })
       .catch(function () {
@@ -229,7 +226,7 @@
           return;
         }
         setStatus(loginStatus, "");
-        loadList();
+        initPanel();
       })
       .catch(function () {
         setStatus(loginStatus, "Falha de rede.", "erro");
@@ -238,18 +235,188 @@
 
   document.getElementById("mod-logout").addEventListener("click", function () {
     fetch("/api/moderation/logout", { method: "POST", credentials: "same-origin" }).finally(function () {
-      document.body.classList.remove("mod-in");
-      while (listRoot.firstChild) listRoot.removeChild(listRoot.firstChild);
+      window.location.reload();
     });
   });
 
-  // If a valid session cookie already exists, show the list.
-  fetch("/api/moderation/comments?limit=1", {
-    credentials: "same-origin",
-    headers: { Accept: "application/json" },
-  }).then(function (res) {
-    if (res.ok) loadList();
+  /* ---------- ADMs (sessão de conta ou senha) ---------- */
+  var adminState = null;
+
+  function api(method, url, body) {
+    var opts = { method: method, credentials: "same-origin", headers: { Accept: "application/json" } };
+    if (body) {
+      opts.headers["Content-Type"] = "application/json";
+      opts.body = JSON.stringify(body);
+    }
+    return fetch(url, opts).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        return { res: res, data: data || {} };
+      });
+    });
+  }
+
+  function clearNode(n) {
+    while (n && n.firstChild) n.removeChild(n.firstChild);
+  }
+
+  function admUser(u) {
+    return window.BDAccount ? window.BDAccount.userLink(u) : el("span", { class: "mod-name" }, ">>" + u.username);
+  }
+
+  function renderSiteAdmins(list) {
+    var ul = document.getElementById("mod-site-list");
+    var st = document.getElementById("mod-site-status");
+    clearNode(ul);
+    (list || []).forEach(function (u) {
+      var rm = null;
+      if (!u.fundador) {
+        rm = el("button", { type: "button", class: "mod-btn secondary mod-btn-sm" }, "Remover");
+        rm.addEventListener("click", function () {
+          if (!confirm("Remover >>" + u.username + " dos ADMs do site?")) return;
+          api("DELETE", "/api/adms/site", { username: u.username }).then(function (out) {
+            if (!out.res.ok) return setStatus(st, out.data.erro || "Não foi possível remover.", "erro");
+            setStatus(st, ">>" + u.username + " removido.", "ok");
+            refreshAdmins();
+          });
+        });
+      }
+      ul.appendChild(el("li", null, admUser(u), u.fundador ? el("span", { class: "mod-tag" }, "fundador") : null, rm));
+    });
+    if (!(list || []).length) ul.appendChild(el("li", { class: "mod-empty" }, "Nenhum ADM do site."));
+  }
+
+  function renderCommAdmins() {
+    var sel = document.getElementById("mod-comm-select");
+    var ul = document.getElementById("mod-comm-list");
+    var st = document.getElementById("mod-comm-status");
+    clearNode(ul);
+    if (!adminState) return;
+    var slug = sel.value;
+    var list = (adminState.adms_comunidades || {})[slug] || [];
+    list.forEach(function (u) {
+      var rm = el("button", { type: "button", class: "mod-btn secondary mod-btn-sm" }, "Remover");
+      rm.addEventListener("click", function () {
+        if (!confirm("Remover >>" + u.username + " dos ADMs de b/" + slug + "?")) return;
+        api("DELETE", "/api/adms/comunidade", { slug: slug, username: u.username }).then(function (out) {
+          if (!out.res.ok) return setStatus(st, out.data.erro || "Não foi possível remover.", "erro");
+          setStatus(st, ">>" + u.username + " removido de b/" + slug + ".", "ok");
+          refreshAdmins();
+        });
+      });
+      ul.appendChild(el("li", null, admUser(u), rm));
+    });
+    if (!list.length) ul.appendChild(el("li", { class: "mod-empty" }, "Nenhum ADM em b/" + slug + "."));
+  }
+
+  function fillCommSelect() {
+    var sel = document.getElementById("mod-comm-select");
+    var prev = sel.value;
+    clearNode(sel);
+    (adminState.comunidades || []).forEach(function (c) {
+      sel.appendChild(el("option", { value: c.slug }, "b/" + c.slug));
+    });
+    if (prev) sel.value = prev;
+    if (!sel.value && sel.options.length) sel.value = sel.options[0].value;
+    renderCommAdmins();
+  }
+
+  function refreshAdmins() {
+    return api("GET", "/api/adms").then(function (out) {
+      if (!out.res.ok || !out.data.autorizado) return out;
+      adminState = out.data;
+      if (adminState.voce && adminState.voce.is_site_admin) {
+        renderSiteAdmins(adminState.adms_site);
+        fillCommSelect();
+      }
+      return out;
+    });
+  }
+
+  function initPanel() {
+    refreshAdmins().then(function (out) {
+      if (!out.res.ok || !out.data.autorizado) {
+        document.body.classList.remove("mod-in");
+        if (out.data && out.data.motivo === "sem_permissao") {
+          setStatus(loginStatus, "Sua conta não é ADM do site nem de nenhuma /b/.", "erro");
+        }
+        return;
+      }
+      var v = adminState.voce || {};
+      document.body.classList.add("mod-in");
+      document.body.classList.toggle("mod-site", !!v.is_site_admin);
+      document.getElementById("mod-logout").hidden = !v.via_token;
+      var who = document.getElementById("mod-whoami");
+      clearNode(who);
+      who.appendChild(document.createTextNode(v.username ? "Você: " : "Você entrou com a senha de administração · "));
+      if (v.username) {
+        who.appendChild(el("a", { class: "user-mention", href: "/@" + v.username }, ">>" + v.username));
+        who.appendChild(document.createTextNode(" · "));
+      }
+      who.appendChild(el("strong", null, v.is_site_admin
+        ? "ADM do site"
+        : "ADM de " + (v.comunidades || []).map(function (s) { return "b/" + s; }).join(", ")));
+      var lead = document.getElementById("mod-comments-lead");
+      if (lead && !v.is_site_admin) {
+        lead.textContent = "Comentários das comunidades que você modera: " + (v.comunidades || []).map(function (s) { return "b/" + s; }).join(", ") + ".";
+      }
+      loadList();
+      loadPosts();
+      if (v.is_site_admin) loadReservas();
+    });
+  }
+
+  document.getElementById("mod-comm-select").addEventListener("change", renderCommAdmins);
+
+  document.getElementById("mod-site-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var input = document.getElementById("mod-site-user");
+    var st = document.getElementById("mod-site-status");
+    setStatus(st, "Adicionando…");
+    api("POST", "/api/adms/site", { username: input.value }).then(function (out) {
+      if (!out.res.ok) return setStatus(st, out.data.erro || "Não foi possível adicionar.", "erro");
+      setStatus(st, "ADM do site adicionado.", "ok");
+      input.value = "";
+      refreshAdmins();
+    });
   });
+
+  document.getElementById("mod-comm-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var input = document.getElementById("mod-comm-user");
+    var st = document.getElementById("mod-comm-status");
+    var slug = document.getElementById("mod-comm-select").value;
+    setStatus(st, "Adicionando…");
+    api("POST", "/api/adms/comunidade", { slug: slug, username: input.value }).then(function (out) {
+      if (!out.res.ok) return setStatus(st, out.data.erro || "Não foi possível adicionar.", "erro");
+      setStatus(st, "ADM adicionado em b/" + slug + ".", "ok");
+      input.value = "";
+      refreshAdmins();
+    });
+  });
+
+  document.getElementById("mod-criar-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var form = ev.target;
+    var st = document.getElementById("mod-criar-status");
+    var fd = new FormData(form);
+    setStatus(st, "Criando…");
+    api("POST", "/api/comunidades", {
+      slug: String(fd.get("slug") || "").trim().toLowerCase(),
+      name: String(fd.get("name") || "").trim(),
+      description: String(fd.get("description") || "").trim(),
+    }).then(function (out) {
+      if (!out.res.ok) return setStatus(st, out.data.erro || "Não foi possível criar.", "erro");
+      var c = out.data.comunidade;
+      form.reset();
+      clearNode(st);
+      st.className = "mod-status ok";
+      st.appendChild(document.createTextNode("Comunidade criada: "));
+      st.appendChild(el("a", { href: c.href }, "b/" + c.slug));
+      refreshAdmins();
+    });
+  });
+
+  initPanel();
 
   var postsRoot = document.getElementById("mod-posts-list");
   var postsStatus = document.getElementById("mod-posts-status");
@@ -267,7 +434,7 @@
         });
       })
       .then(function (out) {
-        if (out.res.status === 401) return;
+        if (out.res.status === 401 || out.res.status === 403) return;
         if (!out.res.ok) {
           setStatus(postsStatus, out.data && out.data.erro ? out.data.erro : "Falha ao listar postagens.", "erro");
           return;

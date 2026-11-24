@@ -1,9 +1,13 @@
-import { errorJson, isAdmin, json } from "../../../_lib/shared.js";
+import { errorJson, isSameOrigin, json } from "../../../_lib/shared.js";
+import { getAdminContext } from "../../../_lib/admins.js";
 import { markReservationPaid } from "../../../_lib/reservas.js";
 
 export async function onRequestPost(context) {
   const { request, env, params } = context;
-  if (!(await isAdmin(request, env))) return errorJson("Não autorizado.", 401);
+  const ctx = await getAdminContext(request, env);
+  if (!ctx.loggedIn) return errorJson("Não autorizado.", 401);
+  if (!ctx.site) return errorJson("Apenas ADMs do site.", 403);
+  if (!isSameOrigin(request)) return errorJson("Origem não permitida.", 403);
   if (!env.DB) return errorJson("Serviço indisponível.", 503);
   const id = params.id;
   let data = {};

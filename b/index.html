@@ -6,7 +6,7 @@
     <title>Comunidades — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261123c">
-    <link rel="stylesheet" href="/b/comunidades.css?v=20261123e">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261123h">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -41,15 +41,40 @@
                         <div class="or-header-main">
                             <a class="or-snoo" href="/b/" aria-label="comunidades">b</a>
                             <h1 class="or-pagename"><a href="/b/">comunidades</a></h1>
-                            <ul class="or-tabmenu">
+                            <div class="or-head-actions">
+                                <a class="or-members-link" href="/b/membros/" title="Membros e ADMs da base">&gt;&gt;&gt;</a>
+                                <button type="button" class="or-join-btn" id="base-join-btn" aria-pressed="false">unir-se</button>
+                            </div>
+                            <ul class="or-tabmenu" data-comm-tabs>
                                 <li class="selected"><a href="/b/">painel</a></li>
                                 <li><a href="/b/adm/">adm</a></li>
                                 <li><a href="/b/atoa/">atoa</a></li>
                             </ul>
                         </div>
                     </header>
+                    <p class="or-join-msg" id="base-join-msg" role="status" hidden></p>
                     <div class="or-wrap">
                         <div class="or-listing">
+                            <div class="or-criar-b" id="base-criar" hidden>
+                                <button type="button" class="or-postar-btn" id="base-criar-btn" aria-expanded="false" aria-controls="base-criar-form">[+] criar /b</button>
+                                <form class="or-submit or-submit-form" id="base-criar-form" hidden>
+                                    <h2>Criar nova comunidade</h2>
+                                    <p class="or-submit-note">Só ADMs do site podem criar comunidades. Você vira ADM da nova /b/ automaticamente.</p>
+                                    <label>Endereço (b/…)
+                                        <input type="text" name="slug" required maxlength="24" placeholder="ex.: musica" autocomplete="off" autocapitalize="none" spellcheck="false">
+                                    </label>
+                                    <label>Nome
+                                        <input type="text" name="name" required maxlength="60" placeholder="Nome da comunidade">
+                                    </label>
+                                    <label>Descrição (opcional)
+                                        <textarea name="description" maxlength="300" rows="3" placeholder="Do que se trata a comunidade."></textarea>
+                                    </label>
+                                    <div class="bd-comments-actions">
+                                        <button type="submit">Criar /b</button>
+                                        <p class="bd-comments-status" id="base-criar-status" role="status"></p>
+                                    </div>
+                                </form>
+                            </div>
                             <div class="or-panel-list" id="bd-comunidades">
                                 <a class="or-sub" href="/b/adm/" data-slug="adm">
                                     <h2 class="or-sub-name">b/adm</h2>
@@ -69,6 +94,7 @@
                                 <p class="or-side-meta">painel do basedisso</p>
                                 <div class="or-md">
                                     <p>Um espaço para comunidades no estilo do fórum antigo. Entre em uma delas para ler e criar postagens.</p>
+                                    <p><a href="/b/membros/">&gt;&gt;&gt; membros e ADMs da base</a></p>
                                 </div>
                             </div>
                         </aside>
@@ -140,7 +166,8 @@
 
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=20261123c"></script>
-    <script src="/b/comunidade.js?v=20261123e"></script>
+    <script src="/b/comunidade.js?v=20261123h"></script>
+    <script src="/b/base.js?v=20261123h"></script>
     <script src="/account.js?v=20261123c"></script>
     <script src="/comments.js?v=20261123f"></script>
 </body>

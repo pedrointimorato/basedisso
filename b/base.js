@@ -1,0 +1,335 @@
+/* Painel /b: unir-se/membro, lista dinâmica de comunidades, criação de /b (só ADM do site),
+   ADMs de cada comunidade e a página /b/membros/. */
+(function () {
+  "use strict";
+
+  function el(tag, attrs) {
+    var node = document.createElement(tag);
+    var key, val, i, child;
+    attrs = attrs || {};
+    for (key in attrs) {
+      if (!Object.prototype.hasOwnProperty.call(attrs, key)) continue;
+      val = attrs[key];
+      if (val == null || val === false) continue;
+      if (key === "class") node.className = val;
+      else if (key.slice(0, 2) === "on" && typeof val === "function") {
+        node.addEventListener(key.slice(2).toLowerCase(), val);
+      } else node.setAttribute(key, val);
+    }
+    for (i = 2; i < arguments.length; i++) {
+      child = arguments[i];
+      if (child == null || child === false) continue;
+      if (typeof child === "string" || typeof child === "number") {
+        node.appendChild(document.createTextNode(String(child)));
+      } else node.appendChild(child);
+    }
+    return node;
+  }
+
+  function clear(node) {
+    while (node && node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function getJson(url, opts) {
+    opts = opts || {};
+    opts.credentials = "same-origin";
+    opts.headers = opts.headers || {};
+    opts.headers.Accept = "application/json";
+    return fetch(url, opts).then(function (res) {
+      return res
+        .json()
+        .catch(function () {
+          return {};
+        })
+        .then(function (data) {
+          return { res: res, data: data || {} };
+        });
+    });
+  }
+
+  function relativeTime(iso) {
+    var t = Date.parse(iso);
+    if (Number.isNaN(t)) return "";
+    var sec = Math.round((Date.now() - t) / 1000);
+    if (sec < 45) return "há poucos segundos";
+    var min = Math.round(sec / 60);
+    if (min < 60) return min === 1 ? "há 1 minuto" : "há " + min + " minutos";
+    var hr = Math.round(min / 60);
+    if (hr < 24) return hr === 1 ? "há 1 hora" : "há " + hr + " horas";
+    var day = Math.round(hr / 24);
+    if (day < 30) return day === 1 ? "há 1 dia" : "há " + day + " dias";
+    try {
+      return new Date(t).toLocaleDateString("pt-BR");
+    } catch (e) {
+      return iso;
+    }
+  }
+
+  function userNode(u, opts) {
+    opts = opts || {};
+    var wrap = el("span", { class: "bm-user" },
+      el("a", { class: "user-mention", href: "/@" + encodeURIComponent(u.username) }, ">>" + u.username)
+    );
+    if (opts.adm) wrap.appendChild(el("span", { class: "bm-badge bm-badge-adm", title: "ADM da base" }, "[ADM]"));
+    if (u.is_primordial) {
+      wrap.appendChild(el("span", { class: "bm-badge bm-badge-prim", title: "usuário primordial" },
+        u.primordial_n != null ? "primordial #" + u.primordial_n : "primordial"));
+    }
+    return wrap;
+  }
+
+  var mePromise = null;
+  function me() {
+    if (!mePromise) {
+      mePromise = getJson("/api/auth/me").then(function (out) {
+        return out.data || {};
+      }).catch(function () {
+        return {};
+      });
+    }
+    return mePromise;
+  }
+
+  /* ---------- unir-se / membro ---------- */
+  function setJoin(btn, member) {
+    btn.textContent = member ? "membro" : "unir-se";
+    btn.setAttribute("aria-pressed", member ? "true" : "false");
+    btn.classList.toggle("is-member", !!member);
+    btn.title = member ? "Você é membro da base. Clique para sair." : "Unir-se à base";
+  }
+
+  function showJoinMsg(node, parts) {
+    if (!node) return;
+    clear(node);
+    if (!parts) {
+      node.hidden = true;
+      return;
+    }
+    parts.forEach(function (p) { node.appendChild(typeof p === "string" ? document.createTextNode(p) : p); });
+    node.hidden = false;
+  }
+
+  function bindJoin() {
+    var btn = document.getElementById("base-join-btn");
+    if (!btn) return;
+    var msg = document.getElementById("base-join-msg");
+    var state = { logado: false, membro: false };
+    getJson("/api/base/membro").then(function (out) {
+      if (out.res.ok) {
+        state = out.data;
+        setJoin(btn, !!state.membro);
+      }
+    }).catch(function () {});
+    btn.addEventListener("click", function () {
+      if (!state.logado) {
+        showJoinMsg(msg, [
+          "Entre na sua conta para se unir. ",
+          el("a", { href: "/entrar/" }, "Entrar"),
+          " · ",
+          el("a", { href: "/cadastro/" }, "Cadastrar"),
+        ]);
+        return;
+      }
+      btn.disabled = true;
+      getJson("/api/base/membro", { method: state.membro ? "DELETE" : "POST" })
+        .then(function (out) {
+          if (out.res.status === 401) {
+            state.logado = false;
+            showJoinMsg(msg, ["Entre na sua conta para se unir. ", el("a", { href: "/entrar/" }, "Entrar"), " · ", el("a", { href: "/cadastro/" }, "Cadastrar")]);
+            return;
+          }
+          if (!out.res.ok) {
+            showJoinMsg(msg, [out.data.erro || "Não foi possível atualizar agora."]);
+            return;
+          }
+          state = out.data;
+          setJoin(btn, !!state.membro);
+          showJoinMsg(msg, state.membro ? ["Você agora é membro da base. ", el("a", { href: "/b/membros/" }, "ver membros")] : null);
+        })
+        .catch(function () {
+          showJoinMsg(msg, ["Falha de rede. Tente de novo."]);
+        })
+        .then(function () {
+          btn.disabled = false;
+        });
+    });
+  }
+
+  /* ---------- comunidades (painel + abas + ADMs por comunidade) ---------- */
+  var commsPromise = null;
+  function loadComms(force) {
+    if (!commsPromise || force) {
+      commsPromise = getJson("/api/comunidades").then(function (out) {
+        return (out.data && out.data.comunidades) || [];
+      }).catch(function () {
+        return [];
+      });
+    }
+    return commsPromise;
+  }
+
+  function renderPanel(host, items) {
+    clear(host);
+    items.forEach(function (c) {
+      var n = Number(c.post_count || 0);
+      var title = "b/" + c.slug + (c.name && c.name !== c.slug ? " — " + c.name : "");
+      host.appendChild(
+        el("a", { class: "or-sub", href: c.href || "/b/" + c.slug + "/", "data-slug": c.slug },
+          el("h2", { class: "or-sub-name" }, title),
+          c.description ? el("p", { class: "or-sub-desc" }, c.description) : null,
+          el("p", { class: "or-sub-meta" },
+            el("span", { "data-count": "" }, n === 1 ? "1 postagem" : n + " postagens"),
+            " · ",
+            el("span", { "data-activity": "" }, c.last_activity ? "atividade " + relativeTime(c.last_activity) : "sem atividade recente"),
+            c.adms && c.adms.length ? " · moderação: " + c.adms.map(function (a) { return ">>" + a.username; }).join(", ") : null
+          )
+        )
+      );
+    });
+  }
+
+  function renderTabs(ul, items) {
+    clear(ul);
+    ul.appendChild(el("li", { class: "selected" }, el("a", { href: "/b/" }, "painel")));
+    items.forEach(function (c) {
+      ul.appendChild(el("li", null, el("a", { href: c.href || "/b/" + c.slug + "/" }, c.slug)));
+    });
+  }
+
+  function fillAdmBoxes(items) {
+    var boxes = document.querySelectorAll("[data-community-adms]");
+    if (!boxes.length) return;
+    var by = {};
+    items.forEach(function (c) { by[c.slug] = c; });
+    Array.prototype.forEach.call(boxes, function (box) {
+      var c = by[box.getAttribute("data-community-adms")];
+      var list = box.querySelector("[data-adms-list]");
+      if (!list) return;
+      clear(list);
+      var adms = (c && c.adms) || [];
+      if (!adms.length) {
+        list.appendChild(document.createTextNode("nenhum ADM definido"));
+        return;
+      }
+      adms.forEach(function (a, i) {
+        if (i) list.appendChild(document.createTextNode(", "));
+        list.appendChild(userNode(a));
+      });
+    });
+  }
+
+  function refreshComms(force) {
+    return loadComms(force).then(function (items) {
+      var panel = document.getElementById("bd-comunidades");
+      if (panel && items.length) renderPanel(panel, items);
+      var tabs = document.querySelector("[data-comm-tabs]");
+      if (tabs && items.length) renderTabs(tabs, items);
+      fillAdmBoxes(items);
+      return items;
+    });
+  }
+
+  /* ---------- criar /b (apenas ADM do site) ---------- */
+  function bindCreate() {
+    var wrap = document.getElementById("base-criar");
+    if (!wrap) return;
+    me().then(function (info) {
+      if (!info || !info.is_site_admin) return;
+      wrap.hidden = false;
+      var btn = document.getElementById("base-criar-btn");
+      var form = document.getElementById("base-criar-form");
+      var status = document.getElementById("base-criar-status");
+      btn.addEventListener("click", function () {
+        var open = form.hidden;
+        form.hidden = !open;
+        btn.textContent = open ? "[-] fechar" : "[+] criar /b";
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        if (open) form.querySelector('input[name="slug"]').focus();
+      });
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var fd = new FormData(form);
+        status.textContent = "Criando…";
+        status.className = "bd-comments-status";
+        getJson("/api/comunidades", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slug: String(fd.get("slug") || "").trim().toLowerCase(),
+            name: String(fd.get("name") || "").trim(),
+            description: String(fd.get("description") || "").trim(),
+          }),
+        }).then(function (out) {
+          if (!out.res.ok) {
+            status.textContent = out.data.erro || "Não foi possível criar.";
+            status.className = "bd-comments-status is-error";
+            return;
+          }
+          var c = out.data.comunidade;
+          form.reset();
+          clear(status);
+          status.className = "bd-comments-status is-ok";
+          status.appendChild(document.createTextNode("Comunidade criada: "));
+          status.appendChild(el("a", { href: c.href }, "b/" + c.slug));
+          refreshComms(true);
+        }).catch(function () {
+          status.textContent = "Falha de rede.";
+          status.className = "bd-comments-status is-error";
+        });
+      });
+    });
+  }
+
+  /* ---------- página /b/membros/ ---------- */
+  function renderMembros(root) {
+    getJson("/api/membros").then(function (out) {
+      if (!out.res.ok) {
+        root.textContent = out.data.erro || "Não foi possível carregar.";
+        return;
+      }
+      var d = out.data;
+      var sBase = document.getElementById("bm-adms-base");
+      var sComm = document.getElementById("bm-adms-b");
+      var sMem = document.getElementById("bm-membros");
+      var count = document.getElementById("bm-membros-total");
+      clear(sBase);
+      (d.adms_base || []).forEach(function (u) {
+        sBase.appendChild(el("li", null, userNode(u, { adm: true }), u.fundador ? el("span", { class: "bm-note" }, " fundador") : null));
+      });
+      if (!(d.adms_base || []).length) sBase.appendChild(el("li", { class: "bm-empty" }, "Nenhum ADM."));
+      clear(sComm);
+      (d.adms_comunidades || []).forEach(function (c) {
+        var ul = el("ul", { class: "bm-list" });
+        (c.adms || []).forEach(function (u) { ul.appendChild(el("li", null, userNode(u))); });
+        if (!(c.adms || []).length) ul.appendChild(el("li", { class: "bm-empty" }, "Nenhum ADM definido."));
+        sComm.appendChild(el("div", { class: "bm-comm", "data-slug": c.slug },
+          el("h4", null, el("a", { href: c.href }, "b/" + c.slug)), ul));
+      });
+      var total = Number(d.total_membros || 0);
+      count.textContent = total === 1 ? "1 membro" : total + " membros";
+      clear(sMem);
+      (d.membros || []).forEach(function (u) {
+        sMem.appendChild(el("li", null, userNode(u), el("span", { class: "bm-when" }, " · entrou " + relativeTime(u.joined_at))));
+      });
+      if (!(d.membros || []).length) {
+        sMem.appendChild(el("li", { class: "bm-empty" }, "Nenhum membro ainda. Clique em unir-se no painel /b."));
+      }
+    }).catch(function () {
+      root.textContent = "Falha de rede.";
+    });
+  }
+
+  function start() {
+    bindJoin();
+    bindCreate();
+    if (document.getElementById("bd-comunidades") || document.querySelector("[data-comm-tabs]") || document.querySelector("[data-community-adms]")) {
+      refreshComms(false);
+    }
+    var mroot = document.getElementById("bd-membros-page");
+    if (mroot) renderMembros(mroot);
+  }
+
+  window.BDBase = { refreshComms: refreshComms };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();

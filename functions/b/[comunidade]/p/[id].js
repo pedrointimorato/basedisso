@@ -1,67 +1,7 @@
 import { escapeHtml } from "../../../_lib/shared.js";
-import { getCommunity, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
+import { SIDEBAR, V } from "../../../_lib/page-shell.js";
+import { getCommunityDb, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
 import { getVisiblePost } from "../../../_lib/posts.js";
-
-const V = "20261123c";
-
-const SIDEBAR = `<aside class="right-sidebar">
-            <div class="sidebar-header">
-                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
-                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
-                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
-                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
-                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
-            </div>
-            <div class="sidebar-body">
-                <div class="sidebar-tab-content active" id="tab-meu">
-                    <div class="sidebar-block sidebar-account-block">
-                        <div class="sidebar-account" data-sidebar-account></div>
-                    </div>
-                </div>
-                <div class="sidebar-tab-content" id="tab-configuracoes">
-                    <div class="sidebar-block">
-                        <h3>Preferências do Sistema</h3>
-                        <div class="config-options">
-                            <label class="config-item">
-                                <span>Modo Escuro</span>
-                                <input type="checkbox" id="theme-toggle">
-                            </label>
-                            <label class="config-item">
-                                <span>Notificações por Email</span>
-                                <input type="checkbox" checked>
-                            </label>
-                            <label class="config-item">
-                                <span>Navegação Compacta</span>
-                                <input type="checkbox">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="sidebar-tab-content" id="tab-ofertas">
-                    <div class="sidebar-block adm-box">
-                        <h3>ADM</h3>
-                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
-                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
-                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
-                        <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
-                    </div>
-                </div>
-            </div>
-            <footer class="sidebar-footer">
-                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
-                    <i class="fa-solid fa-user"></i>
-                    <span>Meu</span>
-                </button>
-                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
-                    <i class="fa-solid fa-sliders"></i>
-                    <span>Ajustes</span>
-                </button>
-                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
-                    <i class="fa-regular fa-envelope"></i>
-                    <span>ADM</span>
-                </button>
-            </footer>
-        </aside>`;
 
 function relativeOrIso(iso) {
   if (!iso) return "";
@@ -106,9 +46,9 @@ export function postPageHtml({ community, post }) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
-    <link rel="stylesheet" href="/style.css?v=${V}">
-    <link rel="stylesheet" href="/account.css?v=${V}">
-    <link rel="stylesheet" href="/b/comunidades.css?v=20261123e">
+    <link rel="stylesheet" href="/style.css?v=20261123c">
+    <link rel="stylesheet" href="/account.css?v=20261123c">
+    <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -167,6 +107,11 @@ export function postPageHtml({ community, post }) {
                                     <p><a href="${hrefComm}">voltar à comunidade</a> · <a href="/b/">painel</a></p>
                                 </div>
                             </div>
+                            <div class="or-modbox" data-community-adms="${escapeHtml(slug)}">
+                                <h3>moderação</h3>
+                                <p class="or-modlist" data-adms-list>carregando…</p>
+                                <p><a href="/b/membros/">&gt;&gt;&gt; membros e ADMs da base</a></p>
+                            </div>
                         </aside>
                     </div>
                 </div>
@@ -174,9 +119,10 @@ export function postPageHtml({ community, post }) {
         </div>
         ${SIDEBAR}
     </div>
-    <script src="/script.js?v=${V}"></script>
-    <script src="/b/comunidades-ui.js?v=${V}"></script>
-    <script src="/account.js?v=${V}"></script>
+    <script src="/script.js?v=20261123c"></script>
+    <script src="/b/comunidades-ui.js?v=20261123c"></script>
+    <script src="/b/base.js?v=${V}"></script>
+    <script src="/account.js?v=20261123c"></script>
     <script src="/comments.js?v=20261123f"></script>
 </body>
 </html>`;
@@ -184,7 +130,7 @@ export function postPageHtml({ community, post }) {
 
 export async function onRequestGet(context) {
   const { env, params } = context;
-  const community = getCommunity(params.comunidade);
+  const community = await getCommunityDb(env.DB, params.comunidade);
   const id = params.id || "";
   if (!community || !UUID_RE.test(id)) {
     return new Response("Página não encontrada.", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });

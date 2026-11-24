@@ -394,8 +394,6 @@
         if (host) loadPosts(slug, host);
       });
     }
-    var panel = document.getElementById("bd-comunidades");
-    if (panel) loadPanel(panel);
     bindComposer();
   }
 

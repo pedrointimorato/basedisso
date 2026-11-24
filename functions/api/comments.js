@@ -79,6 +79,15 @@ export async function onRequestPost(context) {
 
   const page = normalizePage(data?.page || "");
   if (!page) return errorJson("Página inválida.", 400);
+  const pm = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
+  if (pm) {
+    const post = await env.DB.prepare(
+      "SELECT id FROM posts WHERE id = ? AND community = ? AND hidden = 0"
+    )
+      .bind(pm[2], pm[1])
+      .first();
+    if (!post) return errorJson("Postagem não encontrada.", 404);
+  }
 
   const body = sanitizeBody(data?.body);
   if (!body) return errorJson("Escreva um comentário.", 400);

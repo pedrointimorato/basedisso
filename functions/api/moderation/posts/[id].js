@@ -1,4 +1,12 @@
-import { errorJson, isAdmin, isSameOrigin, json } from "../../../_lib/shared.js";
+import { errorJson, isSameOrigin, json } from "../../../_lib/shared.js";
+import { canModerate, getAdminContext } from "../../../_lib/admins.js";
+
+async function authz(request, env) {
+  const ctx = await getAdminContext(request, env);
+  if (!ctx.loggedIn) return { res: errorJson("Não autorizado.", 401) };
+  if (!ctx.any) return { res: errorJson("Apenas ADMs podem moderar.", 403) };
+  return { ctx };
+}
 import { UUID_RE, postPageKey } from "../../../_lib/comunidades.js";
 
 async function deleteCommentsOnPage(db, page) {
@@ -17,7 +25,8 @@ async function deleteCommentsOnPage(db, page) {
 
 export async function onRequestPatch(context) {
   const { request, env, params } = context;
-  if (!(await isAdmin(request, env))) return errorJson("Não autorizado.", 401);
+  const a = await authz(request, env);
+  if (a.res) return a.res;
   if (!isSameOrigin(request)) return errorJson("Origem não permitida.", 403);
   if (!env.DB) return errorJson("Serviço de postagens indisponível.", 503);
   const id = params.id;
@@ -29,8 +38,9 @@ export async function onRequestPatch(context) {
     return errorJson("Pedido inválido.", 400);
   }
   if (typeof data?.hidden !== "boolean") return errorJson("Informe hidden: true ou false.", 400);
-  const existing = await env.DB.prepare("SELECT id FROM posts WHERE id = ?").bind(id).first();
+  const existing = await env.DB.prepare("SELECT id, community FROM posts WHERE id = ?").bind(id).first();
   if (!existing) return errorJson("Postagem não encontrada.", 404);
+  if (!canModerate(a.ctx, existing.community)) return errorJson("Você não modera esta comunidade.", 403);
   await env.DB.prepare("UPDATE posts SET hidden = ? WHERE id = ?")
     .bind(data.hidden ? 1 : 0, id)
     .run();
@@ -39,7 +49,8 @@ export async function onRequestPatch(context) {
 
 export async function onRequestDelete(context) {
   const { request, env, params } = context;
-  if (!(await isAdmin(request, env))) return errorJson("Não autorizado.", 401);
+  const a = await authz(request, env);
+  if (a.res) return a.res;
   if (!isSameOrigin(request)) return errorJson("Origem não permitida.", 403);
   if (!env.DB) return errorJson("Serviço de postagens indisponível.", 503);
   const id = params.id;
@@ -48,6 +59,7 @@ export async function onRequestDelete(context) {
     .bind(id)
     .first();
   if (!existing) return errorJson("Postagem não encontrada.", 404);
+  if (!canModerate(a.ctx, existing.community)) return errorJson("Você não modera esta comunidade.", 403);
   await deleteCommentsOnPage(env.DB, postPageKey(existing.community, id));
   await env.DB.prepare("DELETE FROM posts WHERE id = ?").bind(id).run();
   return json({ ok: true, apagado: true });

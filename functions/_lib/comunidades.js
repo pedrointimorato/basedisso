@@ -1,5 +1,12 @@
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-export const SLUG_RE = /^[a-z][a-z0-9_-]{0,20}$/;
+export const SLUG_RE = /^[a-z0-9][a-z0-9_-]{0,23}$/;
+export const NEW_SLUG_RE = /^[a-z0-9][a-z0-9_-]{1,23}$/;
+export const RESERVED_SLUGS = new Set([
+  "membros", "moderar", "criar", "novo", "api", "p", "admin", "index", "busca",
+  "cadastro", "entrar", "s", "f", "assets",
+]);
+// Pastas estáticas dentro de /b/ (servidas pelos arquivos, não pela Function dinâmica).
+export const STATIC_B_DIRS = new Set(["adm", "atoa", "membros"]);
 
 export const COMMUNITIES = {
   adm: {
@@ -26,6 +33,51 @@ export function getCommunity(slug) {
 
 export function listCommunities() {
   return Object.values(COMMUNITIES);
+}
+
+function rowToCommunity(row) {
+  const base = COMMUNITIES[row.slug];
+  return {
+    slug: row.slug,
+    name: base ? base.name : row.name,
+    title: base ? base.title : row.slug,
+    description: base ? base.description : row.description || "",
+    posting: row.posting || "open",
+    created_at: row.created_at || null,
+    created_by: row.created_by || null,
+    dynamic: !base,
+  };
+}
+
+// Busca a comunidade no D1 (com os textos fixos de adm/atoa como base).
+export async function getCommunityDb(db, slug) {
+  if (!slug || typeof slug !== "string") return null;
+  const s = slug.trim().toLowerCase();
+  if (!SLUG_RE.test(s)) return null;
+  if (!db) return COMMUNITIES[s] || null;
+  let row = null;
+  try {
+    row = await db.prepare("SELECT * FROM communities WHERE slug = ?").bind(s).first();
+  } catch {
+    row = null;
+  }
+  if (row) return rowToCommunity(row);
+  return COMMUNITIES[s] ? { ...COMMUNITIES[s], dynamic: false } : null;
+}
+
+export async function listCommunitiesDb(db) {
+  if (!db) return listCommunities();
+  let rows = [];
+  try {
+    const out = await db.prepare("SELECT * FROM communities ORDER BY created_at ASC, slug ASC").all();
+    rows = out.results || [];
+  } catch {
+    rows = [];
+  }
+  const seen = new Set(rows.map((r) => r.slug));
+  const list = rows.map(rowToCommunity);
+  for (const c of listCommunities()) if (!seen.has(c.slug)) list.unshift({ ...c, dynamic: false });
+  return list;
 }
 
 export function postPageKey(slug, id) {

@@ -6,7 +6,7 @@
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261123c">
-    <link rel="stylesheet" href="moderar.css">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261123h">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -28,33 +28,108 @@
 
     <main class="mod-main">
         <h1>Moderação</h1>
-        <p class="mod-lead">Entre com a senha de administração para moderar comentários e postagens das comunidades, e ver as reservas primordiais.</p>
+        <p class="mod-lead" id="mod-lead">Área dos ADMs do site e dos ADMs das comunidades /b/.</p>
 
         <section class="mod-card" id="mod-login">
-            <form id="mod-login-form">
-                <label for="mod-password">Senha de administração</label>
-                <input id="mod-password" type="password" name="password" autocomplete="current-password" required>
-                <div class="mod-actions">
-                    <button type="submit" class="mod-btn">Entrar</button>
-                </div>
-                <p class="mod-status" id="mod-login-status" role="status"></p>
-            </form>
+            <p class="mod-login-msg" id="mod-login-msg">Entre na sua conta de ADM para moderar. Se você é ADM do site ou de alguma /b/, o painel abre sozinho.</p>
+            <div class="mod-actions">
+                <a class="mod-btn" href="/entrar/" style="text-decoration:none;display:inline-block;">Entrar na conta</a>
+                <a class="mod-btn secondary" href="/b/" style="text-decoration:none;display:inline-block;">Voltar ao /b</a>
+            </div>
+            <details class="mod-token">
+                <summary>Entrar com a senha de administração</summary>
+                <form id="mod-login-form">
+                    <label for="mod-password">Senha de administração</label>
+                    <input id="mod-password" type="password" name="password" autocomplete="current-password" required>
+                    <div class="mod-actions">
+                        <button type="submit" class="mod-btn">Entrar</button>
+                    </div>
+                </form>
+            </details>
+            <p class="mod-status" id="mod-login-status" role="status"></p>
         </section>
 
         <section id="mod-panel">
+            <p class="mod-whoami" id="mod-whoami"></p>
             <div class="mod-actions">
-                <button type="button" class="mod-btn secondary" id="mod-logout">Sair</button>
+                <button type="button" class="mod-btn secondary" id="mod-logout" hidden>Sair do modo senha</button>
                 <a class="mod-btn secondary" href="/b/adm/" style="text-decoration:none;display:inline-block;">Voltar ao b/adm</a>
+                <a class="mod-btn secondary" href="/b/membros/" style="text-decoration:none;display:inline-block;">Membros e ADMs</a>
             </div>
-            <p class="mod-status" id="mod-list-status" role="status"></p>
-            <div class="mod-card" id="mod-list"></div>
-            <div class="mod-posts">
+
+            <nav class="mod-tabs" id="mod-tabs" aria-label="Seções">
+                <a href="#mod-sec-site" data-site-only>ADMs do site</a>
+                <a href="#mod-sec-comm" data-site-only>ADMs dos /b/</a>
+                <a href="#mod-sec-criar" data-site-only>Criar /b</a>
+                <a href="#mod-sec-comentarios">Comentários</a>
+                <a href="#mod-sec-posts">Postagens</a>
+                <a href="#mod-sec-res" data-site-only>Reservas</a>
+            </nav>
+
+            <div class="mod-section" id="mod-sec-site" data-site-only>
+                <h2>ADMs do site <span class="mod-sub">(ADMs da base)</span></h2>
+                <p class="mod-lead">Administram o site inteiro, moderam todas as comunidades e podem criar novas /b/. &gt;&gt;Intimorato é o fundador e não pode ser removido.</p>
+                <div class="mod-card">
+                    <ul class="mod-adm-list" id="mod-site-list"></ul>
+                    <form class="mod-inline-form" id="mod-site-form">
+                        <label for="mod-site-user">Adicionar ADM do site</label>
+                        <div class="mod-row">
+                            <input id="mod-site-user" type="text" name="username" placeholder="&gt;&gt;Nome, @Nome ou Nome" required autocomplete="off" autocapitalize="none" spellcheck="false">
+                            <button type="submit" class="mod-btn">Adicionar</button>
+                        </div>
+                    </form>
+                    <p class="mod-status" id="mod-site-status" role="status"></p>
+                </div>
+            </div>
+
+            <div class="mod-section" id="mod-sec-comm" data-site-only>
+                <h2>ADMs dos /b/</h2>
+                <p class="mod-lead">Moderam postagens e comentários apenas da comunidade escolhida.</p>
+                <div class="mod-card">
+                    <label for="mod-comm-select">Comunidade</label>
+                    <select id="mod-comm-select" class="mod-select"></select>
+                    <ul class="mod-adm-list" id="mod-comm-list"></ul>
+                    <form class="mod-inline-form" id="mod-comm-form">
+                        <label for="mod-comm-user">Adicionar ADM nesta comunidade</label>
+                        <div class="mod-row">
+                            <input id="mod-comm-user" type="text" name="username" placeholder="&gt;&gt;Nome, @Nome ou Nome" required autocomplete="off" autocapitalize="none" spellcheck="false">
+                            <button type="submit" class="mod-btn">Adicionar</button>
+                        </div>
+                    </form>
+                    <p class="mod-status" id="mod-comm-status" role="status"></p>
+                </div>
+            </div>
+
+            <div class="mod-section" id="mod-sec-criar" data-site-only>
+                <h2>Criar nova /b/</h2>
+                <p class="mod-lead">Só ADMs do site podem criar comunidades. Quem cria vira ADM da nova /b/.</p>
+                <div class="mod-card">
+                    <form id="mod-criar-form" class="mod-stack-form">
+                        <label for="mod-criar-slug">Endereço (b/…)</label>
+                        <input id="mod-criar-slug" type="text" name="slug" required maxlength="24" placeholder="ex.: musica" autocomplete="off" autocapitalize="none" spellcheck="false">
+                        <label for="mod-criar-name">Nome</label>
+                        <input id="mod-criar-name" type="text" name="name" required maxlength="60" placeholder="Nome da comunidade">
+                        <label for="mod-criar-desc">Descrição (opcional)</label>
+                        <textarea id="mod-criar-desc" name="description" maxlength="300" rows="3"></textarea>
+                        <div class="mod-actions"><button type="submit" class="mod-btn">Criar /b</button></div>
+                    </form>
+                    <p class="mod-status" id="mod-criar-status" role="status"></p>
+                </div>
+            </div>
+
+            <div class="mod-section" id="mod-sec-comentarios">
+                <h2>Comentários</h2>
+                <p class="mod-lead" id="mod-comments-lead">Oculte ou apague comentários.</p>
+                <p class="mod-status" id="mod-list-status" role="status"></p>
+                <div class="mod-card" id="mod-list"></div>
+            </div>
+            <div class="mod-section mod-posts" id="mod-sec-posts">
                 <h2>Postagens das comunidades</h2>
-                <p class="mod-lead">Oculte ou apague postagens de b/adm e b/atoa. Os comentários da postagem apagada também são removidos.</p>
+                <p class="mod-lead">Oculte ou apague postagens. Os comentários da postagem apagada também são removidos.</p>
                 <p class="mod-status" id="mod-posts-status" role="status"></p>
                 <div class="mod-card" id="mod-posts-list"></div>
             </div>
-            <div class="mod-reservas">
+            <div class="mod-section mod-reservas" id="mod-sec-res" data-site-only>
                 <h2>Reservas de nomes primordiais</h2>
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
                 <p class="mod-status" id="mod-res-status" role="status"></p>
@@ -64,6 +139,6 @@
     </main>
 
     <script src="/account.js?v=20261123c"></script>
-    <script src="moderar.js?v=20261123c"></script>
+    <script src="/b/adm/moderar/moderar.js?v=20261123h"></script>
 </body>
 </html>

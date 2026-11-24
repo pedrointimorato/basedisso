@@ -1,9 +1,12 @@
-import { errorJson, isAdmin, json } from "../../_lib/shared.js";
+import { errorJson, json } from "../../_lib/shared.js";
+import { getAdminContext } from "../../_lib/admins.js";
 import { expireHolds } from "../../_lib/reservas.js";
 
 export async function onRequestGet(context) {
   const { request, env } = context;
-  if (!(await isAdmin(request, env))) return errorJson("Não autorizado.", 401);
+  const ctx = await getAdminContext(request, env);
+  if (!ctx.loggedIn) return errorJson("Não autorizado.", 401);
+  if (!ctx.site) return errorJson("Apenas ADMs do site.", 403);
   if (!env.DB) return errorJson("Serviço indisponível.", 503);
   await expireHolds(env.DB);
   const url = new URL(request.url);

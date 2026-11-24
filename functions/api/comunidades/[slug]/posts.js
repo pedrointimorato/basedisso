@@ -11,7 +11,7 @@ import {
 } from "../../../_lib/shared.js";
 import { getSessionUser } from "../../../_lib/auth.js";
 import {
-  getCommunity,
+  getCommunityDb,
   publicPost,
   sanitizeTitle,
   sanitizeLink,
@@ -21,7 +21,7 @@ import { listVisiblePosts, getVisiblePost } from "../../../_lib/posts.js";
 
 export async function onRequestGet(context) {
   const { env, params } = context;
-  const community = getCommunity(params.slug);
+  const community = await getCommunityDb(env.DB, params.slug);
   if (!community) return errorJson("Comunidade não encontrada.", 404);
   if (!env.DB) return json({ postagens: [] });
   const posts = (await listVisiblePosts(env.DB, community.slug)).map((row) => publicPost(row));
@@ -30,7 +30,7 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
   const { request, env, params } = context;
-  const community = getCommunity(params.slug);
+  const community = await getCommunityDb(env.DB, params.slug);
   if (!community) return errorJson("Comunidade não encontrada.", 404);
   if (!env.DB) return errorJson("Serviço de postagens indisponível.", 503);
   if (!isSameOrigin(request)) return errorJson("Origem não permitida.", 403);

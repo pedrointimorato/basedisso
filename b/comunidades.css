@@ -403,3 +403,109 @@
 .or-submit-cancel:hover {
     background: #ececec;
 }
+
+/* ---- /b: ações no cabeçalho (>>> e unir-se) ---- */
+.or-head-actions {
+    margin-left: auto;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    padding: 2px 0 4px;
+    flex-shrink: 0;
+}
+.or-members-link {
+    font: 700 13px/1 verdana, arial, sans-serif;
+    color: #369;
+    text-decoration: none;
+    letter-spacing: 1px;
+    padding: 2px 2px;
+}
+.or-members-link:hover { color: #ff4500; text-decoration: underline; }
+.or-join-btn {
+    appearance: none;
+    background: #fff;
+    border: 1px solid #5f99cf;
+    border-radius: 2px;
+    color: #369;
+    font: 700 12px verdana, arial, sans-serif;
+    padding: 3px 12px 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 76px;
+}
+.or-join-btn:hover { background: #eff7ff; }
+.or-join-btn.is-member {
+    background: #eff7ff;
+    color: #ff4500;
+    border-color: #ff8b60;
+}
+.or-join-btn.is-member::before { content: "✓ "; }
+.or-join-btn:disabled { opacity: .6; cursor: progress; }
+.or-join-msg {
+    margin: 0;
+    padding: 6px 10px;
+    font: 12px verdana, arial, sans-serif;
+    background: #fffbe6;
+    border-bottom: 1px solid #f0e3a0;
+    color: #333;
+}
+.or-join-msg a { color: #369; font-weight: 700; }
+
+/* ---- /b: criar comunidade ---- */
+.or-criar-b { margin: 0 0 10px; }
+.or-criar-b .or-submit { margin-top: 8px; }
+.bd-comments-status.is-error { color: #c00; }
+.bd-comments-status.is-ok { color: #228822; }
+.bd-comments-status.is-ok a { color: #369; font-weight: 700; }
+
+/* ---- caixa de moderação na lateral das comunidades ---- */
+.or-modbox {
+    margin-top: 12px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    padding: 8px 10px;
+    font-size: 12px;
+}
+.or-modbox h3 {
+    margin: 0 0 6px;
+    font-size: 12px;
+    color: #888;
+    text-transform: lowercase;
+}
+.or-modbox p { margin: 0 0 6px; line-height: 1.5; }
+.or-modbox a { color: #369; }
+.or-modlist .bm-user { white-space: nowrap; }
+
+/* ---- /b/membros/ ---- */
+.bm-section { margin: 0 0 18px; }
+.bm-section > h2 {
+    font-size: 14px;
+    margin: 0 0 6px;
+    padding: 0 0 4px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #000;
+}
+.bm-section > h2 small { font-weight: 400; color: #888; font-size: 11px; margin-left: 6px; }
+.bm-list { list-style: none; margin: 0; padding: 0; }
+.bm-list li { padding: 4px 0; font-size: 13px; border-bottom: 1px dotted #eee; }
+.bm-list li:last-child { border-bottom: 0; }
+.bm-empty { color: #888; font-style: italic; }
+.bm-user .user-mention { color: #369; font-weight: 700; text-decoration: none; }
+.bm-user .user-mention:hover { text-decoration: underline; }
+.bm-badge {
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    vertical-align: 1px;
+}
+.bm-badge-adm { color: #228822; }
+.bm-badge-prim { color: #b8860b; }
+.bm-note, .bm-when { color: #888; font-size: 11px; }
+.bm-comm { margin: 0 0 10px; }
+.bm-comm h4 { margin: 0 0 2px; font-size: 13px; }
+.bm-comm h4 a { color: #0000ff; text-decoration: none; }
+.bm-comm .bm-list { padding-left: 12px; }
+#bd-membros-page { align-self: stretch; width: 100%; }

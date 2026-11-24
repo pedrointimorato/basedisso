@@ -67,3 +67,45 @@
 #mod-panel { display: none; }
 body.mod-in #mod-login { display: none; }
 body.mod-in #mod-panel { display: block; }
+.mod-login-msg { margin: 0 0 4px; font-size: 14px; }
+.mod-token { margin-top: 14px; font-size: 13px; }
+.mod-token summary { cursor: pointer; color: var(--text-secondary); }
+.mod-token form { margin-top: 10px; }
+.mod-whoami { font-size: 14px; margin: 0 0 4px; }
+.mod-whoami .user-mention { font-weight: 700; }
+.mod-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 8px; }
+.mod-tabs a {
+    font-size: 12px; font-weight: 700; text-decoration: none;
+    color: var(--accent-red); border: 1px solid var(--accent-red);
+    border-radius: 4px; padding: 4px 10px;
+}
+.mod-tabs a:hover { background: var(--accent-red); color: #fff; }
+.mod-section { margin-top: 22px; }
+.mod-section h2 { font-size: 18px; margin: 0 0 4px; color: var(--text-primary); }
+.mod-sub { font-size: 13px; font-weight: 400; color: var(--text-secondary); }
+.mod-adm-list { list-style: none; margin: 0 0 12px; padding: 0; }
+.mod-adm-list li {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 8px 0; border-bottom: 1px solid var(--border-subtle); font-size: 14px;
+}
+.mod-adm-list li:last-child { border-bottom: 0; }
+.mod-adm-list .mod-btn-sm { margin-left: auto; }
+.mod-btn-sm { padding: 4px 10px; font-size: 12px; }
+.mod-tag { font-size: 11px; font-weight: 700; color: #228822; text-transform: uppercase; }
+.mod-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.mod-row input { flex: 1 1 180px; min-width: 0; }
+.mod-card input[type="text"], .mod-card textarea, .mod-select {
+    width: 100%; max-width: 420px; box-sizing: border-box;
+    border: 1px solid var(--border-color); border-radius: 6px;
+    padding: 8px 10px; font: inherit;
+    background: var(--search-bg); color: var(--text-primary);
+}
+.mod-row input[type="text"] { max-width: none; }
+.mod-select { margin-bottom: 12px; display: block; }
+.mod-stack-form label { margin-top: 10px; }
+.mod-stack-form label:first-child { margin-top: 0; }
+.mod-inline-form label { margin-top: 6px; }
+body:not(.mod-site) [data-site-only] { display: none !important; }
+#mod-res-list { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.mod-main { box-sizing: border-box; overflow-x: hidden; }
+.mod-table-scroll { overflow-x: auto; max-width: 100%; }
