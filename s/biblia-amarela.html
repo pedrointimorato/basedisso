@@ -6,7 +6,7 @@
     <title>A Bíblia Amarela — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261124a">
-    <link rel="stylesheet" href="satira.css">
+    <link rel="stylesheet" href="satira.css?v=20261124b">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -45,46 +45,35 @@
                             <img src="biblia-amarela-capa.jpg" alt="Capa da Bíblia Amarela, um livro amarelo de capa dura com o título em serifa e o nome Intimorato.">
                             <figcaption>Capa publicada na wiki do r/BrasilSocial</figcaption>
                         </figure>
-                        <div class="book-body">
+                        <!-- Conteúdo padrão (gerado de functions/_lib/biblia.js); /s/biblia.js hidrata com as edições salvas no D1. -->
+                        <div class="book-body" id="ba-cabecalho">
                             <h1 id="a-biblia-amarela">A bíblia amarela</h1>
-                            <p>&quot;A biblia amarela&quot; é um projeto textual satírico composto por uma série de livros a fim de promover críticas, sátiras e pontuações ao MBL/MISSÃO e seus livros de propostas entitulados de &quot;livro amarelo&quot;. Originalmente hospedado na wiki do r/BrasilSocial e com seus fundamentos escritos por <a href="/@Intimorato" class="user-mention">>>Intimorato</a>. Que pretende atrair contribuidores para o projeto.</p>
+                            <p>&quot;A biblia amarela&quot; é um projeto textual satírico composto por uma série de livros a fim de promover críticas, sátiras e pontuações ao MBL/MISSÃO e seus livros de propostas entitulados de &quot;livro amarelo&quot;. Originalmente hospedado na wiki do r/BrasilSocial e com seus fundamentos escritos por <a href="/@Intimorato" class="user-mention">&gt;&gt;Intimorato</a>. Que pretende atrair contribuidores para o projeto.</p>
                         </div>
-                        <nav class="book-toc" aria-label="Sumário">
-                            <h2>Sumário</h2>
-                            <ol>
-                                <li>
-                                    <a href="#genese">Gênese do movimento</a>
-                                    <ol>
-                                        <li><a href="#capitulo-i">Capítulo I</a></li>
-                                        <li><a href="#movimento-besta-livre">Movimento besta livre</a></li>
-                                        <li><a href="#capitulo-ii">Capítulo II</a></li>
-                                    </ol>
-                                </li>
-                                <li class="toc-pending">Militancia <em>ainda não escrito na wiki</em></li>
-                                <li class="toc-pending">Mister partidario <em>ainda não escrito na wiki</em></li>
-                                <li class="toc-pending">Hackeando pessoas <em>ainda não escrito na wiki</em></li>
-                                <li class="toc-pending">O entulho <em>ainda não escrito na wiki</em></li>
-                                <li class="toc-pending">Bostil <em>ainda não escrito na wiki</em></li>
-                            </ol>
+                        <nav class="book-toc" id="ba-toc" aria-label="Sumário">
+                            <h2 id="sumario">Sumário</h2>
+                            <ol><li data-livro="genese"><a href="#genese">Gênese do movimento</a><ol><li><a href="#capitulo-i">Capítulo I</a></li><li><a href="#movimento-besta-livre">Movimento besta livre</a></li><li><a href="#capitulo-ii">Capítulo II</a></li></ol></li><li class="toc-pending" data-livro="militancia">Militancia <em>ainda não escrito na wiki</em></li><li class="toc-pending" data-livro="mister-partidario">Mister partidario <em>ainda não escrito na wiki</em></li><li class="toc-pending" data-livro="hackeando-pessoas">Hackeando pessoas <em>ainda não escrito na wiki</em></li><li class="toc-pending" data-livro="o-entulho">O entulho <em>ainda não escrito na wiki</em></li><li class="toc-pending" data-livro="bostil">Bostil <em>ainda não escrito na wiki</em></li></ol>
                         </nav>
-                        <section class="book-body" id="genese">
-                            <h1>Gênese do movimento</h1>
-                            <p class="book-credit">Texto da wiki do r/BrasilSocial, por <a href="/@Intimorato" class="user-mention">>>Intimorato</a>.</p>
-                                                        <h2 id="capitulo-i">Capítulo I</h2>
-                            <p>No princípio era o Petê, que moldou o estado à sua imagem, fazendo tudo de ruim que não resolveram e também que ocasionaram ser culpa deles. Nesse tempo o Petê revolucionou a corrupção.</p>
-                            <p>O Petê governava de acordo com que suas oferendas para a COLIGAÇÃO lhe permitia.</p>
-                            <p>O Culto dos peteístas ao Petê era grande e inabalável, mas as desvenças estavam crescendo e um belo dia a oferenda incluía 20 centavos. A sensação de livre mobilidade popular se esvaiu.</p>
-                            <p>Sobreveio o presságio de impeachment, a gestão de Dima Rostef entrou em crise, sob a liderança de Renã Satan surgiu o movimento cujo preceito é libertar os bestas e trazer á tona a besta interior de cada indivíduo.</p>
-                            <h2 id="movimento-besta-livre">Movimento besta livre</h2>
-                            <p><strong>M. ême</strong> = Me</p>
-                            <p><strong>B. besta(s) =</strong> be</p>
-                            <p><strong>L. éli = li</strong></p>
-                            <p>E viu o criador que o movimento era bom para toda sorte de enganar trouxas e sequestrar pautas. E se fez mister para o mebéli tomar frente na conclusão do impeachment ou pelo menos fazer presença que pudesse ser vendida como decisiva no processo.</p>
-                            <p>Então se espetaculou uma caminhada até a capital para entregar o pedido de expulsão ao presidente da câmara de puteiros.</p>
-                            <h2 id="capitulo-ii">Capítulo II</h2>
-                            <p>Entre pedaladas, jornadas juninas e jatos lavadores, o impeachment se consumou.</p>
+                        <div id="ba-livros">
+                        <section class="book-body" id="genese" data-livro="genese">
+                        <h1>Gênese do movimento</h1>
+                        <p class="book-credit">Texto da wiki do r/BrasilSocial, por <a href="/@Intimorato" class="user-mention">&gt;&gt;Intimorato</a>.</p>
+                        <h2 id="capitulo-i">Capítulo I</h2>
+                        <p>No princípio era o Petê, que moldou o estado à sua imagem, fazendo tudo de ruim que não resolveram e também que ocasionaram ser culpa deles. Nesse tempo o Petê revolucionou a corrupção.</p>
+                        <p>O Petê governava de acordo com que suas oferendas para a COLIGAÇÃO lhe permitia.</p>
+                        <p>O Culto dos peteístas ao Petê era grande e inabalável, mas as desvenças estavam crescendo e um belo dia a oferenda incluía 20 centavos. A sensação de livre mobilidade popular se esvaiu.</p>
+                        <p>Sobreveio o presságio de impeachment, a gestão de Dima Rostef entrou em crise, sob a liderança de Renã Satan surgiu o movimento cujo preceito é libertar os bestas e trazer á tona a besta interior de cada indivíduo.</p>
+                        <h2 id="movimento-besta-livre">Movimento besta livre</h2>
+                        <p><strong>M. ême</strong> = Me</p>
+                        <p><strong>B. besta(s) =</strong> be</p>
+                        <p><strong>L. éli = li</strong></p>
+                        <p>E viu o criador que o movimento era bom para toda sorte de enganar trouxas e sequestrar pautas. E se fez mister para o mebéli tomar frente na conclusão do impeachment ou pelo menos fazer presença que pudesse ser vendida como decisiva no processo.</p>
+                        <p>Então se espetaculou uma caminhada até a capital para entregar o pedido de expulsão ao presidente da câmara de puteiros.</p>
+                        <h2 id="capitulo-ii">Capítulo II</h2>
+                        <p>Entre pedaladas, jornadas juninas e jatos lavadores, o impeachment se consumou.</p>
                         </section>
-                        <p class="book-wiki-link">Fontes: <a href="https://www.reddit.com/r/BrasilSocial/wiki/biblia-amarela/" target="_blank" rel="noopener noreferrer">wiki da Bíblia Amarela</a> · <a href="https://www.reddit.com/r/BrasilSocial/wiki/biblia-amarela/genese/" target="_blank" rel="noopener noreferrer">Gênese do movimento</a></p>
+                        </div>
+                        <p class="book-wiki-link" id="ba-fontes">Fontes: <a href="https://www.reddit.com/r/BrasilSocial/wiki/biblia-amarela/" target="_blank" rel="noopener noreferrer">wiki da Bíblia Amarela</a> · <a href="https://www.reddit.com/r/BrasilSocial/wiki/biblia-amarela/genese/" target="_blank" rel="noopener noreferrer">Gênese do movimento</a></p>
                         <div class="bd-comments" id="comentarios" data-page="/s/biblia-amarela" data-title="Comentários"></div>
                     </div>
                 </div>
@@ -156,5 +145,6 @@
     <script src="/script.js?v=20261123c"></script>
     <script src="/account.js?v=20261124a"></script>
     <script src="/comments.js?v=20261123f"></script>
+    <script src="/s/biblia.js?v=20261124b"></script>
 </body>
 </html>
