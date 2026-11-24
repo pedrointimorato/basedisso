@@ -86,8 +86,9 @@ export function postPageHtml({ community, post }) {
                             </div>
                             <ul class="or-tabmenu">
                                 <li><a href="${hrefComm}">links</a></li>
+                                <li><a href="${hrefComm}?sort=novos">novos</a></li>
+                                <li><a href="${hrefComm}?sort=melhores">melhores</a></li>
                                 <li class="selected"><a href="${hrefPost}">comentários</a></li>
-                                <li><a href="${hrefComm}#criar">criar</a></li>
                             </ul>
                         </div>
                     </header>
@@ -126,7 +127,7 @@ export function postPageHtml({ community, post }) {
         ${SIDEBAR}
     </div>
     <script src="/script.js?v=20261123c"></script>
-    <script src="/b/comunidades-ui.js?v=20261123c"></script>
+    <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
     <script src="/account.js?v=20261123c"></script>
     <script src="/comments.js?v=20261123f"></script>

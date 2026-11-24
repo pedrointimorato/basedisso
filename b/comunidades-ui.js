@@ -31,14 +31,6 @@
                 btn.textContent = on ? "salvo" : "salvar";
             });
         });
-        const sub = root.querySelector ? root.querySelector("#or-subscribe") : null;
-        if (sub && !sub.dataset.bound) {
-            sub.dataset.bound = "1";
-            sub.addEventListener("click", () => {
-                const on = sub.classList.toggle("is-on");
-                sub.textContent = on ? "inscrito" : "inscrever-se";
-            });
-        }
     }
     window.BDComunidadesUI = { bind: bind };
     document.addEventListener("DOMContentLoaded", () => bind(document));

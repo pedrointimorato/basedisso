@@ -188,22 +188,6 @@
 .or-buttons a:hover, .or-buttons button:hover { text-decoration: underline; }
 .or-buttons button.is-on { color: #ff8b60; }
 
-.or-spacer { margin-bottom: 12px; }
-.or-subscribe {
-    display: inline-block;
-    background: #fff;
-    border: 1px solid #c4dbf1;
-    border-radius: 2px;
-    color: #369;
-    font: 700 12px verdana, arial, sans-serif;
-    padding: 3px 10px 4px;
-    cursor: pointer;
-}
-.or-subscribe:hover { background: #eff7ff; }
-.or-subscribe.is-on {
-    background: #eff7ff;
-    color: #ff4500;
-}
 .or-titlebox {
     border: 1px solid #ddd;
     background: #fafafa;

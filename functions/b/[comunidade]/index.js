@@ -26,9 +26,9 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
                                 <button type="button" class="or-join-btn" data-comm-join-btn aria-pressed="false">unir-se</button>
                             </div>
                             <ul class="or-tabmenu">
-                                <li class="selected"><a href="${href}">links</a></li>
-                                <li><a href="#bd-posts">novos</a></li>
-                                <li><a href="#criar">criar</a></li>
+                                <li class="selected"><a href="${href}" data-sort="links">links</a></li>
+                                <li><a href="${href}?sort=novos" data-sort="novos">novos</a></li>
+                                <li><a href="${href}?sort=melhores" data-sort="melhores">melhores</a></li>
                             </ul>
                         </div>
                     </header>
@@ -66,9 +66,6 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
                         <div id="bd-posts" data-community="${slug}"></div>
                         </div>
                         <aside class="or-side">
-                            <div class="or-spacer">
-                                <button type="button" class="or-subscribe" id="or-subscribe">inscrever-se</button>
-                            </div>
                             <div class="or-titlebox">
                                 <h2 class="or-side-name">${name}</h2>
                                 <p class="or-side-meta">b/${slug}</p>
@@ -92,7 +89,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
         ${SIDEBAR}
     </div>
     <script src="/script.js?v=20261123c"></script>
-    <script src="/b/comunidades-ui.js?v=20261123c"></script>
+    <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/comunidade.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
     <script src="/account.js?v=20261123c"></script>

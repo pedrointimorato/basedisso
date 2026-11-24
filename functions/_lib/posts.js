@@ -18,13 +18,25 @@ export async function getVisiblePost(db, id) {
   return row || null;
 }
 
-export async function listVisiblePosts(db, slug, limit = 100) {
+export const POST_SORTS = {
+  links: "p.sticky DESC, p.created_at DESC",
+  novos: "p.created_at DESC",
+  melhores: "comment_count DESC, p.created_at DESC",
+};
+
+export function normalizeSort(raw) {
+  const s = String(raw || "").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(POST_SORTS, s) ? s : "links";
+}
+
+export async function listVisiblePosts(db, slug, limit = 100, sort = "links") {
   const cap = Math.min(200, Math.max(1, Number(limit) || 100));
+  const order = POST_SORTS[normalizeSort(sort)];
   const { results } = await db
     .prepare(
       `${postsSelectSql()}
        WHERE p.community = ? AND p.hidden = 0
-       ORDER BY p.sticky DESC, p.created_at DESC
+       ORDER BY ${order}
        LIMIT ?`
     )
     .bind(slug, cap)

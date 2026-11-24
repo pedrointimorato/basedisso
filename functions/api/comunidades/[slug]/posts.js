@@ -17,15 +17,16 @@ import {
   sanitizeLink,
   TITLE_MAX,
 } from "../../../_lib/comunidades.js";
-import { listVisiblePosts, getVisiblePost } from "../../../_lib/posts.js";
+import { normalizeSort, listVisiblePosts, getVisiblePost } from "../../../_lib/posts.js";
 
 export async function onRequestGet(context) {
-  const { env, params } = context;
+  const { env, params, request } = context;
+  const sort = normalizeSort(new URL(request.url).searchParams.get("sort"));
   const community = await getCommunityDb(env.DB, params.slug);
   if (!community) return errorJson("Comunidade não encontrada.", 404);
   if (!env.DB) return json({ postagens: [] });
-  const posts = (await listVisiblePosts(env.DB, community.slug)).map((row) => publicPost(row));
-  return json({ postagens: posts });
+  const posts = (await listVisiblePosts(env.DB, community.slug, 100, sort)).map((row) => publicPost(row));
+  return json({ sort, postagens: posts });
 }
 
 export async function onRequestPost(context) {

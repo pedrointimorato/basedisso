@@ -112,9 +112,51 @@
 
   var loadSeq = 0;
 
+  var SORTS = { links: 1, novos: 1, melhores: 1 };
+  var currentSort = "links";
+
+  function sortFromUrl() {
+    var s = "";
+    try {
+      s = (new URLSearchParams(location.search).get("sort") || "").toLowerCase();
+    } catch (e) {
+      s = "";
+    }
+    return SORTS[s] ? s : "links";
+  }
+
+  function markSortTab(sort) {
+    var tabs = document.querySelectorAll(".or-tabmenu a[data-sort]");
+    Array.prototype.forEach.call(tabs, function (a) {
+      var on = a.getAttribute("data-sort") === sort;
+      if (a.parentElement) a.parentElement.classList.toggle("selected", on);
+      if (on) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+  }
+
+  function bindSortTabs(slug, host) {
+    var tabs = document.querySelectorAll(".or-tabmenu a[data-sort]");
+    Array.prototype.forEach.call(tabs, function (a) {
+      a.addEventListener("click", function (ev) {
+        if (ev.button || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+        ev.preventDefault();
+        var sort = a.getAttribute("data-sort");
+        currentSort = SORTS[sort] ? sort : "links";
+        markSortTab(currentSort);
+        if (window.history && history.replaceState) {
+          var q = currentSort === "links" ? "" : "?sort=" + currentSort;
+          history.replaceState(null, "", location.pathname + q);
+        }
+        loadPosts(slug, host);
+      });
+    });
+  }
+
   function loadPosts(slug, host, emptyText) {
     var seq = ++loadSeq;
-    return fetch("/api/comunidades/" + encodeURIComponent(slug) + "/posts", {
+    var qs = currentSort === "links" ? "" : "?sort=" + encodeURIComponent(currentSort);
+    return fetch("/api/comunidades/" + encodeURIComponent(slug) + "/posts" + qs, {
       credentials: "same-origin",
       headers: { Accept: "application/json" },
     })
@@ -300,11 +342,6 @@
     else section.setAttribute("hidden", "");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
     btn.textContent = open ? COMPOSER_OPEN_LABEL : COMPOSER_CLOSED;
-    var criarTab = document.querySelector('.or-tabmenu a[href="#criar"]');
-    if (criarTab && criarTab.parentElement) {
-      if (open) criarTab.parentElement.classList.add("selected");
-      else criarTab.parentElement.classList.remove("selected");
-    }
     if (open && opts.focus !== false) {
       var title = section.querySelector('input[name="title"]');
       if (title) {
@@ -386,6 +423,9 @@
     var form = document.getElementById("bd-post-form");
     var slug = (host && host.getAttribute("data-community")) || (form && form.getAttribute("data-community"));
     if (slug && host) {
+      currentSort = sortFromUrl();
+      markSortTab(currentSort);
+      bindSortTabs(slug, host);
       loadPosts(slug, host);
     }
     if (slug && form) {
