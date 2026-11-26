@@ -1,4 +1,4 @@
-import { anonUsuario, isAnonRow } from "./anonimo.js";
+import { anonUsuario, bAdminOf, isAnonRow } from "./anonimo.js";
 import { maskFor } from "./ascii.js";
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const SLUG_RE = /^[a-z0-9][a-z0-9_-]{0,23}$/;
@@ -149,6 +149,7 @@ export function publicPost(row, extra = {}) {
     ? {
         username: row.username,
         is_admin: Boolean(row.is_admin),
+        b_admin: bAdminOf(row),
         is_primordial: Boolean(row.is_primordial),
         primordial_n: row.primordial_n == null ? null : Number(row.primordial_n),
         avatar: row.avatar || null,

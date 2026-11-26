@@ -432,6 +432,7 @@
     }
     var meta = "No basedisso desde " + relativeTime(u.created_at);
     if (u.is_admin) meta += " · administrador";
+    else if (data.adm_de && data.adm_de.length) meta += " · ADM de " + data.adm_de.map(function (s) { return "b/" + s; }).join(", ");
     if (u.is_primordial) meta += u.primordial_n != null ? " · primordial #" + u.primordial_n : " · primordial";
     headText.appendChild(el("p", { class: "profile-meta" }, meta));
     var asciiSec = renderAsciiSection(root, data, reload, flash);
@@ -494,6 +495,9 @@
         if (c.usuario && c.usuario.is_admin && window.BDAccount) {
           meta.appendChild(document.createTextNode(" "));
           meta.appendChild(el("span", { class: "user-badge", title: "administrador" }, "[M]"));
+        } else if (c.usuario && c.usuario.b_admin) {
+          meta.appendChild(document.createTextNode(" "));
+          meta.appendChild(el("span", { class: "user-badge user-badge-b", title: "ADM de b/" + c.usuario.b_admin }, "[b]"));
         }
         if (window.BDAccount && window.BDAccount.appendAnonExtras) window.BDAccount.appendAnonExtras(meta, Object.assign({ anonimo: true }, c));
         var title = c.tipo === "postagem" ? el("p", { class: "profile-anon-title" }, el("a", { href: c.page }, c.title || "(sem título)")) : null;

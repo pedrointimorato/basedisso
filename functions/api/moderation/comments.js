@@ -1,6 +1,6 @@
 import { errorJson, json } from "../../_lib/shared.js";
 import { communityOfPage, getAdminContext } from "../../_lib/admins.js";
-import { anonUsuario, isAnonRow, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
+import { B_ADMIN_COMMENT_SQL, anonUsuario, bAdminOf, isAnonRow, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -12,7 +12,7 @@ export async function onRequestGet(context) {
   const url = new URL(request.url);
   const limit = Math.min(200, Math.max(1, Number(url.searchParams.get("limit") || 100) || 100));
   const sel = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden, c.author_deleted_at, c.pinned_at, c.user_id, c.anon_by, c.anon_badge,
-            u.username, u.is_admin
+            u.username, u.is_admin, ${B_ADMIN_COMMENT_SQL}
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id`;
   let results;
@@ -51,7 +51,7 @@ export async function onRequestGet(context) {
       fixado: Boolean(row.pinned_at),
       anonimo: isAnonRow(row),
       usuario: isAnonRow(row) ? anonUsuario(row) : row.username
-        ? { username: row.username, is_admin: Boolean(row.is_admin) }
+        ? { username: row.username, is_admin: Boolean(row.is_admin), b_admin: bAdminOf(row) }
         : null,
     }, reais)),
   });

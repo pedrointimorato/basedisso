@@ -11,7 +11,7 @@ import {
 } from "../../../_lib/shared.js";
 import { getSessionUser } from "../../../_lib/auth.js";
 import { canModerate, getAdminContext, isSiteAdmin } from "../../../_lib/admins.js";
-import { ANON_NAME, isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
+import { ANON_NAME, anonBadgeAtPost, isBAdmin, isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
 import {
   getCommunityDb,
   publicPost,
@@ -79,7 +79,7 @@ export async function onRequestPost(context) {
   const name = comoAnon ? ANON_NAME : session ? session.username : sanitizeName(data?.name);
   const userId = session && !comoAnon ? session.id : null;
   const anonBy = comoAnon ? session.id : null;
-  const anonBadge = comoAnon && (await isSiteAdmin(env.DB, session)) ? "site" : null;
+  const anonBadge = comoAnon ? await anonBadgeAtPost(env.DB, session, community.slug) : null;
 
   const ipHash = await hashIp(request, env);
   const rateMsg = await checkPostRate(env.DB, ipHash);
@@ -116,6 +116,7 @@ export async function onRequestPost(context) {
     sticky: 0,
     username: userId ? session.username : null,
     is_admin: userId ? session.is_admin : 0,
+    b_admin_flag: userId && (await isBAdmin(env.DB, session, community.slug)) ? 1 : 0,
     is_primordial: userId ? session.is_primordial : 0,
     primordial_n: userId ? session.primordial_n : null,
     user_id: userId,

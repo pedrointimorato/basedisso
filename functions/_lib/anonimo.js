@@ -1,7 +1,7 @@
 // >>anônimo — publicar sem mostrar a própria conta.
 // Gravação: user_id NULL, name 'anônimo', anon_by = id real (só no servidor), anon_badge = 'site' se ADM do site.
 // Leitura: o autor real NUNCA é serializado, exceto para ADMs (site: tudo; b/: só itens da própria comunidade).
-import { canModerate } from "./admins.js";
+import { canModerate, communityOfPage, isSiteAdmin } from "./admins.js";
 
 export const ANON_NAME = "anônimo";
 
@@ -26,11 +26,40 @@ export function isAnonRow(row) {
   return Boolean(row && !row.user_id && (row.anon_by || isAnonName(row.name)));
 }
 
+// b/ de um item: posts têm community; comentários, a página.
+export function itemSlug(row) {
+  if (!row) return null;
+  return row.community || communityOfPage(row.page) || null;
+}
+
+// Selo [b] (ADM da b/ do item), calculado ao vivo pela junção b_admin_flag. ADM do site mostra só [M].
+export function bAdminOf(row) {
+  return row && row.b_admin_flag && !row.is_admin ? itemSlug(row) : null;
+}
+
+// SQL: 1 se o autor (alias.user_id) é ADM da b/ do item.
+export const B_ADMIN_POST_SQL = "(SELECT 1 FROM community_admins bca WHERE bca.user_id = p.user_id AND bca.community_slug = p.community) AS b_admin_flag";
+export const B_ADMIN_COMMENT_SQL = "(SELECT 1 FROM community_admins bca WHERE bca.user_id = c.user_id AND (substr(c.page, 1, length(bca.community_slug) + 6) = '/b/' || bca.community_slug || '/p/' OR (bca.community_slug = 'adm' AND c.page = '/b/adm'))) AS b_admin_flag";
+
+export async function isBAdmin(db, user, slug) {
+  if (!db || !user || !slug) return false;
+  const r = await db.prepare("SELECT 1 AS ok FROM community_admins WHERE user_id = ? AND community_slug = ?").bind(user.id, String(slug).toLowerCase()).first();
+  return Boolean(r);
+}
+
+// Selo gravado no item anônimo no momento da postagem: 'site' ([M]), 'b' ([b]) ou null.
+export async function anonBadgeAtPost(db, user, slug) {
+  if (await isSiteAdmin(db, user)) return "site";
+  if (await isBAdmin(db, user, slug)) return "b";
+  return null;
+}
+
 export function anonUsuario(row) {
   return {
     username: ANON_NAME,
     anonimo: true,
     is_admin: row && row.anon_badge === "site",
+    b_admin: row && row.anon_badge === "b" ? itemSlug(row) : null,
     is_primordial: false,
     primordial_n: null,
     avatar: null,
@@ -66,10 +95,20 @@ export async function realAuthors(db, rows, ctx, slugOf) {
       .all();
     for (const u of results || []) users.set(u.id, u);
   }
+  const bAdm = new Set();
+  for (let i = 0; i < ids.length; i += 50) {
+    const chunk = ids.slice(i, i + 50);
+    const { results } = await db
+      .prepare(`SELECT user_id, community_slug FROM community_admins WHERE user_id IN (${chunk.map(() => "?").join(",")})`)
+      .bind(...chunk)
+      .all();
+    for (const r of results || []) bAdm.add(r.user_id + "|" + r.community_slug);
+  }
   for (const r of want) {
     const u = users.get(r.anon_by);
+    const slug = itemSlug(r);
     out.set(r.id, u
-      ? { username: u.username, is_admin: Boolean(u.is_admin), is_primordial: Boolean(u.is_primordial), primordial_n: u.primordial_n == null ? null : Number(u.primordial_n) }
+      ? { username: u.username, is_admin: Boolean(u.is_admin), b_admin: !u.is_admin && slug && bAdm.has(u.id + "|" + slug) ? slug : null, is_primordial: Boolean(u.is_primordial), primordial_n: u.primordial_n == null ? null : Number(u.primordial_n) }
       : { username: null, removido: true });
   }
   return out;

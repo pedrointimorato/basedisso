@@ -14,7 +14,7 @@ import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
 import { maskFor, readAvatar } from "../_lib/ascii.js";
 import { canModerate, communityOfPage, getAdminContext, isSiteAdmin } from "../_lib/admins.js";
-import { ANON_NAME, isOwn, anonUsuario, isAnonRow, realAuthors, withRealAuthor } from "../_lib/anonimo.js";
+import { ANON_NAME, B_ADMIN_COMMENT_SQL, anonBadgeAtPost, bAdminOf, isBAdmin, isOwn, anonUsuario, isAnonRow, realAuthors, withRealAuthor } from "../_lib/anonimo.js";
 
 export const DELETED_COMMENT_TEXT = "[comentário excluído pelo autor]";
 
@@ -38,6 +38,7 @@ async function formatComment(db, row, viewer = null) {
     ? {
         username: row.username,
         is_admin: Boolean(row.is_admin),
+        b_admin: bAdminOf(row),
         is_primordial: Boolean(row.is_primordial),
         primordial_n: row.primordial_n == null ? null : Number(row.primordial_n),
         avatar: row.avatar || null,
@@ -68,7 +69,7 @@ export async function onRequestGet(context) {
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
     `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at, c.pinned_at, c.anon_by, c.anon_badge,
-            u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar, av.colors AS avatar_colors
+            u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar, av.colors AS avatar_colors, ${B_ADMIN_COMMENT_SQL}
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id
      LEFT JOIN profile_avatar av ON av.user_id = c.user_id
@@ -141,7 +142,7 @@ export async function onRequestPost(context) {
   const name = comoAnon ? ANON_NAME : session ? session.username : sanitizeName(data?.name);
   const userId = session && !comoAnon ? session.id : null;
   const anonBy = comoAnon ? session.id : null;
-  const anonBadge = comoAnon && (await isSiteAdmin(env.DB, session)) ? "site" : null;
+  const anonBadge = comoAnon ? await anonBadgeAtPost(env.DB, session, communityOfPage(page)) : null;
 
   let parentId = data?.parent_id ? String(data.parent_id).trim() : null;
   if (parentId) {
@@ -196,6 +197,7 @@ export async function onRequestPost(context) {
     created_at: createdAt,
     username: userId ? session.username : null,
     is_admin: userId ? session.is_admin : 0,
+    b_admin_flag: userId && (await isBAdmin(env.DB, session, communityOfPage(page))) ? 1 : 0,
     is_primordial: userId ? session.is_primordial : 0,
     primordial_n: userId ? session.primordial_n : null,
     ...(await (async () => { const a = userId ? await readAvatar(env.DB, session.id) : null; return { avatar: a ? a.arte : null, avatar_colors: a ? a.cores : null }; })()),

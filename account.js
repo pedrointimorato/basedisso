@@ -43,6 +43,8 @@
     var nodes = [];
     if (user && user.is_admin) {
       nodes.push(el("span", { class: "user-badge", title: "administrador" }, "[M]"));
+    } else if (user && user.b_admin) {
+      nodes.push(el("span", { class: "user-badge user-badge-b", title: "ADM de b/" + user.b_admin }, "[b]"));
     }
     if (user && user.is_primordial) {
       var label = user.primordial_n != null ? "primordial #" + user.primordial_n : "primordial";

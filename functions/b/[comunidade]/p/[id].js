@@ -15,6 +15,7 @@ function badgeHtml(u) {
   if (!u) return "";
   let h = "";
   if (u.is_admin) h += ' <span class="user-badge" title="administrador">[M]</span>';
+  else if (u.b_admin) h += ` <span class="user-badge user-badge-b" title="ADM de b/${escapeHtml(u.b_admin)}">[b]</span>`;
   if (u.is_primordial && u.primordial_n != null) h += ` <span class="user-badge primordial" title="usuário primordial">primordial #${escapeHtml(String(u.primordial_n))}</span>`;
   return h;
 }
@@ -167,7 +168,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/script.js?v=20261126g"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261128a"></script>
+    <script src="/account.js?v=20261128b"></script>
     <script src="/comments.js?v=20261128a"></script>
 </body>
 </html>`;

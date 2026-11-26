@@ -105,9 +105,9 @@ export function profilePageHtml({ title, initialPath }) {
         </aside>
     </div>
     <script src="/script.js?v=20261126g"></script>
-    <script src="/account.js?v=20261128a"></script>
+    <script src="/account.js?v=20261128b"></script>
     <script src="/comments.js?v=20261128a"></script>
-    <script src="/perfil.js?v=20261128a"></script>
+    <script src="/perfil.js?v=20261128b"></script>
 </body>
 </html>`;
 }

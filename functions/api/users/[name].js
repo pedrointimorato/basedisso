@@ -1,5 +1,5 @@
 import { CLAIMABLE_ADMIN, getSessionUser, isClaimableAdminName, normalizeUsername, publicUser } from "../../_lib/auth.js";
-import { communityOfPage, getAdminContext, isSiteAdmin } from "../../_lib/admins.js";
+import { communitiesModeratedBy, communityOfPage, getAdminContext, isSiteAdmin } from "../../_lib/admins.js";
 import { anonUsuario, foldName, isOwn, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
 import { ASCII_MAX_COLS, ASCII_MAX_LINES, AVATAR_MAX_COLS, AVATAR_MAX_LINES, readAscii, readAvatar } from "../../_lib/ascii.js";
 import { errorJson, json } from "../../_lib/shared.js";
@@ -73,6 +73,7 @@ export async function onRequestGet(context) {
   return json({
     reservado: false,
     usuario: { ...publicUser(row), avatar: avatar ? avatar.arte : null, avatar_cores: avatar ? avatar.cores : null },
+    adm_de: await communitiesModeratedBy(env.DB, row),
     comentarios,
     ascii,
     avatar,
