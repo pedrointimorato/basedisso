@@ -481,9 +481,14 @@ a.ascii-avatar:hover { border-color: var(--accent-red, var(--t-red, #b92b27)); }
 .ascii-typing, .ascii-typing *, .ascii-swatch, .ascii-swatch * { transition: none; }
 
 /* >>anônimo */
-.bd-anon-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; margin: -4px 0 8px; cursor: pointer; color: var(--text-primary, var(--t-text, #2e3031)); }
-.bd-anon-toggle input { margin: 0; width: 15px; height: 15px; cursor: pointer; }
-.bd-anon-post { font-size: 12px; margin: 2px 0 6px; }
+label.bd-anon-toggle,
+.bd-comments label.bd-anon-toggle,
+.or-submit-form label.bd-anon-toggle {
+  display: flex; flex-direction: row; align-items: center; gap: 5px; align-self: flex-start;
+  font-size: 12px; font-weight: 400; margin: -2px 0 0; cursor: pointer;
+  color: var(--text-primary, var(--t-text, #2e3031));
+}
+label.bd-anon-toggle input[type="checkbox"] { margin: 0; width: 15px; height: 15px; flex: 0 0 auto; cursor: pointer; accent-color: var(--accent-red, #b92b27); }
 .bd-anon-voce { font-size: 11px; opacity: .75; font-style: italic; }
 .bd-autor-real { font-size: 11px; padding: 0 4px; border: 1px dashed currentColor; border-radius: 3px; opacity: .85; white-space: nowrap; }
 .bd-autor-real .user-mention { font-size: inherit; }
