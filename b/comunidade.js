@@ -448,7 +448,8 @@
           if (ts) ts.reset();
           if (!out.res.ok || !out.data.postagem) {
             if (status) {
-              status.textContent = out.data && out.data.erro ? out.data.erro : "Não foi possível publicar.";
+              if (window.BDAccount && window.BDAccount.showError) window.BDAccount.showError(status, out.data, "Não foi possível publicar.");
+              else status.textContent = out.data && out.data.erro ? out.data.erro : "Não foi possível publicar.";
               status.classList.add("erro");
             }
             return;

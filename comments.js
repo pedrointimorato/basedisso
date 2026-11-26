@@ -197,7 +197,8 @@
         .then(function (out) {
           if (ts) ts.reset();
           if (!out.res.ok) {
-            status.textContent = out.data && out.data.erro ? out.data.erro : "Não foi possível enviar.";
+            if (window.BDAccount && window.BDAccount.showError) window.BDAccount.showError(status, out.data, "Não foi possível enviar.");
+            else status.textContent = out.data && out.data.erro ? out.data.erro : "Não foi possível enviar.";
             status.classList.add("erro");
             return;
           }

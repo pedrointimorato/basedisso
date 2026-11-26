@@ -11,7 +11,7 @@
     return n;
   }
   function st(t, k) { status.textContent = t || ""; status.className = "mod-status" + (k ? " " + k : ""); }
-  function fmt(iso) { try { return new Date(iso).toLocaleString("pt-BR"); } catch (e) { return iso || ""; } }
+  function fmt(iso) { if (window.BDAccount && window.BDAccount.localTimeNode) return window.BDAccount.localTimeNode(iso); try { return new Date(iso).toLocaleString("pt-BR"); } catch (e) { return iso || ""; } }
   function load() {
     fetch("/api/moderation/conexoes", { credentials: "same-origin", headers: { Accept: "application/json" } })
       .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { return { res: res, d: d }; }); })
@@ -35,8 +35,8 @@
               el("strong", { class: "mod-ban-label" }, b.rotulo),
               b.rotulo_site ? el("span", { class: "mod-ban-site", title: "rótulo desta conexão no escopo do site" }, " (" + b.rotulo_site.replace("conexão ", "") + " no site)") : null,
               " · ", el("span", { class: "mod-ban-scope" }, b.escopo === "site" ? "site todo" : "b/" + b.escopo),
-              " · ", b.expira_em ? "até " + fmt(b.expira_em) : "permanente"),
-            el("p", { class: "mod-body" }, "Banida por ", b.por ? el("a", { class: "user-mention", href: "/@" + b.por }, ">>" + b.por) : "senha de ADM", " em " + fmt(b.criado_em),
+              " · ", b.expira_em ? "até " : "permanente", b.expira_em ? fmt(b.expira_em) : null),
+            el("p", { class: "mod-body" }, "Banida por ", b.por ? el("a", { class: "user-mention", href: "/@" + b.por }, ">>" + b.por) : "senha de ADM", " em ", fmt(b.criado_em),
               b.motivo ? el("span", { class: "mod-ban-motivo" }, " · motivo: " + b.motivo) : null),
             el("div", { class: "mod-actions" }, un)));
         });

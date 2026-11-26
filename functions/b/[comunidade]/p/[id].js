@@ -178,8 +178,8 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/script.js?v=20261126g"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261128c"></script>
-    <script src="/comments.js?v=20261128b"></script>
+    <script src="/account.js?v=20261128d"></script>
+    <script src="/comments.js?v=20261128c"></script>
 </body>
 </html>`;
 }

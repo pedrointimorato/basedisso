@@ -14,7 +14,7 @@ import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
 import { maskFor, readAvatar } from "../_lib/ascii.js";
 import { canModerate, communityOfPage, getAdminContext, isSiteAdmin } from "../_lib/admins.js";
-import { activeBan, attachConnections, banMessage } from "../_lib/conexoes.js";
+import { activeBan, attachConnections, banResponse } from "../_lib/conexoes.js";
 import { TURNSTILE_ERRO, verifyTurnstile } from "../_lib/turnstile.js";
 import { attachAnonAvatar } from "../_lib/anonimo.js";
 import { ANON_NAME, B_ADMIN_COMMENT_SQL, anonBadgeAtPost, bAdminOf, isBAdmin, isOwn, anonUsuario, isAnonRow, realAuthors, withRealAuthor } from "../_lib/anonimo.js";
@@ -182,7 +182,7 @@ export async function onRequestPost(context) {
   const ipHash = await hashIp(request, env);
   if (!session) {
     const ban = await activeBan(env.DB, ipHash, communityOfPage(page));
-    if (ban) return json({ erro: banMessage(ban), banida: true, ate: ban.expires_at }, 403);
+    if (ban) return json(banResponse(ban), 403);
     const ts = await verifyTurnstile(request, env, data?.turnstile, "comentario");
     if (!ts.ok) return json({ erro: TURNSTILE_ERRO, turnstile: true, codigos: ts.codes }, 403);
   }

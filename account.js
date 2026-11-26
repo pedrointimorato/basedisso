@@ -107,7 +107,7 @@
   var BAN_DUR = [["24h", "24 horas"], ["7d", "7 dias"], ["30d", "30 dias"], ["perm", "permanente"]];
   function fmtAte(iso) {
     if (!iso) return "permanente";
-    try { return "até " + new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return "até " + iso; }
+    try { return "até " + new Date(iso).toLocaleString("pt-BR"); } catch (e) { return "até " + iso; }
   }
   function banButton(tipo, id, cx) {
     var b = el("button", { type: "button", class: "bd-ban-btn", "data-banir-conexao": id, "data-tipo": tipo, "data-rotulo": cx.rotulo,
@@ -490,7 +490,43 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initImages);
   else initImages();
 
+  // <time datetime data-hora-local> no fuso do dispositivo (mesmo formato do /hora-local.js);
+  // o texto inicial é UTC, rotulado, caso a formatação falhe.
+  function utcText(d) {
+    function p(n) { return (n < 10 ? "0" : "") + n; }
+    return p(d.getUTCDate()) + "/" + p(d.getUTCMonth() + 1) + "/" + d.getUTCFullYear() + ", " + p(d.getUTCHours()) + ":" + p(d.getUTCMinutes()) + ":" + p(d.getUTCSeconds()) + " UTC";
+  }
+  function localTimeNode(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return document.createTextNode(String(iso || ""));
+    var t = el("time", { datetime: d.toISOString(), "data-hora-local": "", title: utcText(d) }, utcText(d));
+    try {
+      t.textContent = d.toLocaleString("pt-BR");
+      t.setAttribute("title", d.toLocaleString("pt-BR", { dateStyle: "full", timeStyle: "long" }));
+      t.setAttribute("data-hora-ok", "1");
+    } catch (e) { /* fica em UTC */ }
+    return t;
+  }
+  // Mensagem de conexão banida (resposta 403 com banida/escopo/ate) com a hora local.
+  function banMessageNode(d) {
+    var frag = document.createDocumentFragment();
+    if (!d || !d.banida || !d.escopo) { frag.appendChild(document.createTextNode((d && d.erro) || "")); return frag; }
+    frag.appendChild(document.createTextNode("Esta conexão está impedida de interagir sem conta " + (d.escopo === "site" ? "no basedisso" : "em b/" + d.escopo)));
+    if (d.ate) { frag.appendChild(document.createTextNode(" até ")); frag.appendChild(localTimeNode(d.ate)); }
+    else frag.appendChild(document.createTextNode(" permanentemente"));
+    frag.appendChild(document.createTextNode(". Entre na sua conta para participar."));
+    return frag;
+  }
+  function showError(node, d, fallback) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+    if (d && d.banida) node.appendChild(banMessageNode(d));
+    else node.textContent = (d && d.erro) || fallback;
+  }
+
   global.BDAccount = {
+    localTimeNode: localTimeNode,
+    banMessageNode: banMessageNode,
+    showError: showError,
     img: {
       MAX: IMG_MAX,
       url: imageUrl,

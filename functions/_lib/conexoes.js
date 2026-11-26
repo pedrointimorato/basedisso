@@ -1,3 +1,4 @@
+import { utcFallbackText } from "./hora.js";
 // Conexões sem conta: identificadas só pelo ip_hash salgado (nunca o IP).
 // Rótulos curtos por escopo ('site' ou slug da b/): a mesma conexão tem rótulos diferentes em b/ diferentes,
 // para que ADMs de b/ não cruzem quem posta sem conta entre comunidades.
@@ -35,19 +36,16 @@ export async function activeBan(db, ipHash, slug) {
   return rows[0];
 }
 
-export function fmtBrasilia(iso) {
-  try {
-    const s = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
-    return s.replace(", ", " às ") + " (horário de Brasília)";
-  } catch {
-    return iso;
-  }
-}
-
+// Texto do servidor sem fuso fixo: o ISO vai junto (ate/expira_em) e o cliente mostra a hora
+// no fuso do dispositivo; sem JS fica a hora em UTC, rotulada.
 export function banMessage(ban) {
   const onde = ban.scope === "site" ? "no basedisso" : `em b/${ban.scope}`;
-  const ate = ban.expires_at ? ` até ${fmtBrasilia(ban.expires_at)}` : "";
+  const ate = ban.expires_at ? ` até ${utcFallbackText(ban.expires_at)}` : " permanentemente";
   return `Esta conexão está impedida de interagir sem conta ${onde}${ate}. Entre na sua conta para participar.`;
+}
+
+export function banResponse(ban) {
+  return { erro: banMessage(ban), banida: true, escopo: ban.scope, ate: ban.expires_at || null };
 }
 
 // Anexa item.conexao (rótulo + o que o ADM pode fazer) aos itens sem conta que o ctx modera.
