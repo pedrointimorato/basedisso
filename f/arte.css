@@ -51,3 +51,6 @@
     .arte-tool .tool-card { padding: 12px; }
     .ascii-char { min-width: 34px; min-height: 34px; }
 }
+
+/* tools.css tem .is-hidden { display: none !important } (filtros); aqui é só a camada oculta, que continua na lista. */
+.ascii-layer-list .ascii-layer.is-hidden { display: flex !important; }
