@@ -210,3 +210,5 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .ma-tipo.avatar { background: var(--t-info-bg, #e8f0fb); color: #1a4f9c; }
 [data-theme="dark"] .ma-tipo.avatar { background: #1d2a3d; color: #9cc1f5; }
 .mod-fixado-flag { color: var(--t-green, #228822); border-color: var(--t-green, #228822); }
+[data-theme="dark"] .mc-kind.primordial { color: #b49cf0; }
+[data-theme="dark"] .mc-kind.collective { color: #6fd28a; }
