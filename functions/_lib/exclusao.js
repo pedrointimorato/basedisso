@@ -1,3 +1,4 @@
+import { deletePoll } from "./enquete.js";
 // Exclusão pelo próprio autor (comentários e postagens).
 // Com respostas/comentários: apaga o conteúdo e marca author_deleted_at (a thread continua).
 // Sem respostas/comentários: DELETE de verdade.
@@ -34,7 +35,10 @@ async function pruneAfterDelete(db, parentId, page) {
     const post = await db.prepare("SELECT id, author_deleted_at FROM posts WHERE id = ?").bind(m[1]).first();
     if (post && post.author_deleted_at) {
       const left = await db.prepare("SELECT COUNT(*) AS n FROM comments WHERE page = ?").bind(page).first();
-      if (!Number(left?.n || 0)) await db.prepare("DELETE FROM posts WHERE id = ?").bind(post.id).run();
+      if (!Number(left?.n || 0)) {
+        await db.prepare("DELETE FROM posts WHERE id = ?").bind(post.id).run();
+        await deletePoll(db, post.id);
+      }
     }
   }
 }
@@ -74,8 +78,10 @@ export async function deleteOwnPost(db, user, id) {
       .prepare("UPDATE posts SET title = '', body = '', link = NULL, sticky = 0, author_deleted_at = ?, pinned_at = NULL, pinned_by = NULL WHERE id = ?")
       .bind(new Date().toISOString(), row.id)
       .run();
+    await deletePoll(db, row.id); // a enquete some junto com o conteúdo
     return { ok: true, modo: "marcado", community: row.community };
   }
   await db.prepare("DELETE FROM posts WHERE id = ?").bind(row.id).run();
+  await deletePoll(db, row.id);
   return { ok: true, modo: "apagado", community: row.community };
 }

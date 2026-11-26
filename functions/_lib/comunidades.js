@@ -166,6 +166,9 @@ export function publicPost(row, extra = {}) {
     sticky: Boolean(row.sticky),
     url: postHref(row.community, row.id),
     comment_count: Number(row.comment_count || 0),
+    enquete: row.poll_closes_at && !excluida
+      ? { total: Number(row.poll_votes || 0), encerra_em: row.poll_closes_at, encerrada: Date.parse(row.poll_closes_at) <= Date.now() }
+      : null,
     ...extra,
   };
 }

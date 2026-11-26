@@ -4,11 +4,14 @@ export function postsSelectSql() {
   return `SELECT p.id, p.community, p.title, p.body, p.link, p.name, p.user_id,
             p.created_at, p.hidden, p.sticky, p.author_deleted_at, p.pinned_at,
             u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar,
+            pl.closes_at AS poll_closes_at,
+            (SELECT COUNT(*) FROM poll_votes pv WHERE pv.post_id = p.id) AS poll_votes,
             (SELECT COUNT(*) FROM comments c
               WHERE c.hidden = 0 AND c.page = '/b/' || p.community || '/p/' || p.id) AS comment_count
      FROM posts p
      LEFT JOIN users u ON u.id = p.user_id
-     LEFT JOIN profile_avatar av ON av.user_id = p.user_id`;
+     LEFT JOIN profile_avatar av ON av.user_id = p.user_id
+     LEFT JOIN polls pl ON pl.post_id = p.id`;
 }
 
 export async function getVisiblePost(db, id) {

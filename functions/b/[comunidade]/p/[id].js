@@ -5,6 +5,8 @@ import { getVisiblePost } from "../../../_lib/posts.js";
 import { localTimeHtml } from "../../../_lib/hora.js";
 import { getSessionUser } from "../../../_lib/auth.js";
 import { imageHtml, imageUrl, imagesInText } from "../../../_lib/imagens.js";
+import { readPoll } from "../../../_lib/enquete.js";
+import { pollHtml } from "../../../_lib/enquete-html.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 
 function authorHtml(post) {
@@ -26,7 +28,7 @@ function domainOf(link) {
   }
 }
 
-export function postPageHtml({ community, post, proprio = false, podeFixar = false }) {
+export function postPageHtml({ community, post, proprio = false, podeFixar = false, enquete = null }) {
   const excluida = Boolean(post.excluida_pelo_autor);
   const slug = community.slug;
   const title = excluida ? "Postagem excluída pelo autor" : escapeHtml(post.title || "Postagem");
@@ -54,7 +56,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <link rel="stylesheet" href="/style.css?v=20261126i">
     <link rel="stylesheet" href="/account.css?v=20261126g">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
-    <link rel="stylesheet" href="/comments.css?v=20261126g">
+    <link rel="stylesheet" href="/comments.css?v=20261127a">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -111,6 +113,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
                                 ${linkImgHtml}
                                 ${body ? `<div class="or-md or-post-body">${body}</div>` : ""}
                                 ${bodyImgHtml}
+                                ${enquete ? pollHtml(enquete) : ""}
                                 ${hasImgs ? `<p class="bd-img-toggle-row"><button type="button" class="bd-img-toggle" data-img-toggle="1">ocultar imagens</button></p>` : ""}
                                 ${proprio || podeFixar ? `<ul class="or-buttons or-own-actions">${proprio ? `<li><button type="button" class="or-excluir" data-excluir-post="${escapeHtml(post.id)}" data-voltar="${hrefComm}">excluir</button></li>` : ""}${podeFixar ? `<li><button type="button" class="or-fixar" data-fixar-post="${escapeHtml(post.id)}" data-fixado="${post.fixado ? "1" : "0"}">${post.fixado ? "desafixar" : "fixar"}</button></li>` : ""}</ul><p class="or-excluir-msg" role="status" hidden></p>` : ""}`}
                                 <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="${escapeHtml(pageKey)}" data-title="Comentários"${excluida ? ' data-closed="true"' : ""}></div>
@@ -132,6 +135,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
         ${SIDEBAR}
     </div>
     <script src="/hora-local.js?v=20261126a"></script>
+    <script src="/b/enquete.js?v=20261127a"></script>
     <script src="/b/excluir-post.js?v=20261126d"></script>
     <script src="/script.js?v=20261126g"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
@@ -159,11 +163,16 @@ export async function onRequestGet(context) {
   const viewer = await getSessionUser(request, env);
   const proprio = Boolean(viewer && row.user_id && row.user_id === viewer.id && !row.author_deleted_at);
   let podeFixar = false;
+  let ctx = null;
   if (!row.author_deleted_at && request.headers.get("Cookie")) {
-    const ctx = await getAdminContext(request, env);
+    ctx = await getAdminContext(request, env);
     podeFixar = ctx.any && canModerate(ctx, community.slug);
   }
-  const html = postPageHtml({ community, post: publicPost(row), proprio, podeFixar });
+  let enquete = null;
+  if (!row.author_deleted_at && row.poll_closes_at) {
+    try { enquete = await readPoll(env.DB, row, viewer, ctx); } catch { enquete = null; }
+  }
+  const html = postPageHtml({ community, post: publicPost(row), proprio, podeFixar, enquete });
   return new Response(html, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },

@@ -102,6 +102,12 @@
     var tagline = el("p", { class: "or-tagline" + (av ? " has-avatar" : "") }, "enviado " + relativeTime(p.created_at) + " por ", av, authorNode(p));
     if (p.fixado) tagline.insertBefore(pinTag(), tagline.firstChild);
     if (expBtn) tagline.insertBefore(expBtn, tagline.firstChild);
+    if (p.enquete) {
+      var tot = Number(p.enquete.total || 0);
+      tagline.appendChild(document.createTextNode(" · "));
+      tagline.appendChild(el("span", { class: "or-poll-badge" + (p.enquete.encerrada ? " is-closed" : "") }, "[enquete]"));
+      tagline.appendChild(document.createTextNode(" " + (tot === 1 ? "1 voto" : tot + " votos") + (p.enquete.encerrada ? " · encerrada" : "")));
+    }
     var exp = p.body ? el("p", { class: "or-exp" }, p.body.length > 220 ? p.body.slice(0, 220) + "…" : p.body) : null;
     return el(
       "article",
@@ -229,6 +235,78 @@
       });
   }
 
+  var POLL_MAX = 6, POLL_MIN = 2, POLL_LABEL_MAX = 80;
+  var POLL_PRAZOS = [["1h", "1 hora"], ["24h", "24 horas"], ["3d", "3 dias"], ["7d", "7 dias"]];
+  function buildPollEditor() {
+    var open = false;
+    var toggle = el("button", { type: "button", class: "or-poll-toggle", "aria-expanded": "false" }, "+ Adicionar enquete");
+    var list = el("ol", { class: "or-poll-opts" });
+    var addBtn = el("button", { type: "button", class: "or-poll-add" }, "+ opção");
+    var sel = el("select", { name: "poll_prazo", class: "or-poll-prazo" });
+    POLL_PRAZOS.forEach(function (p) { var o = el("option", { value: p[0] }, p[1]); if (p[0] === "24h") o.selected = true; sel.appendChild(o); });
+    var box = el("fieldset", { class: "or-poll-editor", hidden: "hidden" },
+      el("legend", null, "Enquete"),
+      list,
+      el("p", { class: "or-poll-row" }, addBtn),
+      el("label", { class: "or-poll-prazo-label" }, "Prazo ", sel),
+      el("p", { class: "or-poll-hint" }, "2 a 6 opções, até 80 caracteres cada. Votar exige conta; 1 voto por conta, sem troca.")
+    );
+    function renumber() {
+      var items = list.querySelectorAll("li");
+      for (var i = 0; i < items.length; i++) {
+        items[i].querySelector("input").setAttribute("placeholder", "Opção " + (i + 1));
+        items[i].querySelector("input").setAttribute("aria-label", "Opção " + (i + 1));
+        var rm = items[i].querySelector(".or-poll-rm");
+        rm.hidden = items.length <= POLL_MIN;
+      }
+      addBtn.hidden = items.length >= POLL_MAX;
+    }
+    function addOption(v) {
+      if (list.children.length >= POLL_MAX) return;
+      var input = el("input", { type: "text", maxlength: String(POLL_LABEL_MAX), class: "or-poll-input", autocomplete: "off" });
+      if (v) input.value = v;
+      var rm = el("button", { type: "button", class: "or-poll-rm", "aria-label": "remover opção" }, "×");
+      var li = el("li", null, input, rm);
+      rm.addEventListener("click", function () { if (list.children.length > POLL_MIN) { list.removeChild(li); renumber(); } });
+      list.appendChild(li);
+      renumber();
+      return input;
+    }
+    function reset() {
+      while (list.firstChild) list.removeChild(list.firstChild);
+      addOption(); addOption();
+      sel.value = "24h";
+      setOpen(false);
+    }
+    function setOpen(v) {
+      open = v;
+      box.hidden = !v;
+      toggle.setAttribute("aria-expanded", v ? "true" : "false");
+      toggle.textContent = v ? "− Remover enquete" : "+ Adicionar enquete";
+    }
+    toggle.addEventListener("click", function () { setOpen(!open); if (open) { var f = list.querySelector("input"); if (f) f.focus(); } });
+    addBtn.addEventListener("click", function () { var i = addOption(); if (i) i.focus(); });
+    reset();
+    return {
+      node: el("div", { class: "or-poll-wrap" }, toggle, box),
+      reset: reset,
+      value: function () {
+        if (!open) return null;
+        var vals = [], seen = {};
+        var inputs = list.querySelectorAll("input");
+        for (var i = 0; i < inputs.length; i++) {
+          var v = inputs[i].value.replace(/\s+/g, " ").trim();
+          if (!v) continue;
+          if (seen[v.toLowerCase()]) return { erro: "Há opções repetidas na enquete." };
+          seen[v.toLowerCase()] = 1;
+          vals.push(v);
+        }
+        if (vals.length < POLL_MIN) return { erro: "A enquete precisa de pelo menos 2 opções preenchidas." };
+        return { opcoes: vals, prazo: sel.value };
+      },
+    };
+  }
+
   function bindForm(form, slug, onCreated) {
     var status = form.querySelector("[data-post-status]");
     var nameField = form.querySelector("[data-name-field]");
@@ -257,6 +335,12 @@
       if (!src) return;
       linkPreview.appendChild(el("p", { class: "or-link-preview-label" }, "Prévia da imagem:"));
       linkPreview.appendChild(IMG.node(src, linkInput.value.trim(), "bd-img-preview"));
+    }
+    // ---- Enquete (2 a 6 opções, prazo) ----
+    var poll = buildPollEditor();
+    if (linkInput) {
+      var anchor = linkInput.closest("label") || linkInput;
+      anchor.parentNode.insertBefore(poll.node, (linkPreview && linkPreview.parentNode === anchor.parentNode ? linkPreview : anchor).nextSibling);
     }
     if (linkInput) {
       linkInput.addEventListener("input", updateLinkPreview);
@@ -297,9 +381,17 @@
         }
         return;
       }
-      if (!body && !link) {
+      var enquete = poll.value();
+      if (enquete && enquete.erro) {
         if (status) {
-          status.textContent = "Escreva um texto ou informe um link.";
+          status.textContent = enquete.erro;
+          status.classList.add("erro");
+        }
+        return;
+      }
+      if (!body && !link && !enquete) {
+        if (status) {
+          status.textContent = "Escreva um texto, informe um link ou adicione uma enquete.";
           status.classList.add("erro");
         }
         return;
@@ -313,6 +405,7 @@
           title: title,
           body: body,
           link: link,
+          enquete: enquete || undefined,
           name: nameInput ? nameInput.value : "",
           website: hp ? hp.value : "",
         }),
@@ -332,6 +425,7 @@
           }
           form.reset();
           updateLinkPreview();
+          poll.reset();
           if (window.BDAccount && window.BDAccount.me) window.BDAccount.me().then(applyUser);
           else applyUser(null);
           if (status) {

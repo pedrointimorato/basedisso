@@ -1,6 +1,7 @@
 import { errorJson, isSameOrigin, json } from "../../../_lib/shared.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 import { setPostPin } from "../../../_lib/fixar.js";
+import { deletePoll } from "../../../_lib/enquete.js";
 
 async function authz(request, env) {
   const ctx = await getAdminContext(request, env);
@@ -74,5 +75,6 @@ export async function onRequestDelete(context) {
   if (!canModerate(a.ctx, existing.community)) return errorJson("Você não modera esta comunidade.", 403);
   await deleteCommentsOnPage(env.DB, postPageKey(existing.community, id));
   await env.DB.prepare("DELETE FROM posts WHERE id = ?").bind(id).run();
+  await deletePoll(env.DB, id);
   return json({ ok: true, apagado: true });
 }

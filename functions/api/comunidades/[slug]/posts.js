@@ -19,6 +19,7 @@ import {
   TITLE_MAX,
 } from "../../../_lib/comunidades.js";
 import { normalizeSort, listVisiblePosts, getVisiblePost } from "../../../_lib/posts.js";
+import { cleanPollInput, deletePoll, pollStatements } from "../../../_lib/enquete.js";
 
 export async function onRequestGet(context) {
   const { env, params, request } = context;
@@ -69,8 +70,10 @@ export async function onRequestPost(context) {
 
   const link = sanitizeLink(data?.link);
   if (link === false) return errorJson("Link inválido. Use um endereço http ou https.", 400);
-  if (!body && !link) {
-    return errorJson("Escreva um texto ou informe um link.", 400);
+  const poll = cleanPollInput(data?.enquete);
+  if (poll && poll.erro) return errorJson(poll.erro, 400);
+  if (!body && !link && !poll) {
+    return errorJson("Escreva um texto, informe um link ou adicione uma enquete.", 400);
   }
 
   const session = await getSessionUser(request, env);
@@ -89,6 +92,15 @@ export async function onRequestPost(context) {
   )
     .bind(id, community.slug, title, body, link, name, userId, createdAt, ipHash)
     .run();
+  if (poll) {
+    try {
+      await env.DB.batch(pollStatements(env.DB, id, poll, createdAt));
+    } catch (e) {
+      await env.DB.prepare("DELETE FROM posts WHERE id = ?").bind(id).run();
+      await deletePoll(env.DB, id);
+      return errorJson("Não foi possível criar a enquete.", 500);
+    }
+  }
   await recordRate(env.DB, ipHash, "post");
 
   const row = await getVisiblePost(env.DB, id);
