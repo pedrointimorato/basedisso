@@ -278,6 +278,13 @@
       grid.addEventListener("pointerdown", function (ev) { painting = true; try { grid.setPointerCapture(ev.pointerId); } catch (e) {} paintAt(ev.clientX, ev.clientY); ev.preventDefault(); });
       grid.addEventListener("pointermove", function (ev) { if (painting) { paintAt(ev.clientX, ev.clientY); ev.preventDefault(); } });
       ["pointerup", "pointercancel", "lostpointercapture"].forEach(function (n) { grid.addEventListener(n, function () { painting = false; }); });
+      // Reserva para navegadores/emulações sem Pointer Events (pintar duas vezes a mesma célula não faz nada).
+      grid.addEventListener("mousedown", function (ev) { painting = true; paintAt(ev.clientX, ev.clientY); ev.preventDefault(); });
+      grid.addEventListener("mousemove", function (ev) { if (painting) paintAt(ev.clientX, ev.clientY); });
+      document.addEventListener("mouseup", function () { painting = false; });
+      grid.addEventListener("touchstart", function (ev) { var t = ev.touches[0]; if (!t) return; painting = true; paintAt(t.clientX, t.clientY); ev.preventDefault(); }, { passive: false });
+      grid.addEventListener("touchmove", function (ev) { var t = ev.touches[0]; if (t) paintAt(t.clientX, t.clientY); ev.preventDefault(); }, { passive: false });
+      grid.addEventListener("touchend", function () { painting = false; });
       clearColors.addEventListener("click", function () { mk = rawChars.map(function () { return "."; }); update(); });
       var counter = el("p", { class: "ascii-counter", id: K.prefix + "-counter", "aria-live": "polite" });
       var curFrame = art ? art.moldura : "simples";
