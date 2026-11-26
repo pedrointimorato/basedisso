@@ -296,7 +296,7 @@
     font-family: "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", "Courier New", ui-monospace, monospace;
     font-variant-ligatures: none;
     font-size: 14px;
-    line-height: 1.2;
+    line-height: 1.15;
     white-space: pre;
     overflow-wrap: normal;
     word-break: normal;
@@ -366,6 +366,7 @@
     padding: 10px;
     box-sizing: border-box;
 }
+.ascii-hint code { font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; font-size: 12px; }
 .ascii-vazio { font-size: 12px; color: var(--text-light, #8f9092); margin: 0; }
 @media (max-width: 480px) {
     .profile-main { padding-left: 10px; padding-right: 10px; }

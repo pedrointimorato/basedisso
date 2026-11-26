@@ -148,7 +148,7 @@
       var errBox = el("ul", { class: "ascii-erros", id: "ascii-erros" });
       var editor = el("div", { class: "ascii-editor" },
         el("h2", { class: "ascii-editor-title" }, "Arte ASCII do perfil"),
-        el("p", { class: "ascii-hint" }, "Texto puro, fonte monoespaçada. Espaços são mantidos; tabulações viram 4 espaços. Caracteres de caixa (┌─┐│└┘╔═╗) são permitidos; emojis não."),
+        el("p", { class: "ascii-hint" }, "Texto puro, fonte monoespaçada. Espaços são mantidos; tabulações viram 4 espaços. Caracteres de caixa como ", el("code", null, "┌─┐│└┘╔═╗"), " são permitidos; emojis não."),
         ta, counter, errBox, frames,
         el("p", { class: "ascii-preview-label" }, "Pré-visualização (largura de celular)"),
         el("div", { class: "ascii-preview-phone" }, preview),
