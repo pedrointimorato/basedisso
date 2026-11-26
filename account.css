@@ -463,7 +463,7 @@ a.ascii-avatar:hover { border-color: var(--accent-red, var(--t-red, #b92b27)); }
     color: var(--t-text, #222); white-space: pre; touch-action: none; user-select: none; -webkit-user-select: none;
     cursor: crosshair; width: max-content; max-width: 100%;
 }
-.ascii-paint-row { display: block; height: 1.25em; }
+.ascii-paint-row { display: block; height: 1.25em; font-family: inherit; }
 .ascii-cell { display: inline-block; width: 0.62em; text-align: center; font-family: inherit; font-size: inherit; }
 .ascii-cell:not(.is-space):hover { outline: 1px solid var(--t-text3, #999); }
 .ascii-limpar { margin-top: 6px; }
