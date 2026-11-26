@@ -279,3 +279,97 @@
 .sidebar-account-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
 .sidebar-link-sutil { font-size: 12px; color: var(--text-secondary, #636466); text-decoration: none; }
 .sidebar-link-sutil:hover { color: var(--accent-red, #b92b27); text-decoration: underline; }
+
+/* ---------- Arte ASCII do perfil ---------- */
+.profile-ascii { margin: 0 0 22px; }
+.ascii-wrap {
+    container-type: inline-size;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.ascii-art {
+    --cols: 52;
+    display: inline-block;
+    margin: 0;
+    padding: 10px 12px;
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", "Courier New", ui-monospace, monospace;
+    font-variant-ligatures: none;
+    font-size: 14px;
+    line-height: 1.2;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
+    tab-size: 4;
+    color: var(--text-primary, #2e3031);
+    background: var(--search-bg, #f7f7f8);
+    border: 1px solid var(--border-color, #dee0e1);
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+.ascii-art.sem-moldura { background: transparent; border-color: transparent; padding-left: 0; padding-right: 0; }
+@supports (font-size: 1cqw) {
+    /* Encolhe a fonte para a arte caber na largura; nunca menos de 8px nem mais de 15px. */
+    .ascii-art { font-size: clamp(8px, calc((100cqw - 26px) / (var(--cols) * 0.62)), 15px); }
+}
+.ascii-tools, .ascii-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ascii-btn {
+    background: var(--accent-red, #b92b27);
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.ascii-btn:hover { background: var(--accent-red-hover, #a12320); }
+.ascii-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.ascii-btn.secondary { background: transparent; color: var(--text-primary, #2e3031); border: 1px solid var(--border-color, #dee0e1); }
+.ascii-btn.danger { background: #8a1f1c; }
+.ascii-status { font-size: 13px; margin: 6px 0 0; color: var(--text-secondary, #636466); min-height: 0; }
+.ascii-status:empty { display: none; }
+.ascii-status.ok { color: #228822; }
+.ascii-status.erro { color: var(--accent-red, #b92b27); }
+.ascii-editor { margin-top: 14px; border: 1px solid var(--border-color, #dee0e1); border-radius: 8px; padding: 14px; }
+.ascii-editor-title { font-size: 16px; margin: 0 0 4px; color: var(--text-primary, #2e3031); }
+.ascii-hint { font-size: 12px; color: var(--text-secondary, #636466); margin: 0 0 10px; }
+.ascii-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", "Courier New", ui-monospace, monospace;
+    font-size: 13px;
+    line-height: 1.2;
+    white-space: pre;
+    overflow-x: auto;
+    resize: vertical;
+    padding: 8px;
+    border: 1px solid var(--border-color, #dee0e1);
+    border-radius: 4px;
+    background: var(--bg-card, #fff);
+    color: var(--text-primary, #2e3031);
+}
+.ascii-counter { font-size: 12px; margin: 6px 0 0; color: var(--text-secondary, #636466); font-variant-numeric: tabular-nums; }
+.ascii-counter.erro { color: var(--accent-red, #b92b27); font-weight: 700; }
+.ascii-erros { margin: 4px 0 0; padding-left: 18px; font-size: 12px; color: var(--accent-red, #b92b27); }
+.ascii-erros:empty { display: none; }
+.ascii-frames { border: 0; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.ascii-frames legend { font-size: 12px; font-weight: 700; color: var(--text-secondary, #636466); padding: 0; margin-bottom: 4px; }
+.ascii-radio { font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; color: var(--text-primary, #2e3031); }
+.ascii-preview-label { font-size: 12px; font-weight: 700; color: var(--text-secondary, #636466); margin: 14px 0 6px; }
+/* Simula a área útil do perfil num celular de 412px. */
+.ascii-preview-phone {
+    width: 354px;
+    max-width: 100%;
+    border: 1px dashed var(--border-color, #dee0e1);
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.ascii-vazio { font-size: 12px; color: var(--text-light, #8f9092); margin: 0; }
+@media (max-width: 480px) {
+    .profile-main { padding-left: 10px; padding-right: 10px; }
+    .profile-card { padding: 16px 14px; }
+    .ascii-editor { padding: 10px; }
+    .ascii-preview-phone { width: 100%; }
+}

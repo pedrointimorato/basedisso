@@ -407,6 +407,7 @@
       loadPosts();
       if (v.is_site_admin) loadReservas();
       if (v.is_site_admin && window.BDModConvites) window.BDModConvites.init();
+      if (v.is_site_admin && window.BDModAscii) window.BDModAscii.init();
     });
   }
 

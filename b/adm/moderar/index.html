@@ -6,7 +6,7 @@
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261124a">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261124f">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261125a">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -66,6 +66,7 @@
                 <a href="#mod-sec-res" data-site-only>Reservas</a>
                 <a href="#sec-convites" data-site-only>Códigos</a>
                 <a href="#sec-caixas" data-site-only>Caixas</a>
+                <a href="#sec-ascii" data-site-only>Artes ASCII</a>
             </nav>
 
             <div class="mod-section" id="mod-sec-site" data-site-only>
@@ -189,12 +190,23 @@
                 </div>
                 <div class="mod-card mx-contrib" id="mx-contrib"></div>
             </div>
+
+            <div class="mod-section" id="sec-ascii" data-site-only>
+                <h2>Artes ASCII dos perfis</h2>
+                <p class="mod-lead">Artes de texto que aparecem no topo dos perfis /@Nome. Remova as impróprias; a pessoa pode enviar outra depois.</p>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="ma-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="ascii" aria-controls="ma-list" aria-expanded="true">Encolher</button>
+                </div>
+                <div class="mod-card ma-list" id="ma-list"></div>
+            </div>
         </section>
     </main>
 
     <script src="/account.js?v=20261124a"></script>
     <script src="/b/adm/moderar/moderar-convites.js?v=20261124d"></script>
-    <script src="/b/adm/moderar/moderar.js?v=20261124f"></script>
+    <script src="/b/adm/moderar/moderar-ascii.js?v=20261125a"></script>
+    <script src="/b/adm/moderar/moderar.js?v=20261125a"></script>
     <script src="/b/adm/moderar/moderar-collapse.js?v=20261124c"></script>
 </body>
 </html>

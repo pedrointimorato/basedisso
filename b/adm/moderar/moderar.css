@@ -198,3 +198,11 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
     .mod-res-table td.mod-res-acoes { flex-basis: 100%; margin-top: 4px; white-space: normal; display: flex; flex-wrap: wrap; gap: 6px; }
     .mod-res-table td.mod-res-acoes .mod-btn + .mod-btn { margin-left: 0; }
 }
+/* Artes ASCII dos perfis */
+.ma-item { padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+.ma-item:last-child { border-bottom: 0; }
+.ma-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 6px; }
+.ma-head .ma-del { margin-left: auto; }
+.ma-meta { font-size: 12px; color: var(--text-secondary); }
+.ma-scroll { overflow-x: auto; max-width: 100%; }
+.ma-art { margin: 0; font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; font-size: 11px; line-height: 1.2; white-space: pre; color: var(--text-primary); background: var(--search-bg); border-radius: 4px; padding: 6px 8px; display: inline-block; }

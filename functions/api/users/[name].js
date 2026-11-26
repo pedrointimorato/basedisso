@@ -1,4 +1,6 @@
-import { CLAIMABLE_ADMIN, isClaimableAdminName, normalizeUsername, publicUser } from "../../_lib/auth.js";
+import { CLAIMABLE_ADMIN, getSessionUser, isClaimableAdminName, normalizeUsername, publicUser } from "../../_lib/auth.js";
+import { isSiteAdmin } from "../../_lib/admins.js";
+import { ASCII_MAX_COLS, ASCII_MAX_LINES, readAscii } from "../../_lib/ascii.js";
 import { errorJson, json } from "../../_lib/shared.js";
 import { lookupMentions } from "../../_lib/mentions.js";
 
@@ -52,5 +54,24 @@ export async function onRequestGet(context) {
     });
   }
 
-  return json({ reservado: false, usuario: publicUser(row), comentarios });
+  const viewer = await getSessionUser(context.request, env);
+  const ascii = await readAscii(env.DB, row.id);
+  const podeEditar = Boolean(viewer && viewer.id === row.id);
+  let podeRemover = false;
+  if (viewer && ascii) {
+    try {
+      podeRemover = await isSiteAdmin(env.DB, viewer);
+    } catch {
+      podeRemover = false;
+    }
+  }
+  return json({
+    reservado: false,
+    usuario: publicUser(row),
+    comentarios,
+    ascii,
+    ascii_limites: { linhas: ASCII_MAX_LINES, colunas: ASCII_MAX_COLS },
+    pode_editar_ascii: podeEditar,
+    pode_remover_ascii: podeRemover,
+  });
 }
