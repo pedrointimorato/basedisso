@@ -56,7 +56,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <link rel="stylesheet" href="/style.css?v=20261126i">
     <link rel="stylesheet" href="/account.css?v=20261126g">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
-    <link rel="stylesheet" href="/comments.css?v=20261127a">
+    <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>

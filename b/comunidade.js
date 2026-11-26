@@ -287,6 +287,10 @@
     toggle.addEventListener("click", function () { setOpen(!open); if (open) { var f = list.querySelector("input"); if (f) f.focus(); } });
     addBtn.addEventListener("click", function () { var i = addOption(); if (i) i.focus(); });
     reset();
+    box.addEventListener("input", function () {
+      var form = box.closest("form"); var st = form && form.querySelector("[data-post-status]");
+      if (st && st.classList.contains("erro")) { st.textContent = ""; st.classList.remove("erro"); }
+    });
     return {
       node: el("div", { class: "or-poll-wrap" }, toggle, box),
       reset: reset,

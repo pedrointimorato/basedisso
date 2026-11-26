@@ -336,3 +336,5 @@ html.bd-noimg .bd-img-link, html.bd-noimg .or-expando, html.bd-noimg .or-expando
 .or-poll-prazo-label { display: flex !important; align-items: center; gap: 8px; font-size: 13px; }
 .or-poll-prazo { width: auto !important; }
 .or-poll-hint { font-size: 11px; color: var(--t-text3, #888); margin: 6px 0 0; }
+.or-submit-form .or-poll-prazo-label { flex-direction: row; align-items: center; justify-content: flex-start; gap: 8px; font-size: 12px; }
+.or-submit-form .or-poll-prazo { font: 13px verdana, arial, helvetica, sans-serif; padding: 3px 6px; border: 1px solid var(--t-info-border, #a8b8c8); border-radius: 2px; background: var(--t-surface, #fff); color: var(--t-text, #000); }
