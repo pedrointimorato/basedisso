@@ -279,3 +279,5 @@
 .or-expando .bd-img { max-height: 500px; }
 html.bd-noimg .bd-img-link, html.bd-noimg .or-expando, html.bd-noimg .or-expando-btn, html.bd-noimg .or-thumb-img .bd-img, html.bd-noimg .or-link-preview { display: none !important; }
 [data-theme="dark"] .or-expando-btn { background: transparent; }
+/* URLs longas (imagens por link) não estouram a largura no celular */
+.or-exp, .bd-comment-body, .or-post-body, .profile-comment-body, .or-title, .or-post-link { overflow-wrap: anywhere; }
