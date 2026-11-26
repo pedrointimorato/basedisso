@@ -212,7 +212,7 @@ body {
 }
 .sidebar-icon-link {
     margin-left: 0;
-    color: #a12320;
+    color: var(--accent-red-hover, #a12320);
     font-size: 13px;
     flex-shrink: 0;
 }
