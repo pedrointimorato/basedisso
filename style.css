@@ -1014,3 +1014,19 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
 .tema-item input:checked + .tema-pill { border-color: var(--accent-red); background: var(--accent-red); }
 .tema-item input:checked + .tema-pill::after { left: 24px; background: #fff; border-color: #fff; }
 .tema-item input:focus-visible + .tema-pill { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+/* ===== Cores das artes ASCII (paleta fixa, uma variante por tema; sem hex livre do usuário) ===== */
+:root {
+    --ac-1: #c62828; --ac-2: #b34700; --ac-3: #8a6500; --ac-4: #2e7d32;
+    --ac-5: #00737d; --ac-6: #1565c0; --ac-7: #7b1fa2; --ac-8: #6b6b6b;
+}
+[data-theme="dark"] {
+    --ac-1: #ff6b6b; --ac-2: #ffa04d; --ac-3: #ffd84d; --ac-4: #6ee07a;
+    --ac-5: #4dd8e6; --ac-6: #7ab0ff; --ac-7: #c99cf0; --ac-8: #a8a8a8;
+}
+[data-theme="papel"] {
+    --ac-1: #a8201a; --ac-2: #943f00; --ac-3: #725600; --ac-4: #2d6a1f;
+    --ac-5: #00666f; --ac-6: #1d4f91; --ac-7: #6a2c8a; --ac-8: #655d52;
+}
+.ac-1 { color: var(--ac-1); } .ac-2 { color: var(--ac-2); } .ac-3 { color: var(--ac-3); } .ac-4 { color: var(--ac-4); }
+.ac-5 { color: var(--ac-5); } .ac-6 { color: var(--ac-6); } .ac-7 { color: var(--ac-7); } .ac-8 { color: var(--ac-8); }

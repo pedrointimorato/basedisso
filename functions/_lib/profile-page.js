@@ -10,8 +10,8 @@ export function profilePageHtml({ title, initialPath }) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${safeTitle}</title>
-    <link rel="stylesheet" href="/style.css?v=20261126i">
-    <link rel="stylesheet" href="/account.css?v=20261126g">
+    <link rel="stylesheet" href="/style.css?v=20261127c">
+    <link rel="stylesheet" href="/account.css?v=20261127c">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -105,9 +105,9 @@ export function profilePageHtml({ title, initialPath }) {
         </aside>
     </div>
     <script src="/script.js?v=20261126g"></script>
-    <script src="/account.js?v=20261126f"></script>
+    <script src="/account.js?v=20261127c"></script>
     <script src="/comments.js?v=20261126e"></script>
-    <script src="/perfil.js?v=20261126e"></script>
+    <script src="/perfil.js?v=20261127c"></script>
 </body>
 </html>`;
 }

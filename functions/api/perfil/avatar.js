@@ -1,6 +1,6 @@
 import { getSessionUser } from "../../_lib/auth.js";
 import { errorJson, isSameOrigin, json } from "../../_lib/shared.js";
-import { AVATAR_LIMITS, cleanAsciiArt, readAvatar } from "../../_lib/ascii.js";
+import { cleanColorMask, AVATAR_LIMITS, cleanAsciiArt, readAvatar } from "../../_lib/ascii.js";
 
 async function owner(request, env) {
   if (!env.DB) return { res: errorJson("Serviço indisponível.", 503) };
@@ -24,12 +24,14 @@ export async function onRequestPut(context) {
   if (!data || typeof data.arte !== "string") return errorJson("Envie o avatar como texto.", 400);
   const c = cleanAsciiArt(data.arte, AVATAR_LIMITS);
   if (c.erro) return errorJson(c.erro, 400);
+  const cm = cleanColorMask(data.cores, c.arte);
+  if (cm.erro) return errorJson(cm.erro, 400);
   const now = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO profile_avatar (user_id, art, created_at, updated_at) VALUES (?, ?, ?, ?)
-     ON CONFLICT(user_id) DO UPDATE SET art = excluded.art, updated_at = excluded.updated_at`
+    `INSERT INTO profile_avatar (user_id, art, colors, created_at, updated_at) VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET art = excluded.art, colors = excluded.colors, updated_at = excluded.updated_at`
   )
-    .bind(o.user.id, c.arte, now, now)
+    .bind(o.user.id, c.arte, cm.cores, now, now)
     .run();
   return json({ ok: true, avatar: await readAvatar(env.DB, o.user.id) });
 }

@@ -12,7 +12,7 @@ import {
 } from "../_lib/shared.js";
 import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
-import { readAvatar } from "../_lib/ascii.js";
+import { maskFor, readAvatar } from "../_lib/ascii.js";
 import { canModerate, communityOfPage, getAdminContext } from "../_lib/admins.js";
 
 export const DELETED_COMMENT_TEXT = "[comentário excluído pelo autor]";
@@ -39,6 +39,7 @@ async function formatComment(db, row, viewer = null) {
         is_primordial: Boolean(row.is_primordial),
         primordial_n: row.primordial_n == null ? null : Number(row.primordial_n),
         avatar: row.avatar || null,
+        avatar_cores: row.avatar ? maskFor(row.avatar, row.avatar_colors) : null,
       }
     : null;
   return {
@@ -64,7 +65,7 @@ export async function onRequestGet(context) {
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
     `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at, c.pinned_at,
-            u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar
+            u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar, av.colors AS avatar_colors
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id
      LEFT JOIN profile_avatar av ON av.user_id = c.user_id
@@ -194,7 +195,7 @@ export async function onRequestPost(context) {
     is_admin: session ? session.is_admin : 0,
     is_primordial: session ? session.is_primordial : 0,
     primordial_n: session ? session.primordial_n : null,
-    avatar: session ? (await readAvatar(env.DB, session.id))?.arte || null : null,
+    ...(await (async () => { const a = session ? await readAvatar(env.DB, session.id) : null; return { avatar: a ? a.arte : null, avatar_colors: a ? a.cores : null }; })()),
     user_id: userId,
   }, session);
   return json({ ok: true, comentario }, 201);

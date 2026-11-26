@@ -6,6 +6,7 @@ import { localTimeHtml } from "../../../_lib/hora.js";
 import { getSessionUser } from "../../../_lib/auth.js";
 import { imageHtml, imageUrl, imagesInText } from "../../../_lib/imagens.js";
 import { readPoll } from "../../../_lib/enquete.js";
+import { coloredHtml } from "../../../_lib/ascii.js";
 import { pollHtml } from "../../../_lib/enquete-html.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 
@@ -13,7 +14,7 @@ function authorHtml(post) {
   if (post.usuario && post.usuario.username) {
     const name = escapeHtml(post.usuario.username);
     const av = post.usuario.avatar
-      ? `<a href="/@${name}" class="ascii-avatar ascii-avatar-sm" aria-hidden="true" tabindex="-1"><span class="av-pre">${escapeHtml(post.usuario.avatar)}</span></a>`
+      ? `<a href="/@${name}" class="ascii-avatar ascii-avatar-sm" aria-hidden="true" tabindex="-1"><span class="av-pre">${coloredHtml(post.usuario.avatar, post.usuario.avatar_cores, escapeHtml)}</span></a>`
       : "";
     return `${av}<a href="/@${name}" class="or-author user-mention">&gt;&gt;${name}</a>`;
   }
@@ -53,8 +54,8 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
-    <link rel="stylesheet" href="/style.css?v=20261126i">
-    <link rel="stylesheet" href="/account.css?v=20261126g">
+    <link rel="stylesheet" href="/style.css?v=20261127c">
+    <link rel="stylesheet" href="/account.css?v=20261127c">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -140,7 +141,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/script.js?v=20261126g"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261126f"></script>
+    <script src="/account.js?v=20261127c"></script>
     <script src="/comments.js?v=20261126e"></script>
 </body>
 </html>`;

@@ -40,7 +40,8 @@
         items.forEach(function (a) {
           var isAv = a.tipo === "avatar";
           var pre = el("pre", { class: "ma-art" + (isAv ? " ma-avatar" : "") });
-          pre.textContent = a.arte; // texto puro, sempre escapado
+          if (window.BDAccount && window.BDAccount.colorize) window.BDAccount.colorize(pre, a.arte, a.cores || null); // textNodes/spans, nunca HTML
+          else pre.textContent = a.arte; // texto puro, sempre escapado
           var del = el("button", { type: "button", class: "mod-btn danger mod-btn-sm ma-del" }, isAv ? "Remover avatar" : "Remover arte");
           del.addEventListener("click", function () {
             if (!confirm((isAv ? "Remover o avatar ASCII de >>" : "Remover a arte ASCII de >>") + a.username + "?")) return;

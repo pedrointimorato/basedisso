@@ -48,14 +48,74 @@ export function cleanFrame(raw) {
   return ASCII_FRAMES.includes(f) ? f : null;
 }
 
+// ---------- Cores por caractere ----------
+// Máscara: mesmo formato da arte (linhas separadas por \n), um código por caractere.
+// '.' = cor padrão do tema; '1'..'8' = paleta abaixo (classes .ac-1..ac-8, uma variante por tema no CSS).
+export const ASCII_PALETTE = ["vermelho", "laranja", "amarelo", "verde", "ciano", "azul", "roxo", "cinza"];
+const MASK_LINE_RE = /^[.1-8]*$/;
+
+// Alinha a máscara à arte já limpa. Comprimentos diferentes são corrigidos (completa com '.', corta o excesso);
+// códigos fora da paleta são rejeitados. Espaços nunca têm cor. Máscara toda '.' vira null.
+export function cleanColorMask(raw, arte) {
+  if (raw == null || raw === "") return { cores: null };
+  if (typeof raw !== "string" || raw.length > ASCII_RAW_MAX) return { erro: "Cores inválidas." };
+  const maskLines = raw.replace(/\r\n?/g, "\n").split("\n");
+  for (const l of maskLines) {
+    if (!MASK_LINE_RE.test(l)) return { erro: "Cores inválidas: use só as cores da paleta." };
+  }
+  const artLines = String(arte || "").split("\n");
+  let any = false;
+  const out = artLines.map((line, i) => {
+    const chars = Array.from(line);
+    const m = maskLines[i] || "";
+    let r = "";
+    for (let j = 0; j < chars.length; j++) {
+      const c = /\s/u.test(chars[j]) ? "." : m[j] || ".";
+      if (c !== ".") any = true;
+      r += c;
+    }
+    return r;
+  });
+  return { cores: any ? out.join("\n") : null };
+}
+
+// Máscara já guardada → alinhada (defensivo, caso a arte mude por fora).
+export function maskFor(arte, colors) {
+  if (!colors) return null;
+  const c = cleanColorMask(colors, arte);
+  return c.erro ? null : c.cores;
+}
+
+// HTML escapado com <span class="ac-N"> por sequência de mesma cor (não um span por caractere).
+// O texto passa sempre por escape; a classe vem só de '1'..'8'.
+export function coloredHtml(arte, colors, esc) {
+  const mask = maskFor(arte, colors);
+  const lines = String(arte || "").split("\n");
+  if (!mask) return esc(String(arte || ""));
+  const ml = mask.split("\n");
+  return lines.map((line, i) => {
+    const chars = Array.from(line);
+    const m = ml[i] || "";
+    let html = "", run = "", cur = ".";
+    const flush = () => { if (!run) return; html += cur === "." ? esc(run) : `<span class="ac-${cur}">${esc(run)}</span>`; run = ""; };
+    for (let j = 0; j < chars.length; j++) {
+      const c = m[j] || ".";
+      if (c !== cur) { flush(); cur = c; }
+      run += chars[j];
+    }
+    flush();
+    return html;
+  }).join("\n");
+}
+
 export function asciiOut(row) {
   if (!row || !row.art) return null;
-  return { arte: row.art, moldura: row.frame === "nenhuma" ? "nenhuma" : "simples", atualizada_em: row.updated_at || null };
+  return { arte: row.art, cores: maskFor(row.art, row.colors), moldura: row.frame === "nenhuma" ? "nenhuma" : "simples", atualizada_em: row.updated_at || null };
 }
 
 export async function readAscii(db, userId) {
   try {
-    const row = await db.prepare("SELECT art, frame, updated_at FROM profile_ascii WHERE user_id = ?").bind(userId).first();
+    const row = await db.prepare("SELECT art, colors, frame, updated_at FROM profile_ascii WHERE user_id = ?").bind(userId).first();
     return asciiOut(row);
   } catch {
     return null; // tabela ausente em ambiente local
@@ -65,8 +125,8 @@ export async function readAscii(db, userId) {
 export async function readAvatar(db, userId) {
   if (!userId) return null;
   try {
-    const row = await db.prepare("SELECT art, updated_at FROM profile_avatar WHERE user_id = ?").bind(userId).first();
-    return row && row.art ? { arte: row.art, atualizada_em: row.updated_at || null } : null;
+    const row = await db.prepare("SELECT art, colors, updated_at FROM profile_avatar WHERE user_id = ?").bind(userId).first();
+    return row && row.art ? { arte: row.art, cores: maskFor(row.art, row.colors), atualizada_em: row.updated_at || null } : null;
   } catch {
     return null;
   }

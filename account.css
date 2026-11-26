@@ -442,3 +442,28 @@ a.ascii-avatar:hover { border-color: var(--accent-red, var(--t-red, #b92b27)); }
     .profile-head.has-avatar { gap: 12px; }
     .profile-head.has-avatar .profile-name { font-size: 22px; }
 }
+
+/* ===== Editor de cores da arte ASCII ===== */
+.ascii-cores { margin: 12px 0 4px; }
+.ascii-palette { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.ascii-swatch {
+    display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; min-height: 34px;
+    border: 1px solid var(--t-border, #ccc); border-radius: 16px; cursor: pointer;
+    background: var(--t-surface, #fff); color: var(--t-text, #222); font-size: 12px;
+}
+.ascii-swatch-dot { font-family: "Courier New", Courier, monospace; font-size: 16px; line-height: 1; }
+.ascii-swatch.is-on { border-color: var(--t-text, #222); box-shadow: 0 0 0 2px var(--t-text, #222) inset; font-weight: 700; }
+.ascii-swatch.is-eraser .ascii-swatch-dot { color: var(--t-text2, #555); }
+.ascii-paint-scroll {
+    border: 1px dashed var(--t-border, #bbb); border-radius: 4px; padding: 6px;
+    background: var(--t-surface, #fff); max-width: 100%; overflow: hidden;
+}
+.ascii-paint {
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; line-height: 1.25;
+    color: var(--t-text, #222); white-space: pre; touch-action: none; user-select: none; -webkit-user-select: none;
+    cursor: crosshair; width: max-content; max-width: 100%;
+}
+.ascii-paint-row { display: block; height: 1.25em; }
+.ascii-cell { display: inline-block; width: 0.62em; text-align: center; }
+.ascii-cell:not(.is-space):hover { outline: 1px solid var(--t-text3, #999); }
+.ascii-limpar { margin-top: 6px; }

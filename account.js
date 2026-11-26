@@ -75,6 +75,36 @@
     return wrap;
   }
 
+  // Cores das artes ASCII: máscara com o mesmo formato da arte ('.' = padrão, '1'..'8' = paleta).
+  // Junta sequências da mesma cor num só <span class="ac-N"> (texto via textNode, nunca HTML).
+  var ASCII_CORES = [
+    { c: "1", nome: "vermelho" }, { c: "2", nome: "laranja" }, { c: "3", nome: "amarelo" }, { c: "4", nome: "verde" },
+    { c: "5", nome: "ciano" }, { c: "6", nome: "azul" }, { c: "7", nome: "roxo" }, { c: "8", nome: "cinza" },
+  ];
+  function colorize(node, art, mask) {
+    art = String(art || "");
+    if (!mask || typeof mask !== "string") { node.appendChild(document.createTextNode(art)); return node; }
+    var lines = art.split("\n"), ml = mask.split("\n");
+    lines.forEach(function (line, i) {
+      if (i) node.appendChild(document.createTextNode("\n"));
+      var chars = Array.from(line), m = ml[i] || "", run = "", cur = ".";
+      function flush() {
+        if (!run) return;
+        if (cur === ".") node.appendChild(document.createTextNode(run));
+        else { var sp = document.createElement("span"); sp.className = "ac-" + cur; sp.textContent = run; node.appendChild(sp); }
+        run = "";
+      }
+      for (var j = 0; j < chars.length; j++) {
+        var c = m.charAt(j);
+        if (!/^[1-8]$/.test(c) || /\s/.test(chars[j])) c = ".";
+        if (c !== cur) { flush(); cur = c; }
+        run += chars[j];
+      }
+      flush();
+    });
+    return node;
+  }
+
   // Avatar ASCII (até 8×16) num espaço fixo, como foto de perfil. Só textContent.
   // size: "sm" (comentários/postagens), "xs" (lista de postagens), "lg" (perfil).
   function avatarNode(user, size) {
@@ -83,7 +113,7 @@
     // <span> (não <pre>): pode ficar dentro de <p> sem o HTML fechar o parágrafo.
     var pre = document.createElement("span");
     pre.className = "av-pre";
-    pre.textContent = art;
+    colorize(pre, art, user.avatar_cores || null);
     var a = el("a", {
       class: "ascii-avatar ascii-avatar-" + (size || "sm"),
       href: profileHref(user.username),
@@ -324,6 +354,8 @@
     me: me,
     userLink: userLink,
     avatarNode: avatarNode,
+    colorize: colorize,
+    asciiCores: ASCII_CORES,
     displayName: displayName,
     profileHref: profileHref,
     appendBodyWithMentions: appendBodyWithMentions,

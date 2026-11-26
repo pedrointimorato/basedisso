@@ -83,11 +83,23 @@
   }
 
   // Bloco <pre> com textContent (nunca innerHTML): o texto é sempre escapado.
-  function asciiBlock(arte, moldura, label) {
+  function framedMask(lines, mask, moldura) {
+    if (!mask) return null;
+    var ml = String(mask).split("\n");
+    if (moldura === "nenhuma") return ml.join("\n");
+    var w = lines.reduce(function (m, l) { return Math.max(m, cpLen(l)); }, 0);
+    var dots = function (n) { return new Array(n + 1).join("."); };
+    var out = [dots(w + 4)];
+    lines.forEach(function (l, i) { var m = (ml[i] || "").slice(0, cpLen(l)); out.push(".." + m + dots(w - m.length) + ".."); });
+    out.push(dots(w + 4));
+    return out.join("\n");
+  }
+
+  function asciiBlock(arte, moldura, label, cores) {
     var lines = String(arte || "").split("\n");
     var f = framedText(lines, moldura);
     var pre = el("pre", { class: "ascii-art" + (moldura === "nenhuma" ? " sem-moldura" : " com-moldura"), role: "img", "aria-label": label || "Arte ASCII" });
-    pre.textContent = f.text;
+    window.BDAccount.colorize(pre, f.text, framedMask(lines, cores, moldura));
     pre.style.setProperty("--cols", String(Math.max(f.cols, 12)));
     return el("div", { class: "ascii-wrap" }, pre);
   }
@@ -103,8 +115,52 @@
     });
   }
 
-  function avatarPreview(arte, size) {
-    var n = window.BDAccount.avatarNode({ username: "", avatar: arte }, size); if (n) { n.removeAttribute("href"); } return n;
+  function avatarPreview(arte, size, cores) {
+    var n = window.BDAccount.avatarNode({ username: "", avatar: arte, avatar_cores: cores || null }, size); if (n) { n.removeAttribute("href"); } return n;
+  }
+
+  // ---------- Pintura (cores por caractere) ----------
+  // A máscara de cores fica alinhada ao texto CRU do textarea (um código por caractere digitado);
+  // editar o texto desloca as cores junto (prefixo/sufixo comuns preservados).
+  var STRIP1 = new RegExp("^" + STRIP_RE.source + "$");
+  var MARK1 = null;
+  try { MARK1 = new RegExp("^\\p{M}$", "u"); } catch (e) {}
+  function cellsFrom(rawChars) {
+    var lines = [[]];
+    for (var i = 0; i < rawChars.length; i++) {
+      var ch = rawChars[i];
+      if (ch === "\r") { if (rawChars[i + 1] === "\n") continue; lines.push([]); continue; }
+      if (ch === "\n") { lines.push([]); continue; }
+      if (ch === "\t") { for (var t = 0; t < 4; t++) lines[lines.length - 1].push({ ch: " ", raw: i }); continue; }
+      if (STRIP1.test(ch)) continue;
+      if (MARK1 && MARK1.test(ch)) continue;
+      lines[lines.length - 1].push({ ch: ch, raw: i });
+    }
+    lines = lines.map(function (l) { var n = l.length; while (n && /\s/.test(l[n - 1].ch)) n--; return l.slice(0, n); });
+    while (lines.length && !lines[lines.length - 1].length) lines.pop();
+    while (lines.length && !lines[0].length) lines.shift();
+    return lines;
+  }
+  function maskOf(cells, mk) {
+    var any = false;
+    var s = cells.map(function (l) {
+      return l.map(function (c) { var v = /\s/.test(c.ch) ? "." : mk[c.raw] || "."; if (v !== ".") any = true; return v; }).join("");
+    }).join("\n");
+    return any ? s : null;
+  }
+  function shiftMask(oldChars, newChars, mk) {
+    var p = 0, a = oldChars.length, b = newChars.length;
+    while (p < a && p < b && oldChars[p] === newChars[p]) p++;
+    var s = 0;
+    while (s < a - p && s < b - p && oldChars[a - 1 - s] === newChars[b - 1 - s]) s++;
+    var mid = [];
+    for (var i = 0; i < b - p - s; i++) mid.push(".");
+    return mk.slice(0, p).concat(mid, mk.slice(a - s));
+  }
+  function maskToRaw(arte, cores) {
+    var mk = [], al = String(arte || "").split("\n"), ml = String(cores || "").split("\n");
+    al.forEach(function (l, i) { if (i) mk.push("."); var n = cpLen(l), m = ml[i] || ""; for (var j = 0; j < n; j++) mk.push(/^[1-8]$/.test(m.charAt(j)) ? m.charAt(j) : "."); });
+    return mk;
   }
 
   var KINDS = {
@@ -129,7 +185,7 @@
     var art = data.ascii;
     var current = { arte: data.ascii, avatar: data.avatar };
     var section = el("section", { class: "profile-ascii", id: "perfil-ascii" });
-    if (art) section.appendChild(asciiBlock(art.arte, art.moldura, "Arte ASCII de >>" + u.username));
+    if (art) section.appendChild(asciiBlock(art.arte, art.moldura, "Arte ASCII de >>" + u.username, art.cores));
     var status = el("p", { class: "ascii-status", role: "status" });
     var tools = el("div", { class: "ascii-tools" });
     var editorHost = el("div", { class: "ascii-editor-host" });
@@ -168,6 +224,61 @@
         autocapitalize: "off", autocomplete: "off", "aria-label": K.title, maxlength: "4000",
         placeholder: "Desenhe com texto. Até " + K.lines + " linhas × " + K.cols + " colunas." });
       ta.value = existing ? existing.arte : "";
+      var rawChars = Array.from(ta.value);
+      var mk = existing && existing.cores ? maskToRaw(existing.arte, existing.cores) : rawChars.map(function () { return "."; });
+      var brush = "1";
+      var palette = el("div", { class: "ascii-palette", role: "radiogroup", "aria-label": "Pincel de cor", id: K.prefix + "-paleta" });
+      var swatches = [];
+      function swatch(code, label, cls) {
+        var b = el("button", { type: "button", class: "ascii-swatch" + (cls ? " " + cls : ""), role: "radio", "data-cor": code, title: label, "aria-label": label },
+          el("span", { class: "ascii-swatch-dot" + (code === "." ? "" : " ac-" + code), "aria-hidden": "true" }, code === "." ? "⌫" : "█"), el("span", { class: "ascii-swatch-name" }, label));
+        b.addEventListener("click", function () { brush = code; syncBrush(); });
+        swatches.push(b); palette.appendChild(b);
+      }
+      window.BDAccount.asciiCores.forEach(function (c) { swatch(c.c, c.nome); });
+      swatch(".", "borracha", "is-eraser");
+      function syncBrush() { swatches.forEach(function (b) { var on = b.getAttribute("data-cor") === brush; b.setAttribute("aria-checked", on ? "true" : "false"); b.classList.toggle("is-on", on); }); }
+      syncBrush();
+      var clearColors = el("button", { type: "button", class: "ascii-btn secondary ascii-limpar", id: K.prefix + "-limpar-cores" }, "Limpar cores");
+      var grid = el("div", { class: "ascii-paint", id: K.prefix + "-pintura", "aria-label": "Toque ou arraste sobre os caracteres para pintar" });
+      var colorsBox = el("div", { class: "ascii-cores" },
+        el("p", { class: "ascii-preview-label" }, "Cores — escolha o pincel e toque ou arraste sobre os caracteres:"),
+        palette, el("div", { class: "ascii-paint-scroll" }, grid), el("div", { class: "ascii-actions" }, clearColors));
+      var cells = [];
+      var painting = false, pending = false;
+      function renderGrid() {
+        while (grid.firstChild) grid.removeChild(grid.firstChild);
+        var maxw = 1;
+        cells.slice(0, K.lines + 8).forEach(function (line, li) {
+          var row = el("div", { class: "ascii-paint-row" });
+          line.slice(0, K.cols + 16).forEach(function (c) {
+            var sp = /\s/.test(c.ch);
+            var code = sp ? "." : mk[c.raw] || ".";
+            row.appendChild(el("span", { class: "ascii-cell" + (sp ? " is-space" : "") + (code !== "." ? " ac-" + code : ""), "data-raw": String(c.raw) }, sp ? " " : c.ch));
+          });
+          if (!line.length) row.appendChild(document.createTextNode(" "));
+          maxw = Math.max(maxw, Math.min(line.length, K.cols + 16));
+          grid.appendChild(row);
+        });
+        grid.style.setProperty("--cols", String(maxw));
+        var avail = (grid.parentNode && grid.parentNode.clientWidth) || 320;
+        var fs = Math.max(10, Math.min(kind === "avatar" ? 26 : 20, Math.floor((avail - 12) / (Math.max(maxw, kind === "avatar" ? 16 : 24) * 0.62))));
+        grid.style.fontSize = fs + "px";
+        colorsBox.hidden = !cells.length;
+      }
+      function paintAt(x, y) {
+        var t = document.elementFromPoint(x, y);
+        if (!t || !t.classList || !t.classList.contains("ascii-cell") || t.classList.contains("is-space") || !grid.contains(t)) return;
+        var raw = Number(t.getAttribute("data-raw"));
+        if (mk[raw] === brush) return;
+        mk[raw] = brush;
+        t.className = "ascii-cell" + (brush !== "." ? " ac-" + brush : "");
+        if (!pending) { pending = true; requestAnimationFrame(function () { pending = false; update(true); }); }
+      }
+      grid.addEventListener("pointerdown", function (ev) { painting = true; try { grid.setPointerCapture(ev.pointerId); } catch (e) {} paintAt(ev.clientX, ev.clientY); ev.preventDefault(); });
+      grid.addEventListener("pointermove", function (ev) { if (painting) { paintAt(ev.clientX, ev.clientY); ev.preventDefault(); } });
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach(function (n) { grid.addEventListener(n, function () { painting = false; }); });
+      clearColors.addEventListener("click", function () { mk = rawChars.map(function () { return "."; }); update(); });
       var counter = el("p", { class: "ascii-counter", id: K.prefix + "-counter", "aria-live": "polite" });
       var curFrame = art ? art.moldura : "simples";
       function radio(value, label) {
@@ -191,14 +302,16 @@
         : el("div", { class: "ascii-preview-phone" }, preview);
       var editor = el("div", { class: "ascii-editor" + (kind === "avatar" ? " avatar-editor" : ""), id: K.prefix + "-editor" },
         el("h2", { class: "ascii-editor-title" }, K.title),
-        hint, ta, counter, errBox, frames,
+        hint, ta, counter, errBox, colorsBox, frames,
         el("p", { class: "ascii-preview-label" }, kind === "avatar" ? "Pré-visualização (perfil e comentários)" : "Pré-visualização (largura de celular)"),
         previewWrap,
         el("div", { class: "ascii-actions" }, save, remove, cancel)
       );
       editorHost.appendChild(editor);
       var cur = null;
-      function update() {
+      function update(fromPaint) {
+        if (!fromPaint) { cells = cellsFrom(rawChars); renderGrid(); }
+        var mask = maskOf(cells, mk);
         cur = cleanAscii(ta.value, K.lines, K.cols);
         counter.textContent = "Linhas: " + cur.linhas + "/" + K.lines + " · Colunas: " + Math.min(cur.colunas, 999) + "/" + K.cols +
           " · " + cpLen(cur.arte) + " caracteres";
@@ -207,21 +320,30 @@
         cur.erros.forEach(function (e) { errBox.appendChild(el("li", null, e)); });
         while (preview.firstChild) preview.removeChild(preview.firstChild);
         var ok = cur.linhas && !(WIDE_RE && WIDE_RE.test(cur.arte));
-        var shown = ok ? cur.lines.slice(0, 40).map(function (l) { return Array.from(l).slice(0, 80).join(""); }).join("\n") : "";
+        var shownCells = ok ? cells.slice(0, 40).map(function (l) { return l.slice(0, 80); }) : [];
+        var shown = shownCells.map(function (l) { return l.map(function (c) { return c.ch; }).join(""); }).join("\n");
+        var shownMask = mask ? maskOf(shownCells, mk) : null;
+        cur.mascara = mask;
+        cur.texto = cells.map(function (l) { return l.map(function (c) { return c.ch; }).join(""); }).join("\n");
         if (!ok) {
           preview.appendChild(el("p", { class: "ascii-vazio" }, "A pré-visualização aparece aqui."));
         } else if (kind === "avatar") {
-          preview.appendChild(el("div", { class: "avatar-preview-item" }, avatarPreview(shown, "lg"), el("span", null, "perfil")));
+          preview.appendChild(el("div", { class: "avatar-preview-item" }, avatarPreview(shown, "lg", shownMask), el("span", null, "perfil")));
           preview.appendChild(el("div", { class: "avatar-preview-item" },
-            el("div", { class: "avatar-preview-comment" }, avatarPreview(shown, "sm"),
+            el("div", { class: "avatar-preview-comment" }, avatarPreview(shown, "sm", shownMask),
               el("div", null, el("p", { class: "bd-comment-meta" }, el("strong", null, ">>" + u.username), " · agora"), el("p", { class: "avatar-preview-body" }, "um comentário qualquer"))),
             el("span", null, "comentários")));
         } else {
-          preview.appendChild(asciiBlock(shown, curFrame, "Pré-visualização"));
+          preview.appendChild(asciiBlock(shown, curFrame, "Pré-visualização", shownMask));
         }
         save.disabled = cur.erros.length > 0;
       }
-      ta.addEventListener("input", update);
+      ta.addEventListener("input", function () {
+        var nc = Array.from(ta.value);
+        mk = shiftMask(rawChars, nc, mk);
+        rawChars = nc;
+        update();
+      });
       update();
       ta.focus();
       cancel.addEventListener("click", function () { reload(""); });
@@ -230,7 +352,7 @@
         if (cur.erros.length) return;
         save.disabled = true;
         setSt(status, "Salvando…");
-        var body = K.frames ? { arte: ta.value, moldura: curFrame } : { arte: ta.value };
+        var body = K.frames ? { arte: cur.texto, cores: cur.mascara, moldura: curFrame } : { arte: cur.texto, cores: cur.mascara };
         api("PUT", K.api, body).then(function (out) {
           if (out.res.ok) reload(K.savedMsg);
           else { save.disabled = false; setSt(status, (out.data && out.data.erro) || "Não foi possível salvar.", "erro"); }

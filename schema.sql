@@ -390,3 +390,7 @@ CREATE TABLE IF NOT EXISTS poll_votes (
 );
 CREATE INDEX IF NOT EXISTS idx_poll_votes_option ON poll_votes(option_id);
 CREATE INDEX IF NOT EXISTS idx_poll_votes_user ON poll_votes(user_id);
+
+-- Cores nas artes ASCII (ver migrate-ascii-cores.sql; ALTERs já aplicados):
+-- ALTER TABLE profile_ascii ADD COLUMN colors TEXT;
+-- ALTER TABLE profile_avatar ADD COLUMN colors TEXT;

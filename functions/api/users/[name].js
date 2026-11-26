@@ -68,7 +68,7 @@ export async function onRequestGet(context) {
   }
   return json({
     reservado: false,
-    usuario: { ...publicUser(row), avatar: avatar ? avatar.arte : null },
+    usuario: { ...publicUser(row), avatar: avatar ? avatar.arte : null, avatar_cores: avatar ? avatar.cores : null },
     comentarios,
     ascii,
     avatar,

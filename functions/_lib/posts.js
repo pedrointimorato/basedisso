@@ -3,7 +3,7 @@ import { postPageKey } from "./comunidades.js";
 export function postsSelectSql() {
   return `SELECT p.id, p.community, p.title, p.body, p.link, p.name, p.user_id,
             p.created_at, p.hidden, p.sticky, p.author_deleted_at, p.pinned_at,
-            u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar,
+            u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar, av.colors AS avatar_colors,
             pl.closes_at AS poll_closes_at,
             (SELECT COUNT(*) FROM poll_votes pv WHERE pv.post_id = p.id) AS poll_votes,
             (SELECT COUNT(*) FROM comments c
