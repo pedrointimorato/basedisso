@@ -260,6 +260,12 @@
     if (wrap && wrap.classList.contains("or-thumb-img")) {
       wrap.classList.remove("or-thumb-img");
       img.parentNode.removeChild(img);
+      // Miniatura quebrada: tira também o botão de expandir da mesma postagem.
+      var thing = wrap.closest(".or-thing");
+      var eb = thing && thing.querySelector(".or-expando-btn");
+      var ex = thing && thing.querySelector(".or-expando");
+      if (eb) eb.parentNode.removeChild(eb);
+      if (ex) ex.parentNode.removeChild(ex);
       return;
     }
     if (wrap) { wrap.hidden = true; wrap.classList.add("bd-img-falhou"); }

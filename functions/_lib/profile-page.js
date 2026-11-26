@@ -101,7 +101,7 @@ export function profilePageHtml({ title, initialPath }) {
         </aside>
     </div>
     <script src="/script.js?v=20261123c"></script>
-    <script src="/account.js?v=20261126e"></script>
+    <script src="/account.js?v=20261126f"></script>
     <script src="/comments.js?v=20261126e"></script>
     <script src="/perfil.js?v=20261126e"></script>
 </body>
