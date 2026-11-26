@@ -148,13 +148,17 @@
     }).join("\n");
     return any ? s : null;
   }
-  function shiftMask(oldChars, newChars, mk) {
-    var p = 0, a = oldChars.length, b = newChars.length;
-    while (p < a && p < b && oldChars[p] === newChars[p]) p++;
+  // caret: posição (em code points) do cursor depois da edição; desempata repetições ("A" digitado antes de "A").
+  // fill: cor do pincel para o texto novo (digitado, colado ou que substituiu uma seleção); espaços ficam padrão.
+  function shiftMask(oldChars, newChars, mk, caret, fill) {
+    var a = oldChars.length, b = newChars.length;
+    var sMax = caret == null ? Math.min(a, b) : Math.max(0, Math.min(b - caret, a));
     var s = 0;
-    while (s < a - p && s < b - p && oldChars[a - 1 - s] === newChars[b - 1 - s]) s++;
+    while (s < sMax && oldChars[a - 1 - s] === newChars[b - 1 - s]) s++;
+    var p = 0;
+    while (p < a - s && p < b - s && oldChars[p] === newChars[p]) p++;
     var mid = [];
-    for (var i = 0; i < b - p - s; i++) mid.push(".");
+    for (var i = p; i < b - s; i++) mid.push(fill && fill !== "." && !/\s/.test(newChars[i]) ? fill : ".");
     return mk.slice(0, p).concat(mid, mk.slice(a - s));
   }
   function maskToRaw(arte, cores) {
@@ -226,24 +230,40 @@
       ta.value = existing ? existing.arte : "";
       var rawChars = Array.from(ta.value);
       var mk = existing && existing.cores ? maskToRaw(existing.arte, existing.cores) : rawChars.map(function () { return "."; });
-      var brush = "1";
+      var brush = "."; // padrão: digitar sem cor, como antes
+      var NOMES = { ".": "padrão" };
+      window.BDAccount.asciiCores.forEach(function (c) { NOMES[c.c] = c.nome; });
+      var typingDot = el("span", { class: "ascii-typing-dot", "aria-hidden": "true" }, "█");
+      var typingName = el("strong", { class: "ascii-typing-name" });
+      var typing = el("p", { class: "ascii-typing", id: K.prefix + "-digitando", "aria-live": "polite" }, typingDot, " Digitando em: ", typingName,
+        el("span", { class: "ascii-typing-hint" }, " — o texto novo sai nessa cor (espaços nunca têm cor)"));
       var palette = el("div", { class: "ascii-palette", role: "radiogroup", "aria-label": "Pincel de cor", id: K.prefix + "-paleta" });
       var swatches = [];
       function swatch(code, label, cls) {
         var b = el("button", { type: "button", class: "ascii-swatch" + (cls ? " " + cls : ""), role: "radio", "data-cor": code, title: label, "aria-label": label },
           el("span", { class: "ascii-swatch-dot" + (code === "." ? "" : " ac-" + code), "aria-hidden": "true" }, code === "." ? "⌫" : "█"), el("span", { class: "ascii-swatch-name" }, label));
+        b.addEventListener("mousedown", function (ev) { ev.preventDefault(); }); // não tira o foco/seleção do textarea
         b.addEventListener("click", function () { brush = code; syncBrush(); });
         swatches.push(b); palette.appendChild(b);
       }
       window.BDAccount.asciiCores.forEach(function (c) { swatch(c.c, c.nome); });
-      swatch(".", "borracha", "is-eraser");
-      function syncBrush() { swatches.forEach(function (b) { var on = b.getAttribute("data-cor") === brush; b.setAttribute("aria-checked", on ? "true" : "false"); b.classList.toggle("is-on", on); }); }
+      swatch(".", "padrão / borracha", "is-eraser");
+      function syncBrush() {
+        swatches.forEach(function (b) { var on = b.getAttribute("data-cor") === brush; b.setAttribute("aria-checked", on ? "true" : "false"); b.classList.toggle("is-on", on); });
+        typingName.textContent = NOMES[brush] || "padrão";
+        typingName.className = "ascii-typing-name" + (brush !== "." ? " ac-" + brush : "");
+        typingDot.className = "ascii-typing-dot" + (brush !== "." ? " ac-" + brush : " is-default");
+        typing.className = "ascii-typing" + (brush !== "." ? " has-color" : "");
+        ta.classList.remove("ac-caret-1", "ac-caret-2", "ac-caret-3", "ac-caret-4", "ac-caret-5", "ac-caret-6", "ac-caret-7", "ac-caret-8");
+        if (brush !== ".") ta.classList.add("ac-caret-" + brush);
+      }
       syncBrush();
       var clearColors = el("button", { type: "button", class: "ascii-btn secondary ascii-limpar", id: K.prefix + "-limpar-cores" }, "Limpar cores");
       var grid = el("div", { class: "ascii-paint", id: K.prefix + "-pintura", "aria-label": "Toque ou arraste sobre os caracteres para pintar" });
       var colorsBox = el("div", { class: "ascii-cores" },
-        el("p", { class: "ascii-preview-label" }, "Cores — escolha o pincel e toque ou arraste sobre os caracteres:"),
+        el("p", { class: "ascii-preview-label" }, "Cores — escolha uma cor para digitar nela, ou toque/arraste sobre os caracteres para pintar:"),
         palette, el("div", { class: "ascii-paint-scroll" }, grid), el("div", { class: "ascii-actions" }, clearColors));
+      var gridWrap = grid.parentNode;
       var cells = [];
       var painting = false, pending = false;
       function renderGrid() {
@@ -264,7 +284,7 @@
         var avail = (grid.parentNode && grid.parentNode.clientWidth) || 320;
         var fs = Math.max(10, Math.min(kind === "avatar" ? 26 : 20, Math.floor((avail - 12) / (Math.max(maxw, kind === "avatar" ? 16 : 24) * 0.62))));
         grid.style.fontSize = fs + "px";
-        colorsBox.hidden = !cells.length;
+        gridWrap.hidden = !cells.length;
       }
       function paintAt(x, y) {
         var t = document.elementFromPoint(x, y);
@@ -309,7 +329,7 @@
         : el("div", { class: "ascii-preview-phone" }, preview);
       var editor = el("div", { class: "ascii-editor" + (kind === "avatar" ? " avatar-editor" : ""), id: K.prefix + "-editor" },
         el("h2", { class: "ascii-editor-title" }, K.title),
-        hint, ta, counter, errBox, colorsBox, frames,
+        hint, ta, typing, counter, errBox, colorsBox, frames,
         el("p", { class: "ascii-preview-label" }, kind === "avatar" ? "Pré-visualização (perfil e comentários)" : "Pré-visualização (largura de celular)"),
         previewWrap,
         el("div", { class: "ascii-actions" }, save, remove, cancel)
@@ -347,7 +367,9 @@
       }
       ta.addEventListener("input", function () {
         var nc = Array.from(ta.value);
-        mk = shiftMask(rawChars, nc, mk);
+        var caret = null;
+        try { caret = Array.from(ta.value.slice(0, ta.selectionEnd)).length; } catch (e) { caret = null; }
+        mk = shiftMask(rawChars, nc, mk, caret, brush);
         rawChars = nc;
         update();
       });
