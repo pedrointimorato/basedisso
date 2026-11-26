@@ -528,3 +528,29 @@ label.bd-anon-toggle input[type="checkbox"] { margin: 0; width: 15px; height: 15
 /* Turnstile (só sem conta) */
 .bd-turnstile { margin: 2px 0 4px; max-width: 100%; min-height: 65px; }
 .bd-turnstile[hidden] { display: none; }
+
+/* ===== Camadas da arte ASCII (até 4) ===== */
+.ascii-camadas { margin: 10px 0 8px; }
+.ascii-layer-list { list-style: none; margin: 0 0 6px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.ascii-layer {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 4px;
+    border: 1px solid var(--t-border, #ccc); border-radius: 6px; background: var(--t-surface, #fff);
+}
+.ascii-layer.is-active { border-color: var(--t-text, #222); box-shadow: 0 0 0 1px var(--t-text, #222) inset; }
+.ascii-layer-sel {
+    flex: 1 1 140px; min-height: 34px; text-align: left; padding: 4px 8px; border: 0; border-radius: 4px; cursor: pointer;
+    background: transparent; color: var(--t-text, #222); font-size: 13px;
+}
+.ascii-layer.is-active .ascii-layer-sel { font-weight: 700; }
+.ascii-layer.is-hidden .ascii-layer-sel { opacity: 0.6; text-decoration: line-through; }
+.ascii-layer-empty { font-weight: 400; color: var(--t-text2, #666); font-size: 12px; }
+.ascii-layer-btn {
+    min-width: 34px; min-height: 34px; padding: 2px 8px; border: 1px solid var(--t-border, #ccc); border-radius: 4px; cursor: pointer;
+    background: var(--t-surface, #fff); color: var(--t-text, #222); font-size: 13px;
+}
+.ascii-layer-btn:disabled { opacity: 0.35; cursor: default; }
+.ascii-layer-eye.is-off { color: var(--t-text2, #666); }
+.ascii-layer-tools { margin-top: 2px; }
+.ascii-layer-view { margin-top: 8px; }
+.ascii-dim { opacity: 0.28; }
+.avatar-preview-camadas pre.ascii-art { margin: 0; font-size: 13px; line-height: 1.15; }

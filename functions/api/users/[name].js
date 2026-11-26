@@ -2,7 +2,7 @@ import { CLAIMABLE_ADMIN, getSessionUser, isClaimableAdminName, normalizeUsernam
 import { communitiesModeratedBy, communityOfPage, getAdminContext, isSiteAdmin } from "../../_lib/admins.js";
 import { ANON_PROFILE_ID, anonUsuario, attachAnonAvatar, foldName, isOwn, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
 import { readAnonEditLog } from "../../_lib/perfil-alvo.js";
-import { ASCII_MAX_COLS, ASCII_MAX_LINES, AVATAR_MAX_COLS, AVATAR_MAX_LINES, readAscii, readAvatar } from "../../_lib/ascii.js";
+import { ASCII_MAX_COLS, ASCII_MAX_LINES, AVATAR_MAX_COLS, AVATAR_MAX_LINES, LAYERS_MAX, readAscii, readAvatar, readLayers } from "../../_lib/ascii.js";
 import { errorJson, json } from "../../_lib/shared.js";
 import { lookupMentions } from "../../_lib/mentions.js";
 
@@ -82,7 +82,18 @@ export async function onRequestGet(context) {
     ascii_limites: { linhas: ASCII_MAX_LINES, colunas: ASCII_MAX_COLS },
     pode_editar_ascii: podeEditar,
     pode_remover_ascii: podeRemover,
+    ...(await layersFor(env.DB, podeEditar, row.id, ascii, avatar)),
   });
+}
+
+// Camadas só para quem edita (o editor precisa delas; o resto do site usa a arte composta).
+async function layersFor(db, podeEditar, id, ascii, avatar) {
+  if (!podeEditar) return {};
+  return {
+    camadas_max: LAYERS_MAX,
+    ascii_camadas: ascii ? await readLayers(db, "profile_ascii", id) : null,
+    avatar_camadas: avatar ? await readLayers(db, "profile_avatar", id) : null,
+  };
 }
 
 // Perfil coletivo >>anônimo: tudo o que foi publicado como >>anônimo (logado com a caixinha, ou deslogado sem nome).
@@ -148,6 +159,7 @@ async function anonProfile(context) {
     ascii_limites: { linhas: ASCII_MAX_LINES, colunas: ASCII_MAX_COLS },
     pode_editar_ascii: podeEditar,
     pode_remover_ascii: false,
+    ...(await layersFor(env.DB, podeEditar, ANON_PROFILE_ID, ascii, avatar)),
     perfil_alvo: podeEditar ? "anonimo" : null,
     ultima_edicao: ultima,
     comentarios: [],

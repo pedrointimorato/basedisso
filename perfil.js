@@ -46,7 +46,8 @@
   var AVATAR_LINES = 8;
   var AVATAR_COLS = 16;
 
-  function cleanAscii(raw, maxLines, maxCols) {
+  // keepLead: camada (linhas vazias do topo contam para a posição; pode ficar vazia).
+  function cleanAscii(raw, maxLines, maxCols, keepLead) {
     var ML = maxLines || ASCII_LINES, MC = maxCols || ASCII_COLS;
     var s = String(raw == null ? "" : raw).replace(/\r\n?/g, "\n").replace(/\t/g, "    ");
     try { s = s.normalize("NFC"); } catch (e) {}
@@ -54,14 +55,14 @@
     if (MARK_RE) s = s.replace(MARK_RE, "");
     var lines = s.split("\n").map(function (l) { return l.replace(/\s+$/, ""); });
     while (lines.length && lines[lines.length - 1] === "") lines.pop();
-    while (lines.length && lines[0] === "") lines.shift();
+    if (!keepLead) while (lines.length && lines[0] === "") lines.shift();
     var cols = 0, longest = 0, errs = [];
     lines.forEach(function (l, i) {
       var n = cpLen(l);
       if (n > cols) { cols = n; longest = i + 1; }
     });
     if (WIDE_RE && WIDE_RE.test(s)) errs.push("Emojis e caracteres largos não são aceitos (quebram o alinhamento).");
-    if (!lines.length) errs.push("A arte está vazia.");
+    if (!lines.length && !keepLead) errs.push("A arte está vazia.");
     if (lines.length > ML) errs.push("Máximo de " + ML + " linhas (tem " + lines.length + ").");
     if (cols > MC) errs.push("A linha " + longest + " tem " + cols + " colunas; o máximo é " + MC + ".");
     return { arte: lines.join("\n"), lines: lines, linhas: lines.length, colunas: cols, erros: errs };
@@ -125,7 +126,7 @@
   var STRIP1 = new RegExp("^" + STRIP_RE.source + "$");
   var MARK1 = null;
   try { MARK1 = new RegExp("^\\p{M}$", "u"); } catch (e) {}
-  function cellsFrom(rawChars) {
+  function cellsFrom(rawChars, keepLead) {
     var lines = [[]];
     for (var i = 0; i < rawChars.length; i++) {
       var ch = rawChars[i];
@@ -138,7 +139,7 @@
     }
     lines = lines.map(function (l) { var n = l.length; while (n && /\s/.test(l[n - 1].ch)) n--; return l.slice(0, n); });
     while (lines.length && !lines[lines.length - 1].length) lines.pop();
-    while (lines.length && !lines[0].length) lines.shift();
+    if (!keepLead) while (lines.length && !lines[0].length) lines.shift();
     return lines;
   }
   function maskOf(cells, mk) {
@@ -165,6 +166,58 @@
     var mk = [], al = String(arte || "").split("\n"), ml = String(cores || "").split("\n");
     al.forEach(function (l, i) { if (i) mk.push("."); var n = cpLen(l), m = ml[i] || ""; for (var j = 0; j < n; j++) mk.push(/^[1-8]$/.test(m.charAt(j)) ? m.charAt(j) : "."); });
     return mk;
+  }
+
+  // ---------- Camadas (mesma regra de functions/_lib/ascii.js) ----------
+  // list: [{ text, mask, idx }] de baixo para cima. Um caractere que não é espaço cobre o de baixo;
+  // espaços são transparentes. origin: índice da camada de cada caractere ('.' = espaço).
+  var LAYERS_MAX = 4;
+  function compositeC(list) {
+    var L = list.map(function (l) { return { lines: String(l.text || "").split("\n").map(function (x) { return Array.from(x); }), ml: String(l.mask || "").split("\n"), idx: l.idx }; });
+    var rows = 0;
+    L.forEach(function (l) { var n = l.lines.length === 1 && !l.lines[0].length ? 0 : l.lines.length; if (n > rows) rows = n; });
+    var art = [], mask = [], orig = [];
+    for (var r = 0; r < rows; r++) {
+      var w = 0;
+      L.forEach(function (l) { if (l.lines[r] && l.lines[r].length > w) w = l.lines[r].length; });
+      var a = [], m = "", o = "";
+      for (var c = 0; c < w; c++) {
+        var ch = " ", code = ".", oi = ".";
+        for (var k = L.length - 1; k >= 0; k--) {
+          var x = L[k].lines[r] && L[k].lines[r][c];
+          if (x != null && !/\s/.test(x)) { ch = x; var mc = (L[k].ml[r] || "").charAt(c); code = /^[1-8]$/.test(mc) ? mc : "."; oi = String(L[k].idx); break; }
+        }
+        a.push(ch); m += code; o += oi;
+      }
+      var n = a.length; while (n && /\s/.test(a[n - 1])) n--;
+      art.push(a.slice(0, n).join("")); mask.push(m.slice(0, n)); orig.push(o.slice(0, n));
+    }
+    while (art.length && art[art.length - 1] === "") { art.pop(); mask.pop(); orig.pop(); }
+    while (art.length && art[0] === "") { art.shift(); mask.shift(); orig.shift(); }
+    var any = mask.some(function (x) { return /[1-8]/.test(x); });
+    return { arte: art.join("\n"), cores: any ? mask.join("\n") : null, origem: orig.join("\n"), lines: art };
+  }
+  // Pré-visualização com as outras camadas esmaecidas (só textContent).
+  function dimBlock(comp, active, moldura, framed) {
+    var lines = comp.lines;
+    var f = framed ? framedText(lines, moldura) : { text: comp.arte, cols: lines.reduce(function (m, l) { return Math.max(m, cpLen(l)); }, 0) };
+    var fm = framed ? framedMask(lines, comp.cores || lines.map(function (l) { return new Array(cpLen(l) + 1).join("."); }).join("\n"), moldura) : (comp.cores || "");
+    var fo = framed ? framedMask(lines, comp.origem, moldura) : comp.origem;
+    var pre = el("pre", { class: "ascii-art ascii-layer-preview" + (framed ? (moldura === "nenhuma" ? " sem-moldura" : " com-moldura") : " sem-moldura"), role: "img", "aria-label": "Pré-visualização com as outras camadas esmaecidas" });
+    var tl = f.text.split("\n"), ml = String(fm || "").split("\n"), ol = String(fo || "").split("\n");
+    tl.forEach(function (line, i) {
+      if (i) pre.appendChild(document.createTextNode("\n"));
+      var chars = Array.from(line), run = "", key = "";
+      function flush() { if (!run) return; var cls = key.split("|"); var sp = document.createElement("span"); sp.className = [cls[0] !== "." ? "ac-" + cls[0] : "", cls[1] === "d" ? "ascii-dim" : ""].join(" ").trim(); if (!sp.className) pre.appendChild(document.createTextNode(run)); else { sp.textContent = run; pre.appendChild(sp); } run = ""; }
+      for (var j = 0; j < chars.length; j++) {
+        var c = (ml[i] || "").charAt(j); if (!/^[1-8]$/.test(c) || /\s/.test(chars[j])) c = ".";
+        var o = (ol[i] || "").charAt(j); var d = /^[0-9]$/.test(o) && o !== String(active) ? "d" : "";
+        var k2 = c + "|" + d; if (k2 !== key) { flush(); key = k2; } run += chars[j];
+      }
+      flush();
+    });
+    pre.style.setProperty("--cols", String(Math.max(f.cols, 12)));
+    return el("div", { class: "ascii-wrap" }, pre);
   }
 
   var KINDS = {
@@ -228,9 +281,15 @@
       var ta = el("textarea", { id: K.prefix + "-input", class: "ascii-input" + (kind === "avatar" ? " avatar-input" : ""), rows: K.rows, wrap: "off", spellcheck: "false",
         autocapitalize: "off", autocomplete: "off", "aria-label": K.title, maxlength: "4000",
         placeholder: "Desenhe com texto. Até " + K.lines + " linhas × " + K.cols + " colunas." });
-      ta.value = existing ? existing.arte : "";
+      // Camadas de baixo para cima; artes antigas chegam como uma camada só (igual à arte).
+      var srvLayers = data[kind === "arte" ? "ascii_camadas" : "avatar_camadas"];
+      var layers = (srvLayers && srvLayers.length ? srvLayers : existing ? [{ arte: existing.arte, cores: existing.cores, visivel: true }] : [{ arte: "", cores: null, visivel: true }])
+        .slice(0, LAYERS_MAX).map(function (l) { return { raw: String(l.arte || ""), mk: l.cores ? maskToRaw(l.arte, l.cores) : Array.from(String(l.arte || "")).map(function () { return "."; }), visivel: l.visivel !== false }; });
+      var active = layers.length - 1;
+      var viewMode = "tudo";
+      ta.value = layers[active].raw;
       var rawChars = Array.from(ta.value);
-      var mk = existing && existing.cores ? maskToRaw(existing.arte, existing.cores) : rawChars.map(function () { return "."; });
+      var mk = layers[active].mk.slice();
       var brush = "."; // padrão: digitar sem cor, como antes
       var NOMES = { ".": "padrão" };
       window.BDAccount.asciiCores.forEach(function (c) { NOMES[c.c] = c.nome; });
@@ -308,6 +367,57 @@
       grid.addEventListener("touchend", function () { painting = false; });
       clearColors.addEventListener("click", function () { mk = rawChars.map(function () { return "."; }); update(); });
       var counter = el("p", { class: "ascii-counter", id: K.prefix + "-counter", "aria-live": "polite" });
+      var layersBox = el("div", { class: "ascii-camadas", id: K.prefix + "-camadas" });
+      function commit() { layers[active].raw = ta.value; layers[active].mk = mk.slice(); }
+      function load(i) { active = i; ta.value = layers[i].raw; rawChars = Array.from(ta.value); mk = layers[i].mk.slice(); renderLayers(); update(); }
+      function hasContent(l) { return /\S/.test(l.raw); }
+      function lbtn(cls, label, title, onClick, disabled) {
+        var b = el("button", { type: "button", class: "ascii-layer-btn " + cls, title: title, "aria-label": title }, label);
+        if (disabled) b.disabled = true;
+        b.addEventListener("mousedown", function (ev) { ev.preventDefault(); });
+        b.addEventListener("click", onClick);
+        return b;
+      }
+      function renderLayers() {
+        while (layersBox.firstChild) layersBox.removeChild(layersBox.firstChild);
+        var n = layers.length;
+        layersBox.appendChild(el("p", { class: "ascii-preview-label" }, "Camadas (até " + LAYERS_MAX + ") — a de cima cobre a de baixo; espaços são transparentes. O texto, as cores e o pincel valem para a camada ativa."));
+        var list = el("ul", { class: "ascii-layer-list", id: K.prefix + "-camadas-lista" });
+        for (var i = n - 1; i >= 0; i--) (function (i) {
+          var l = layers[i];
+          var name = "Camada " + (i + 1) + (n > 1 && i === 0 ? " (base)" : "") + (n > 1 && i === n - 1 ? " (topo)" : "");
+          var sel = el("button", { type: "button", class: "ascii-layer-sel", "aria-pressed": i === active ? "true" : "false", "data-i": String(i) }, name, hasContent(l) ? null : el("span", { class: "ascii-layer-empty" }, " · vazia"));
+          sel.addEventListener("click", function () { if (i === active) return; commit(); load(i); });
+          list.appendChild(el("li", { class: "ascii-layer" + (i === active ? " is-active" : "") + (l.visivel ? "" : " is-hidden"), "data-i": String(i) }, sel,
+            lbtn("ascii-layer-eye" + (l.visivel ? "" : " is-off"), l.visivel ? "◉ visível" : "○ oculta", (l.visivel ? "Ocultar" : "Mostrar") + " a camada " + (i + 1), function () { commit(); l.visivel = !l.visivel; renderLayers(); update(); }),
+            lbtn("ascii-layer-up", "↑", "Subir a camada " + (i + 1), function () { commit(); var t = layers[i]; layers[i] = layers[i + 1]; layers[i + 1] = t; if (active === i) active = i + 1; else if (active === i + 1) active = i; load(active); }, i === n - 1),
+            lbtn("ascii-layer-down", "↓", "Descer a camada " + (i + 1), function () { commit(); var t = layers[i]; layers[i] = layers[i - 1]; layers[i - 1] = t; if (active === i) active = i - 1; else if (active === i - 1) active = i; load(active); }, i === 0),
+            lbtn("ascii-layer-del", "✕", "Apagar a camada " + (i + 1), function () {
+              commit();
+              if (hasContent(layers[i]) && !confirm("Apagar a camada " + (i + 1) + " e o que tem nela?")) return;
+              layers.splice(i, 1);
+              if (active > i || active >= layers.length) active = Math.max(0, active - 1);
+              load(active);
+            }, n === 1)));
+        })(i);
+        layersBox.appendChild(list);
+        var add = el("button", { type: "button", class: "ascii-btn secondary ascii-layer-add", id: K.prefix + "-camada-nova" }, "+ Nova camada (por cima)");
+        if (n >= LAYERS_MAX) { add.disabled = true; add.textContent = "Máximo de " + LAYERS_MAX + " camadas"; }
+        add.addEventListener("click", function () { if (layers.length >= LAYERS_MAX) return; commit(); layers.push({ raw: "", mk: [], visivel: true }); load(layers.length - 1); ta.focus(); });
+        var row = el("div", { class: "ascii-actions ascii-layer-tools" }, add);
+        layersBox.appendChild(row);
+        if (n > 1) {
+          var modes = el("fieldset", { class: "ascii-frames ascii-layer-view", id: K.prefix + "-camadas-ver" }, el("legend", null, "Ao editar, mostrar"));
+          [["tudo", "tudo"], ["esmaecer", "outras esmaecidas"], ["so", "só a ativa"]].forEach(function (m) {
+            var input = el("input", { type: "radio", name: K.prefix + "-ver", value: m[0], id: K.prefix + "-ver-" + m[0] });
+            input.checked = viewMode === m[0];
+            input.addEventListener("change", function () { if (input.checked) { viewMode = m[0]; update(); } });
+            modes.appendChild(el("label", { class: "ascii-radio", for: K.prefix + "-ver-" + m[0] }, input, " " + m[1]));
+          });
+          layersBox.appendChild(modes);
+        }
+        ta.setAttribute("aria-label", K.title + " — camada " + (active + 1));
+      }
       var curFrame = art ? art.moldura : "simples";
       function radio(value, label) {
         var input = el("input", { type: "radio", name: "ascii-moldura", value: value, id: "ascii-moldura-" + value });
@@ -330,7 +440,7 @@
         : el("div", { class: "ascii-preview-phone" }, preview);
       var editor = el("div", { class: "ascii-editor" + (kind === "avatar" ? " avatar-editor" : ""), id: K.prefix + "-editor" },
         el("h2", { class: "ascii-editor-title" }, K.title),
-        hint, ta, typing, counter, errBox, colorsBox, frames,
+        hint, layersBox, ta, typing, counter, errBox, colorsBox, frames,
         el("p", { class: "ascii-preview-label" }, kind === "avatar" ? "Pré-visualização (perfil e comentários)" : "Pré-visualização (largura de celular)"),
         previewWrap,
         el("div", { class: "ascii-actions" }, save, remove, cancel)
@@ -338,31 +448,45 @@
       editorHost.appendChild(editor);
       var cur = null;
       function update(fromPaint) {
-        if (!fromPaint) { cells = cellsFrom(rawChars); renderGrid(); }
-        var mask = maskOf(cells, mk);
-        cur = cleanAscii(ta.value, K.lines, K.cols);
-        counter.textContent = "Linhas: " + cur.linhas + "/" + K.lines + " · Colunas: " + Math.min(cur.colunas, 999) + "/" + K.cols +
-          " · " + cpLen(cur.arte) + " caracteres";
-        counter.className = "ascii-counter" + (cur.erros.length ? " erro" : "");
+        if (!fromPaint) { cells = cellsFrom(rawChars, true); renderGrid(); }
+        var n = layers.length;
+        var LD = layers.map(function (l, i) {
+          var lc = i === active ? cells : cellsFrom(Array.from(l.raw), true);
+          var m = i === active ? mk : l.mk;
+          return { text: lc.map(function (x) { return x.map(function (c) { return c.ch; }).join(""); }).join("\n"), mask: maskOf(lc, m), idx: i };
+        });
+        var errs = [];
+        layers.forEach(function (l, i) {
+          cleanAscii(i === active ? ta.value : l.raw, K.lines, K.cols, true).erros.forEach(function (e) { errs.push((n > 1 ? "Camada " + (i + 1) + ": " : "") + e); });
+        });
+        var comp = compositeC(LD.filter(function (d, i) { return layers[i].visivel; }));
+        if (!comp.arte) errs.push(layers.some(function (l) { return !l.visivel && hasContent(l); }) ? "A arte está vazia: as camadas com desenho estão ocultas." : "A arte está vazia.");
+        var cols = comp.lines.reduce(function (m, l) { return Math.max(m, cpLen(l)); }, 0);
+        cur = { erros: errs, texto: comp.arte, mascara: comp.cores, linhas: comp.lines.length, colunas: cols, camadas: LD };
+        counter.textContent = "Linhas: " + cur.linhas + "/" + K.lines + " · Colunas: " + Math.min(cols, 999) + "/" + K.cols +
+          " · " + cpLen(comp.arte) + " caracteres" + (n > 1 ? " · editando a camada " + (active + 1) + " de " + n : "");
+        counter.className = "ascii-counter" + (errs.length ? " erro" : "");
         while (errBox.firstChild) errBox.removeChild(errBox.firstChild);
-        cur.erros.forEach(function (e) { errBox.appendChild(el("li", null, e)); });
+        errs.forEach(function (e) { errBox.appendChild(el("li", null, e)); });
         while (preview.firstChild) preview.removeChild(preview.firstChild);
-        var ok = cur.linhas && !(WIDE_RE && WIDE_RE.test(cur.arte));
-        var shownCells = ok ? cells.slice(0, 40).map(function (l) { return l.slice(0, 80); }) : [];
-        var shown = shownCells.map(function (l) { return l.map(function (c) { return c.ch; }).join(""); }).join("\n");
-        var shownMask = mask ? maskOf(shownCells, mk) : null;
-        cur.mascara = mask;
-        cur.texto = cells.map(function (l) { return l.map(function (c) { return c.ch; }).join(""); }).join("\n");
+        var shownComp = viewMode === "so" && n > 1 ? compositeC([LD[active]]) : comp;
+        var ok = shownComp.lines.length && !(WIDE_RE && WIDE_RE.test(shownComp.arte));
+        var cut = function (c) { var ls = c.lines.slice(0, 40).map(function (l) { return Array.from(l).slice(0, 80).join(""); }); return { lines: ls, arte: ls.join("\n"), cores: c.cores ? c.cores.split("\n").slice(0, 40).map(function (x) { return x.slice(0, 80); }).join("\n") : null, origem: c.origem.split("\n").slice(0, 40).map(function (x) { return x.slice(0, 80); }).join("\n") }; };
+        var sc = ok ? cut(shownComp) : null;
+        var dim = viewMode === "esmaecer" && n > 1;
         if (!ok) {
-          preview.appendChild(el("p", { class: "ascii-vazio" }, "A pré-visualização aparece aqui."));
+          preview.appendChild(el("p", { class: "ascii-vazio" }, viewMode === "so" && n > 1 ? "A camada ativa está vazia." : "A pré-visualização aparece aqui."));
         } else if (kind === "avatar") {
-          preview.appendChild(el("div", { class: "avatar-preview-item" }, avatarPreview(shown, "lg", shownMask), el("span", null, "perfil")));
+          if (dim) preview.appendChild(el("div", { class: "avatar-preview-item avatar-preview-camadas" }, dimBlock(sc, active, "nenhuma", false), el("span", null, "camadas")));
+          preview.appendChild(el("div", { class: "avatar-preview-item" }, avatarPreview(sc.arte, "lg", sc.cores), el("span", null, "perfil")));
           preview.appendChild(el("div", { class: "avatar-preview-item" },
-            el("div", { class: "avatar-preview-comment" }, avatarPreview(shown, "sm", shownMask),
+            el("div", { class: "avatar-preview-comment" }, avatarPreview(sc.arte, "sm", sc.cores),
               el("div", null, el("p", { class: "bd-comment-meta" }, el("strong", null, ">>" + u.username), " · agora"), el("p", { class: "avatar-preview-body" }, "um comentário qualquer"))),
             el("span", null, "comentários")));
+        } else if (dim) {
+          preview.appendChild(dimBlock(sc, active, curFrame, true));
         } else {
-          preview.appendChild(asciiBlock(shown, curFrame, "Pré-visualização", shownMask));
+          preview.appendChild(asciiBlock(sc.arte, curFrame, "Pré-visualização", sc.cores));
         }
         save.disabled = cur.erros.length > 0;
       }
@@ -374,6 +498,7 @@
         rawChars = nc;
         update();
       });
+      renderLayers();
       update();
       ta.focus();
       cancel.addEventListener("click", function () { reload(""); });
@@ -382,7 +507,8 @@
         if (cur.erros.length) return;
         save.disabled = true;
         setSt(status, "Salvando…");
-        var body = K.frames ? { arte: cur.texto, cores: cur.mascara, moldura: curFrame } : { arte: cur.texto, cores: cur.mascara };
+        var camadas = cur.camadas.map(function (d, i) { return { arte: d.text, cores: d.mask, visivel: layers[i].visivel }; });
+        var body = K.frames ? { camadas: camadas, moldura: curFrame } : { camadas: camadas };
         api("PUT", K.api + alvoQs, body).then(function (out) {
           if (out.res.ok) reload(K.savedMsg);
           else { save.disabled = false; setSt(status, (out.data && out.data.erro) || "Não foi possível salvar.", "erro"); }

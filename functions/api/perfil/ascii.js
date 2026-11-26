@@ -1,6 +1,6 @@
 import { logAnonEdit, profileTarget } from "../../_lib/perfil-alvo.js";
 import { errorJson, isSameOrigin, json } from "../../_lib/shared.js";
-import { cleanColorMask, cleanAsciiArt, cleanFrame, readAscii } from "../../_lib/ascii.js";
+import { cleanFrame, cleanLayeredInput, readAscii, readLayers } from "../../_lib/ascii.js";
 
 async function owner(request, env) {
   return profileTarget(request, env);
@@ -17,22 +17,23 @@ export async function onRequestPut(context) {
   } catch {
     return errorJson("Pedido inválido.", 400);
   }
-  if (!data || typeof data.arte !== "string") return errorJson("Envie a arte como texto.", 400);
+  if (!data || typeof data !== "object") return errorJson("Pedido inválido.", 400);
   const moldura = cleanFrame(data.moldura);
   if (!moldura) return errorJson("Moldura inválida.", 400);
-  const c = cleanAsciiArt(data.arte);
+  // { camadas: [{ arte, cores, visivel }] (até 4) } ou o formato antigo { arte, cores }; a composição é sempre refeita aqui.
+  const c = cleanLayeredInput(data);
   if (c.erro) return errorJson(c.erro, 400);
-  const cm = cleanColorMask(data.cores, c.arte);
-  if (cm.erro) return errorJson(cm.erro, 400);
   const now = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO profile_ascii (user_id, art, colors, frame, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)
-     ON CONFLICT(user_id) DO UPDATE SET art = excluded.art, colors = excluded.colors, frame = excluded.frame, updated_at = excluded.updated_at`
+    `INSERT INTO profile_ascii (user_id, art, colors, layers, frame, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET art = excluded.art, colors = excluded.colors, layers = excluded.layers, frame = excluded.frame, updated_at = excluded.updated_at`
   )
-    .bind(o.targetId, c.arte, cm.cores, moldura, now, now)
+    .bind(o.targetId, c.arte, c.cores, c.camadas, moldura, now, now)
     .run();
   if (o.anon) await logAnonEdit(env.DB, o.user, "arte (salvou)");
-  return json({ ok: true, ascii: await readAscii(env.DB, o.targetId) });
+  const ascii = await readAscii(env.DB, o.targetId);
+  if (ascii) ascii.camadas = await readLayers(env.DB, "profile_ascii", o.targetId);
+  return json({ ok: true, ascii });
 }
 
 // DELETE /api/perfil/ascii — remove a própria arte.

@@ -404,3 +404,7 @@ CREATE TABLE IF NOT EXISTS connection_bans (id TEXT PRIMARY KEY, ip_hash TEXT NO
 CREATE INDEX IF NOT EXISTS idx_connection_bans_hash ON connection_bans(ip_hash, scope);
 CREATE INDEX IF NOT EXISTS idx_connection_bans_scope ON connection_bans(scope, created_at);
 CREATE TABLE IF NOT EXISTS profile_edit_log (target_id TEXT PRIMARY KEY, edited_by TEXT, edited_at TEXT NOT NULL, what TEXT);
+
+-- Camadas nas artes ASCII (ver migrate-ascii-camadas.sql; ALTERs já aplicados):
+-- ALTER TABLE profile_ascii ADD COLUMN layers TEXT;
+-- ALTER TABLE profile_avatar ADD COLUMN layers TEXT;

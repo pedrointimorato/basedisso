@@ -131,3 +131,115 @@ export async function readAvatar(db, userId) {
     return null;
   }
 }
+
+// ---------- Camadas (até 4) ----------
+// Cada camada: texto + máscara de cores, alinhados por posição (linhas vazias no topo contam).
+// Composição de cima para baixo: um caractere que não é espaço numa camada de cima cobre o de baixo;
+// espaços são transparentes. Camadas ocultas são guardadas, mas não entram na composição.
+// art/colors continuam sendo o resultado composto (o que todo o resto do site lê).
+export const LAYERS_MAX = 4;
+
+export function cleanLayerText(raw, limits = {}) {
+  const maxLines = limits.lines || ASCII_MAX_LINES;
+  const maxCols = limits.cols || ASCII_MAX_COLS;
+  if (raw != null && typeof raw !== "string") return { erro: "Camada inválida." };
+  let s = String(raw ?? "");
+  if (s.length > ASCII_RAW_MAX) return { erro: "Camada grande demais." };
+  s = s.replace(/\r\n?/g, "\n").replace(/\t/g, "    ");
+  try { s = s.normalize("NFC"); } catch { /* ok */ }
+  s = s.replace(STRIP_RE, "").replace(MARK_RE, "");
+  if (WIDE_RE.test(s)) return { erro: "Emojis e caracteres largos (chinês, japonês, coreano) não são aceitos: eles quebram o alinhamento." };
+  const lines = s.split("\n").map((l) => l.replace(/\s+$/u, ""));
+  while (lines.length && lines[lines.length - 1] === "") lines.pop();
+  if (lines.length > maxLines) return { erro: `máximo de ${maxLines} linhas (tem ${lines.length}).` };
+  for (let i = 0; i < lines.length; i++) {
+    const n = Array.from(lines[i]).length;
+    if (n > maxCols) return { erro: `a linha ${i + 1} tem ${n} colunas; o máximo é ${maxCols}.` };
+  }
+  return { arte: lines.join("\n") };
+}
+
+// layers: [{ arte, cores }] de baixo para cima (só as visíveis). Devolve { arte, cores } já aparados.
+export function compositeLayers(layers) {
+  const L = layers.map((l) => {
+    const lines = String(l.arte || "").split("\n").map((x) => Array.from(x));
+    const ml = String(l.cores || "").split("\n");
+    return { lines, ml };
+  });
+  const rows = Math.max(0, ...L.map((l) => (l.lines.length === 1 && !l.lines[0].length ? 0 : l.lines.length)));
+  let art = [], mask = [];
+  for (let r = 0; r < rows; r++) {
+    const w = Math.max(0, ...L.map((l) => (l.lines[r] ? l.lines[r].length : 0)));
+    let a = "", m = "";
+    for (let c = 0; c < w; c++) {
+      let ch = " ", code = ".";
+      for (let k = L.length - 1; k >= 0; k--) {
+        const x = L[k].lines[r] && L[k].lines[r][c];
+        if (x != null && !/\s/u.test(x)) { ch = x; const mc = (L[k].ml[r] || "")[c]; code = mc && /[1-8]/.test(mc) ? mc : "."; break; }
+      }
+      a += ch; m += code;
+    }
+    const t = a.replace(/\s+$/u, ""); const n = Array.from(t).length;
+    art.push(t); mask.push(m.slice(0, n));
+  }
+  while (art.length && art[art.length - 1] === "") { art.pop(); mask.pop(); }
+  while (art.length && art[0] === "") { art.shift(); mask.shift(); }
+  const any = mask.some((x) => /[1-8]/.test(x));
+  return { arte: art.join("\n"), cores: any ? mask.join("\n") : null };
+}
+
+// Valida o pedido (camadas ou o formato antigo arte/cores) e recalcula a composição no servidor.
+// Devolve { arte, cores, camadas (JSON ou null) } ou { erro }.
+export function cleanLayeredInput(data, limits = {}) {
+  if (data && data.camadas !== undefined) {
+    if (!Array.isArray(data.camadas)) return { erro: "Camadas inválidas." };
+    if (!data.camadas.length) return { erro: "Envie ao menos uma camada." };
+    if (data.camadas.length > LAYERS_MAX) return { erro: `Máximo de ${LAYERS_MAX} camadas.` };
+    const out = [];
+    for (let i = 0; i < data.camadas.length; i++) {
+      const l = data.camadas[i];
+      if (!l || typeof l !== "object" || Array.isArray(l)) return { erro: `Camada ${i + 1}: inválida.` };
+      if (l.visivel !== undefined && typeof l.visivel !== "boolean") return { erro: `Camada ${i + 1}: visibilidade inválida.` };
+      const t = cleanLayerText(l.arte, limits);
+      if (t.erro) return { erro: `Camada ${i + 1}: ${t.erro}` };
+      const cm = cleanColorMask(l.cores, t.arte);
+      if (cm.erro) return { erro: `Camada ${i + 1}: ${cm.erro}` };
+      out.push({ arte: t.arte, cores: cm.cores, visivel: l.visivel !== false });
+    }
+    const comp = compositeLayers(out.filter((l) => l.visivel));
+    if (!comp.arte) return { erro: "A arte está vazia (todas as camadas visíveis estão em branco ou ocultas)." };
+    const c = cleanAsciiArt(comp.arte, limits);
+    if (c.erro) return { erro: c.erro };
+    const cm = cleanColorMask(comp.cores, c.arte);
+    if (cm.erro) return { erro: cm.erro };
+    return { arte: c.arte, cores: cm.cores, camadas: JSON.stringify(out) };
+  }
+  if (!data || typeof data.arte !== "string") return { erro: "Envie a arte como texto." };
+  const c = cleanAsciiArt(data.arte, limits);
+  if (c.erro) return { erro: c.erro };
+  const cm = cleanColorMask(data.cores, c.arte);
+  if (cm.erro) return { erro: cm.erro };
+  return { arte: c.arte, cores: cm.cores, camadas: null };
+}
+
+// Camadas guardadas → lista para o editor; sem camadas (artes antigas) = uma camada só, igual à arte.
+export function layersOut(row) {
+  if (!row || !row.art) return null;
+  if (row.layers) {
+    try {
+      const l = JSON.parse(row.layers);
+      if (Array.isArray(l) && l.length && l.length <= LAYERS_MAX) return l.map((x) => ({ arte: String(x.arte || ""), cores: x.cores || null, visivel: x.visivel !== false }));
+    } catch { /* cai para uma camada */ }
+  }
+  return [{ arte: row.art, cores: maskFor(row.art, row.colors), visivel: true }];
+}
+
+export async function readLayers(db, table, userId) {
+  if (table !== "profile_ascii" && table !== "profile_avatar") return null;
+  try {
+    const row = await db.prepare(`SELECT art, colors, layers FROM ${table} WHERE user_id = ?`).bind(userId).first();
+    return layersOut(row);
+  } catch {
+    return null;
+  }
+}
