@@ -70,7 +70,7 @@
     var imgSrc = p.link && IMG ? IMG.url(p.link) : null;
     var thumb = el("a", { class: "or-thumb" + (imgSrc ? " or-thumb-img" : ""), href: imgSrc ? p.link : href, "aria-hidden": "true", tabindex: "-1" });
     if (imgSrc) { thumb.setAttribute("target", "_blank"); thumb.setAttribute("rel", "noopener noreferrer nofollow"); }
-    if (p.link) thumb.style.background = "#cee3f8";
+    if (p.link) thumb.style.background = "var(--t-info-bg, #cee3f8)";
     thumb.appendChild(el("i", { class: p.link ? (imgSrc ? "fa-regular fa-image" : "fa-solid fa-link") : "fa-regular fa-file-lines" }));
     if (imgSrc) {
       var ti = IMG.node(imgSrc, p.link).firstChild;

@@ -361,7 +361,7 @@ body {
     width: 40px;
     height: 20px;
     appearance: none;
-    background-color: #ccc;
+    background-color: var(--t-surface2, #ccc);
     border-radius: 20px;
     position: relative;
     outline: none;
@@ -782,7 +782,7 @@ a.sidebar-btn-entrar {
 }
 a.sidebar-btn-entrar:hover { background-color: var(--accent-red-hover); color: #fff; }
 a.sidebar-btn-cadastro {
-    background-color: var(--bg-card, #fff);
+    background-color: var(--bg-card, var(--t-surface, #fff));
     color: var(--accent-red);
     border: 1px solid var(--accent-red);
 }
@@ -887,7 +887,7 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
     line-height: 1.45;
 }
 .busca-mark {
-    background: #ffe08a;
+    background: var(--t-warn-bg, #ffe08a);
     color: inherit;
     padding: 0 1px;
     border-radius: 2px;
@@ -896,3 +896,118 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
     background: #6b5420;
     color: var(--text-primary);
 }
+
+/* ===== Temas: Escuro e Papel =====
+   As folhas usam var(--t-*, <cor original>): no tema padrão as --t-* não existem e vale a cor original;
+   nos temas abaixo elas são definidas e cobrem o site inteiro. */
+[data-theme="dark"] {
+    color-scheme: dark;
+    --t-surface: #1f2021;
+    --t-surface2: #2a2b2d;
+    --t-input: #18191a;
+    --t-info-bg: #1d2a3a;
+    --t-ok-bg: #1c2a1d;
+    --t-warn-bg: #2e2814;
+    --t-err-bg: #3a1e1d;
+    --t-text: #e4e6eb;
+    --t-text2: #b0b3b8;
+    --t-text3: #8a8d91;
+    --t-link: #8ab4f8;
+    --t-link2: #7fb2e5;
+    --t-visited: #c58af9;
+    --t-red: #ff6b63;
+    --t-red-dark: #ff8a84;
+    --t-green: #5cc85c;
+    --t-green-dark: #8fd88f;
+    --t-warn-text: #e0b25a;
+    --t-border: #3e4042;
+    --t-info-border: #34506e;
+    --t-ok-border: #2f4a30;
+    --t-warn-border: #6b5a20;
+    /* leitor da Bíblia Amarela */
+    --bk-paper: #24201a;
+    --bk-note: #2f2a21;
+    --bk-btn: #2c271e;
+    --bk-btn-hover: #3a3326;
+    --bk-input: #1b1814;
+    --bk-err: #3a1e1d;
+    --bk-text: #e8dfcc;
+    --bk-text2: #c4b79e;
+    --bk-text3: #a89b82;
+    --bk-link: #e9a25f;
+    --bk-gold: #e0bf5a;
+    --bk-border: #4f4535;
+}
+
+[data-theme="papel"] {
+    color-scheme: light;
+    --bg-global: #efe6d2;
+    --bg-navbar: #f7f0df;
+    --bg-card: #fbf6ea;
+    --bg-sidebar: #f7f0df;
+    --bg-footer: #ece2cc;
+    --border-color: #d9caa8;
+    --border-subtle: #e6dcc4;
+    --text-primary: #3b2f20;
+    --text-secondary: #5e4d36;
+    --text-light: #85735a;
+    --accent-red: #9b2420;
+    --accent-red-hover: #7f1c19;
+    --accent-blue: #7a3410;
+    --search-bg: #f1e8d4;
+    --t-surface: #fbf6ea;
+    --t-surface2: #f1e8d4;
+    --t-input: #fffaf0;
+    --t-info-bg: #ece1c6;
+    --t-ok-bg: #e9e6c8;
+    --t-warn-bg: #f3e3b8;
+    --t-err-bg: #f3d9cc;
+    --t-text: #3b2f20;
+    --t-text2: #5e4d36;
+    --t-text3: #85735a;
+    --t-link: #7a3410;
+    --t-link2: #6b3e1a;
+    --t-visited: #6b2c5e;
+    --t-red: #9b2420;
+    --t-red-dark: #7f1c19;
+    --t-green: #2f6b2a;
+    --t-green-dark: #2f5a25;
+    --t-warn-text: #7a4e0e;
+    --t-border: #d9caa8;
+    --t-info-border: #c9b48a;
+    --t-ok-border: #c9c49a;
+    --t-warn-border: #d6b86a;
+}
+/* Papel: fonte com serifa (especificidade zero: ícones e monoespaçados mantêm a própria fonte) */
+:where([data-theme="papel"]) :where(body, body *) {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Cambria, "Times New Roman", serif;
+}
+/* Controles de formulário sem estilo próprio */
+:where([data-theme="dark"], [data-theme="papel"]) :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select) {
+    background-color: var(--t-input);
+    color: var(--t-text);
+    border-color: var(--t-border);
+}
+:where([data-theme="dark"], [data-theme="papel"]) :where(input, textarea)::placeholder { color: var(--t-text3); opacity: 1; }
+:where([data-theme="dark"], [data-theme="papel"]) :where(pre, code, table, th, td) { border-color: var(--t-border); }
+:where([data-theme="dark"]) :where(a:not([class])) { color: var(--t-link2); }
+:where([data-theme="dark"], [data-theme="papel"]) :where(hr) { border-color: var(--t-border); }
+
+/* ===== Ajustes → Tema: chaves (0  ) ===== */
+.tema-block h3 { margin-bottom: 8px; }
+.tema-options { display: flex; flex-direction: column; gap: 10px; }
+.tema-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; font-size: 15px; color: var(--text-primary); user-select: none; }
+.tema-item input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.tema-pill {
+    position: relative; flex-shrink: 0; width: 46px; height: 24px; border-radius: 999px;
+    border: 2px solid var(--text-secondary); background: transparent;
+    transition: background-color .2s ease, border-color .2s ease;
+}
+.tema-pill::after {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--text-secondary); background: transparent; box-sizing: border-box;
+    transition: left .2s ease, background-color .2s ease, border-color .2s ease;
+}
+.tema-item input:checked + .tema-pill { border-color: var(--accent-red); background: var(--accent-red); }
+.tema-item input:checked + .tema-pill::after { left: 24px; background: #fff; border-color: #fff; }
+.tema-item input:focus-visible + .tema-pill { outline: 2px solid var(--accent-blue); outline-offset: 2px; }

@@ -45,7 +45,7 @@
 .mod-btn.danger { background: #8a1f1c; }
 .mod-status { font-size: 13px; margin-top: 8px; color: var(--text-secondary); }
 .mod-status.erro { color: var(--accent-red); }
-.mod-status.ok { color: #228822; }
+.mod-status.ok { color: var(--t-green, #228822); }
 .mod-item {
     border-top: 1px solid var(--border-subtle);
     padding: 14px 0;
@@ -57,7 +57,7 @@
 .mod-hidden-flag {
     display: inline-block;
     margin-left: 6px;
-    color: #8a1f1c;
+    color: var(--t-red-dark, #8a1f1c);
     font-weight: 700;
     font-size: 11px;
     text-transform: uppercase;
@@ -91,7 +91,7 @@ body.mod-in #mod-panel { display: block; }
 .mod-adm-list li:last-child { border-bottom: 0; }
 .mod-adm-list .mod-btn-sm { margin-left: auto; }
 .mod-btn-sm { padding: 4px 10px; font-size: 12px; }
-.mod-tag { font-size: 11px; font-weight: 700; color: #228822; text-transform: uppercase; }
+.mod-tag { font-size: 11px; font-weight: 700; color: var(--t-green, #228822); text-transform: uppercase; }
 .mod-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .mod-row input { flex: 1 1 180px; min-width: 0; }
 .mod-card input[type="text"], .mod-card textarea, .mod-select {
@@ -123,13 +123,13 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mc-kind.primordial { color: #6b4fa8; }
 .mc-kind.collective { color: #1f7a33; }
 .mc-st { font-size: 11px; font-weight: 700; text-transform: uppercase; }
-.mc-st.ativo { color: #228822; }
+.mc-st.ativo { color: var(--t-green, #228822); }
 .mc-st.expirado, .mc-st.esgotado { color: var(--text-light); }
-.mc-st.revogado { color: #8a1f1c; }
+.mc-st.revogado { color: var(--t-red-dark, #8a1f1c); }
 .mc-meta { font-size: 12px; color: var(--text-secondary); margin: 4px 0 0; }
 .mc-reds { list-style: none; margin: 6px 0 0; padding: 0; font-size: 13px; }
 .mc-reds li { padding: 2px 0; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
-.mc-flag { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #8a5a12; background: #fff4dc; border: 1px solid #e8c879; border-radius: 3px; padding: 0 5px; }
+.mc-flag { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--t-warn-text, #8a5a12); background: var(--t-warn-bg, #fff4dc); border: 1px solid var(--t-warn-border, #e8c879); border-radius: 3px; padding: 0 5px; }
 .mc-head .mod-btn-sm { margin-left: auto; }
 .mx-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
 @media (min-width: 760px) { .mx-grid { grid-template-columns: 1fr 1fr; } }
@@ -139,14 +139,14 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mx-valor { font-size: 18px; font-weight: 800; color: var(--text-primary); }
 .mx-dur { font-size: 12px; color: var(--text-secondary); }
 .mx-estado { margin-left: auto; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-.mx-estado.aberta { color: #228822; }
-.mx-estado.espera { color: #8a5a12; }
-.mx-estado.travada, .mx-estado.pausada { color: #8a1f1c; }
+.mx-estado.aberta { color: var(--t-green, #228822); }
+.mx-estado.espera { color: var(--t-warn-text, #8a5a12); }
+.mx-estado.travada, .mx-estado.pausada { color: var(--t-red-dark, #8a1f1c); }
 .mx-bar { height: 8px; border-radius: 999px; background: var(--border-color); overflow: hidden; margin: 10px 0 4px; }
 .mx-bar > span { display: block; height: 100%; background: #228822; border-radius: 999px; }
 .mx-line { font-size: 13px; margin: 4px 0 0; color: var(--text-primary); }
 .mx-line.sub { color: var(--text-secondary); font-size: 12px; }
-.mx-code { font-family: ui-monospace, monospace; font-weight: 800; letter-spacing: 0.12em; color: #1d4d1d; }
+.mx-code { font-family: ui-monospace, monospace; font-weight: 800; letter-spacing: 0.12em; color: var(--t-green-dark, #1d4d1d); }
 .mx-toggles { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
 .mx-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .mx-toggle input { width: 16px; height: 16px; accent-color: var(--accent-red); }
@@ -156,15 +156,15 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mx-table th, .mx-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
 .mx-table th { font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
 .mx-st { font-weight: 700; }
-.mx-st.paid { color: #228822; }
-.mx-st.pending { color: #8a5a12; }
+.mx-st.paid { color: var(--t-green, #228822); }
+.mx-st.pending { color: var(--t-warn-text, #8a5a12); }
 .mx-st.expired, .mx-st.failed { color: var(--text-light); }
 .mc-head .mc-linkbtn { margin-left: auto; }
 .mc-head .mc-linkbtn + .mod-btn-sm { margin-left: 0; }
-.mc-result { margin-top: 14px; border: 1px dashed #228822; background: #effaef; border-radius: 8px; padding: 12px 14px; }
+.mc-result { margin-top: 14px; border: 1px dashed var(--t-green, #228822); background: var(--t-ok-bg, #effaef); border-radius: 8px; padding: 12px 14px; }
 [data-theme="dark"] .mc-result { background: #1d2a1d; }
 .mc-result-top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
-.mc-result-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #228822; letter-spacing: 0.05em; }
+.mc-result-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--t-green, #228822); letter-spacing: 0.05em; }
 .mc-result-code { font-size: 22px; }
 .mc-result-link { font-size: 13px; margin: 6px 0 0; word-break: break-all; }
 .mc-result-link a { color: var(--accent-red); }
@@ -207,6 +207,6 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .ma-scroll { overflow-x: auto; max-width: 100%; }
 .ma-art { margin: 0; font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; font-size: 11px; line-height: 1.2; white-space: pre; color: var(--text-primary); background: var(--search-bg); border-radius: 4px; padding: 6px 8px; display: inline-block; }
 .ma-tipo { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 1px 6px; border-radius: 3px; background: var(--border-subtle); color: var(--text-secondary); }
-.ma-tipo.avatar { background: #e8f0fb; color: #1a4f9c; }
+.ma-tipo.avatar { background: var(--t-info-bg, #e8f0fb); color: #1a4f9c; }
 [data-theme="dark"] .ma-tipo.avatar { background: #1d2a3d; color: #9cc1f5; }
-.mod-fixado-flag { color: #228822; border-color: #228822; }
+.mod-fixado-flag { color: var(--t-green, #228822); border-color: var(--t-green, #228822); }

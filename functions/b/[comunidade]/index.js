@@ -80,7 +80,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
         </div>
         ${SIDEBAR}
     </div>
-    <script src="/script.js?v=20261123c"></script>
+    <script src="/script.js?v=20261126g"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/comunidade.js?v=${V}"></script>
     <script src="/b/excluir-post.js?v=${V}"></script>

@@ -26,32 +26,37 @@ function mudarAbaSidebar(idAba, tituloCabecalho, event) {
         event.currentTarget.classList.add('active');
     }
 }  
-// --- SISTEMA DE MODO ESCURO ---
-document.addEventListener("DOMContentLoaded", () => {
-    const themeToggle = document.getElementById("theme-toggle");
-
-    // 1. Verifica se o usuário já tinha uma preferência salva anteriormente
-    const temaSalvo = localStorage.getItem("tema") || "light";
-    document.documentElement.setAttribute("data-theme", temaSalvo);
-
-    if (!themeToggle) return;
-
-    // Ajusta o estado visual do checkbox baseado no tema carregado
-    if (temaSalvo === "dark") {
-        themeToggle.checked = true;
+// --- TEMAS: Escuro / Papel (exclusivos; os dois desligados = padrão) ---
+// O <head> de cada página já aplica o tema salvo antes de desenhar (sem piscar).
+(function () {
+    var TEMAS = ["dark", "papel"];
+    function lerTema() {
+        try { var t = localStorage.getItem("tema"); return TEMAS.indexOf(t) >= 0 ? t : ""; } catch (e) { return ""; }
     }
-
-    // 2. Escuta o clique no checkbox para alternar o tema
-    themeToggle.addEventListener("change", () => {
-        if (themeToggle.checked) {
-            document.documentElement.setAttribute("data-theme", "dark");
-            localStorage.setItem("tema", "dark"); // Salva no navegador do usuário
-        } else {
-            document.documentElement.setAttribute("data-theme", "light");
-            localStorage.setItem("tema", "light"); // Salva no navegador do usuário
+    function aplicarTema(t) {
+        if (t) document.documentElement.setAttribute("data-theme", t);
+        else document.documentElement.removeAttribute("data-theme");
+        var chaves = document.querySelectorAll("input[data-tema]");
+        for (var i = 0; i < chaves.length; i++) {
+            chaves[i].checked = chaves[i].getAttribute("data-tema") === t;
+            chaves[i].setAttribute("aria-checked", chaves[i].checked ? "true" : "false");
         }
+    }
+    function salvarTema(t) {
+        try { if (t) localStorage.setItem("tema", t); else localStorage.setItem("tema", "light"); } catch (e) {}
+        aplicarTema(t);
+    }
+    window.BDTema = { get: lerTema, set: salvarTema };
+    aplicarTema(lerTema());
+    document.addEventListener("change", function (ev) {
+        var el = ev.target;
+        if (!el || !el.matches || !el.matches("input[data-tema]")) return;
+        salvarTema(el.checked ? el.getAttribute("data-tema") : "");
     });
-});
+    document.addEventListener("DOMContentLoaded", function () { aplicarTema(lerTema()); });
+    // Outra aba mudou o tema.
+    window.addEventListener("storage", function (ev) { if (ev.key === "tema") aplicarTema(lerTema()); });
+})();
 
 function toggleSidebarMobile() {
     // Seleciona a barra lateral pela classe

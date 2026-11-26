@@ -1,7 +1,7 @@
 /* Widget de comentários do basedisso */
 .bd-comments {
     margin: 24px 0 8px;
-    color: var(--text-primary, #2e3031);
+    color: var(--text-primary, var(--t-text, #2e3031));
     font-family: inherit;
 }
 .bd-comments * { box-sizing: border-box; }
@@ -9,7 +9,7 @@
     font-size: 16px;
     font-weight: 700;
     margin: 0 0 12px;
-    color: var(--text-primary, #2e3031);
+    color: var(--text-primary, var(--t-text, #2e3031));
 }
 .bd-comments-form,
 .bd-comment-reply-form {
@@ -21,15 +21,15 @@
 .bd-comments label {
     font-size: 13px;
     font-weight: 600;
-    color: var(--text-primary, #2e3031);
+    color: var(--text-primary, var(--t-text, #2e3031));
 }
 .bd-comments input[type="text"],
 .bd-comments textarea {
     width: 100%;
-    border: 1px solid var(--border-color, #dee0e1);
+    border: 1px solid var(--border-color, var(--t-border, #dee0e1));
     border-radius: 6px;
-    background: var(--bg-card, #fff);
-    color: var(--text-primary, #2e3031);
+    background: var(--bg-card, var(--t-surface, #fff));
+    color: var(--text-primary, var(--t-text, #2e3031));
     font: inherit;
     font-size: 14px;
     padding: 8px 10px;
@@ -37,7 +37,7 @@
 .bd-comments textarea { min-height: 90px; resize: vertical; }
 .bd-comments input[type="text"]:focus,
 .bd-comments textarea:focus {
-    outline: 2px solid var(--accent-red, #b92b27);
+    outline: 2px solid var(--accent-red, var(--t-red, #b92b27));
     outline-offset: 1px;
 }
 .bd-hp {
@@ -65,26 +65,26 @@
 .bd-comments-submit:disabled { opacity: 0.7; cursor: wait; }
 .bd-comments-status {
     font-size: 13px;
-    color: var(--text-secondary, #636466);
+    color: var(--text-secondary, var(--t-text2, #636466));
 }
-.bd-comments-status.erro { color: var(--accent-red, #b92b27); }
-.bd-comments-status.ok { color: #228822; }
+.bd-comments-status.erro { color: var(--accent-red, var(--t-red, #b92b27)); }
+.bd-comments-status.ok { color: var(--t-green, #228822); }
 .bd-comments-empty {
     font-size: 14px;
-    color: var(--text-secondary, #636466);
+    color: var(--text-secondary, var(--t-text2, #636466));
     margin: 8px 0 16px;
 }
 .bd-comment-list { list-style: none; margin: 0; padding: 0; }
 .bd-comment {
-    border-top: 1px solid var(--border-subtle, #f1f2f2);
+    border-top: 1px solid var(--border-subtle, var(--t-border, #f1f2f2));
     padding: 12px 0;
 }
 .bd-comment-meta {
     font-size: 12px;
-    color: var(--text-secondary, #636466);
+    color: var(--text-secondary, var(--t-text2, #636466));
     margin-bottom: 4px;
 }
-.bd-comment-name { font-weight: 700; color: var(--text-primary, #2e3031); }
+.bd-comment-name { font-weight: 700; color: var(--text-primary, var(--t-text, #2e3031)); }
 .bd-comment-body {
     font-size: 14px;
     line-height: 1.5;
@@ -97,7 +97,7 @@
     background: none;
     border: none;
     padding: 0;
-    color: var(--accent-red, #b92b27);
+    color: var(--accent-red, var(--t-red, #b92b27));
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -106,29 +106,29 @@
     list-style: none;
     margin: 8px 0 0 18px;
     padding: 0 0 0 12px;
-    border-left: 2px solid var(--border-color, #dee0e1);
+    border-left: 2px solid var(--border-color, var(--t-border, #dee0e1));
 }
 .bd-comment-replies .bd-comment { padding: 10px 0; }
 
 /* Estilo old reddit, usado em /adm */
 .bd-comments-reddit {
     font-family: Verdana, arial, helvetica, sans-serif;
-    color: #000;
+    color: var(--t-text, #000);
     margin: 16px 0 0;
     padding-top: 10px;
-    border-top: 1px solid #d4e6d4;
+    border-top: 1px solid var(--t-ok-border, #d4e6d4);
 }
 .bd-comments-reddit .bd-comments-title {
     font-size: 13px;
-    color: #222;
+    color: var(--t-text, #222);
     font-weight: 700;
 }
 .bd-comments-reddit input[type="text"],
 .bd-comments-reddit textarea {
-    border: 1px solid #a9bacb;
+    border: 1px solid var(--t-info-border, #a9bacb);
     border-radius: 0;
-    background: #fff;
-    color: #000;
+    background: var(--t-surface, #fff);
+    color: var(--t-text, #000);
     font-family: Verdana, arial, helvetica, sans-serif;
     font-size: 13px;
 }
@@ -138,8 +138,8 @@
     outline-offset: 0;
 }
 .bd-comments-reddit .bd-comments-submit {
-    background: #eff7ff;
-    color: #369;
+    background: var(--t-info-bg, #eff7ff);
+    color: var(--t-link2, #369);
     border: 1px solid #5f99cf;
     border-radius: 3px;
     font-weight: 700;
@@ -147,25 +147,25 @@
     padding: 4px 10px;
 }
 .bd-comments-reddit .bd-comments-submit:hover {
-    background: #cee3f8;
-    color: #369;
+    background: var(--t-info-bg, #cee3f8);
+    color: var(--t-link2, #369);
 }
 .bd-comments-reddit .bd-comment {
     border-top: 0;
     padding: 8px 0 4px;
 }
-.bd-comments-reddit .bd-comment-name { color: #369; font-weight: 700; }
-.bd-comments-reddit .bd-comment-meta { color: #888; }
-.bd-comments-reddit .bd-comment-body { font-size: 13px; color: #000; }
+.bd-comments-reddit .bd-comment-name { color: var(--t-link2, #369); font-weight: 700; }
+.bd-comments-reddit .bd-comment-meta { color: var(--t-text3, #888); }
+.bd-comments-reddit .bd-comment-body { font-size: 13px; color: var(--t-text, #000); }
 .bd-comments-reddit .bd-comment-reply-btn,
-.bd-comments-reddit .bd-comment-cancel { color: #888; font-weight: 700; text-transform: lowercase; }
-.bd-comments-reddit .bd-comment-reply-btn:hover { color: #369; }
+.bd-comments-reddit .bd-comment-cancel { color: var(--t-text3, #888); font-weight: 700; text-transform: lowercase; }
+.bd-comments-reddit .bd-comment-reply-btn:hover { color: var(--t-link2, #369); }
 .bd-comments-reddit .bd-comment-replies {
     margin-left: 15px;
     padding-left: 10px;
-    border-left: 1px dotted #d5d5d5;
+    border-left: 1px dotted var(--t-border, #d5d5d5);
 }
-.bd-comments-reddit .bd-comments-empty { font-size: 13px; color: #555; }
+.bd-comments-reddit .bd-comments-empty { font-size: 13px; color: var(--t-text2, #555); }
 
 /* Threads de qualquer profundidade: indentação limitada no mobile (~5 níveis) */
 .bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies .bd-comment-replies,
@@ -207,7 +207,7 @@
 }
 .bd-comments-sidebar .bd-comments-status { font-size: 12px; line-height: 1.4; }
 .bd-comments-sidebar .bd-comments-sent-link {
-    color: var(--accent-red, #b92b27);
+    color: var(--accent-red, var(--t-red, #b92b27));
     font-weight: 700;
     text-decoration: underline;
     word-break: break-all;
@@ -226,55 +226,55 @@
     background: none;
     border: none;
     padding: 4px 0;
-    color: var(--text-secondary, #636466);
+    color: var(--text-secondary, var(--t-text2, #636466));
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
 }
-.bd-comment-del-btn:hover { color: var(--accent-red, #b92b27); text-decoration: underline; }
+.bd-comment-del-btn:hover { color: var(--accent-red, var(--t-red, #b92b27)); text-decoration: underline; }
 .bd-comment-del-btn:disabled { opacity: 0.5; cursor: default; }
-.bd-comments-reddit .bd-comment-del-btn { color: #888; font-weight: 700; text-transform: lowercase; }
-.bd-comments-reddit .bd-comment-del-btn:hover { color: #b92b27; }
-.bd-comment-body.bd-comment-excluido { font-style: italic; color: var(--text-light, #8f9092); }
-.bd-comment-excluido-nome { font-style: italic; color: var(--text-light, #8f9092) !important; font-weight: 400 !important; }
-.bd-comments-fechados { font-size: 13px; color: var(--text-secondary, #636466); background: var(--search-bg, #f7f7f8); border: 1px dashed var(--border-color, #dee0e1); border-radius: 6px; padding: 8px 10px; margin: 6px 0 12px; }
+.bd-comments-reddit .bd-comment-del-btn { color: var(--t-text3, #888); font-weight: 700; text-transform: lowercase; }
+.bd-comments-reddit .bd-comment-del-btn:hover { color: var(--t-red, #b92b27); }
+.bd-comment-body.bd-comment-excluido { font-style: italic; color: var(--text-light, var(--t-text3, #8f9092)); }
+.bd-comment-excluido-nome { font-style: italic; color: var(--text-light, var(--t-text3, #8f9092)) !important; font-weight: 400 !important; }
+.bd-comments-fechados { font-size: 13px; color: var(--text-secondary, var(--t-text2, #636466)); background: var(--search-bg, var(--t-surface2, #f7f7f8)); border: 1px dashed var(--border-color, var(--t-border, #dee0e1)); border-radius: 6px; padding: 8px 10px; margin: 6px 0 12px; }
 .profile-comments .profile-comment-del { margin-top: 2px; }
 /* Postagens */
-.or-buttons .or-excluir:hover, .or-own-actions .or-excluir:hover { color: #b92b27; }
+.or-buttons .or-excluir:hover, .or-own-actions .or-excluir:hover { color: var(--t-red, #b92b27); }
 .or-own-actions { margin: 8px 0 4px; }
-.or-excluir-msg { font-size: 12px; margin: 4px 0 0; color: #b92b27; }
-.or-selfpost-title.or-excluida { color: var(--text-light, #8f9092) !important; font-style: italic; }
-.or-excluida-nota { font-size: 13px; color: var(--text-secondary, #636466); margin: 4px 0 12px; }
+.or-excluir-msg { font-size: 12px; margin: 4px 0 0; color: var(--t-red, #b92b27); }
+.or-selfpost-title.or-excluida { color: var(--text-light, var(--t-text3, #8f9092)) !important; font-style: italic; }
+.or-excluida-nota { font-size: 13px; color: var(--text-secondary, var(--t-text2, #636466)); margin: 4px 0 12px; }
 /* Fixados (ADMs) */
 .bd-comment-pin-btn {
-    background: none; border: 0; padding: 0 0 0 10px; color: var(--text-secondary, #636466);
+    background: none; border: 0; padding: 0 0 0 10px; color: var(--text-secondary, var(--t-text2, #636466));
     font-size: 12px; font-weight: 600; cursor: pointer;
 }
-.bd-comment-pin-btn:hover { color: #228822; text-decoration: underline; }
+.bd-comment-pin-btn:hover { color: var(--t-green, #228822); text-decoration: underline; }
 .bd-comment-pin-btn:disabled { opacity: 0.5; cursor: default; }
-.bd-comments-reddit .bd-comment-pin-btn { color: #888; font-weight: 700; text-transform: lowercase; }
-.bd-comment-fixado { color: #228822; font-weight: 700; font-size: 11px; margin-right: 6px; text-transform: lowercase; }
+.bd-comments-reddit .bd-comment-pin-btn { color: var(--t-text3, #888); font-weight: 700; text-transform: lowercase; }
+.bd-comment-fixado { color: var(--t-green, #228822); font-weight: 700; font-size: 11px; margin-right: 6px; text-transform: lowercase; }
 .bd-comment-fixado i { font-size: 10px; }
 .or-fixado-tag i { font-size: 10px; }
-.or-buttons .or-fixar:hover, .or-own-actions .or-fixar:hover { color: #228822; }
+.or-buttons .or-fixar:hover, .or-own-actions .or-fixar:hover { color: var(--t-green, #228822); }
 /* Imagens por link (comentários, textos, prévia) */
 .bd-img-list { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 4px 0 6px; max-width: 100%; }
-.bd-img-link { display: inline-block; max-width: 100%; line-height: 0; border: 1px solid var(--border-color, #dee0e1); border-radius: 4px; overflow: hidden; background: var(--search-bg, #f7f7f8); }
+.bd-img-link { display: inline-block; max-width: 100%; line-height: 0; border: 1px solid var(--border-color, var(--t-border, #dee0e1)); border-radius: 4px; overflow: hidden; background: var(--search-bg, var(--t-surface2, #f7f7f8)); }
 .bd-img-link[hidden] { display: none !important; }
 .bd-img-link .bd-img { display: block; max-width: 100%; max-height: 400px; width: auto; height: auto; object-fit: contain; }
 .bd-img-full .bd-img { max-height: 600px; }
 .bd-img-preview .bd-img { max-height: 200px; }
 .bd-img-toggle-row { margin: 2px 0 6px; font-size: 11px; }
-.bd-img-toggle { background: none; border: 0; padding: 0; color: var(--text-secondary, #888); font-size: 11px; font-weight: 700; cursor: pointer; text-transform: lowercase; }
+.bd-img-toggle { background: none; border: 0; padding: 0; color: var(--text-secondary, var(--t-text3, #888)); font-size: 11px; font-weight: 700; cursor: pointer; text-transform: lowercase; }
 .bd-img-toggle:hover { text-decoration: underline; }
 .or-post-image { margin: 6px 0 8px; max-width: 100%; }
 .or-link-preview { margin: 4px 0 8px; max-width: 100%; }
-.or-link-preview-label { font-size: 12px; color: var(--text-secondary, #636466); margin: 0 0 4px; }
+.or-link-preview-label { font-size: 12px; color: var(--text-secondary, var(--t-text2, #636466)); margin: 0 0 4px; }
 /* miniatura e expando no feed */
 .or-thumb.or-thumb-img { position: relative; overflow: hidden; }
 .or-thumb.or-thumb-img .bd-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.or-expando-btn { background: #fff; border: 1px solid #ccc; border-radius: 2px; color: #888; width: 22px; height: 18px; padding: 0; margin-right: 5px; font-size: 11px; line-height: 16px; cursor: pointer; vertical-align: middle; }
-.or-expando-btn:hover, .or-expando-btn.is-open { color: #369; border-color: #369; }
+.or-expando-btn { background: var(--t-surface, #fff); border: 1px solid var(--t-border, #ccc); border-radius: 2px; color: var(--t-text3, #888); width: 22px; height: 18px; padding: 0; margin-right: 5px; font-size: 11px; line-height: 16px; cursor: pointer; vertical-align: middle; }
+.or-expando-btn:hover, .or-expando-btn.is-open { color: var(--t-link2, #369); border-color: #369; }
 .or-expando { margin: 4px 0 6px; max-width: 100%; }
 .or-expando .bd-img { max-height: 500px; }
 html.bd-noimg .bd-img-link, html.bd-noimg .or-expando, html.bd-noimg .or-expando-btn, html.bd-noimg .or-thumb-img .bd-img, html.bd-noimg .or-link-preview { display: none !important; }

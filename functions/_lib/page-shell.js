@@ -1,6 +1,6 @@
 import { escapeHtml } from "./shared.js";
 
-export const V = "20261126e";
+export const V = "20261126g";
 
 export const SIDEBAR = `<aside class="right-sidebar">
             <div class="sidebar-header">
@@ -17,13 +17,16 @@ export const SIDEBAR = `<aside class="right-sidebar">
                     </div>
                 </div>
                 <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block tema-block">
+                        <h3>Tema</h3>
+                        <div class="tema-options" role="group" aria-label="Tema">
+                            <label class="tema-item"><span>Escuro</span><input type="checkbox" role="switch" data-tema="dark"><span class="tema-pill" aria-hidden="true"></span></label>
+                            <label class="tema-item"><span>Papel</span><input type="checkbox" role="switch" data-tema="papel"><span class="tema-pill" aria-hidden="true"></span></label>
+                        </div>
+                    </div>
                     <div class="sidebar-block">
                         <h3>Preferências do Sistema</h3>
                         <div class="config-options">
-                            <label class="config-item">
-                                <span>Modo Escuro</span>
-                                <input type="checkbox" id="theme-toggle">
-                            </label>
                             <label class="config-item">
                                 <span>Notificações por Email</span>
                                 <input type="checkbox" checked>
@@ -82,13 +85,14 @@ export const NAV = `<nav class="navbar">
 
 export function headHtml(title) {
   return `<head>
+    <script>try{var t=localStorage.getItem("tema");if(t==="dark"||t==="papel")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${escapeHtml(title)}</title>
-    <link rel="stylesheet" href="/style.css?v=20261123c">
-    <link rel="stylesheet" href="/account.css?v=20261126b">
+    <link rel="stylesheet" href="/style.css?v=20261126g">
+    <link rel="stylesheet" href="/account.css?v=20261126g">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
-    <link rel="stylesheet" href="/comments.css?v=20261126f">
+    <link rel="stylesheet" href="/comments.css?v=20261126g">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>`;
 }
@@ -101,7 +105,7 @@ export function htmlResponse(html, status = 200) {
 }
 
 export function notFoundHtml(msg = "Página não encontrada.") {
-  return htmlResponse(`<!DOCTYPE html><html lang="pt-BR">${headHtml("Não encontrado — basedisso")}<body><div class="site-container layout-default" id="siteContainer"><div class="left-area">${NAV}<main class="main-content adm-main"><div class="oldreddit"><div class="or-wrap"><div class="or-listing"><p>${escapeHtml(msg)}</p><p><a href="/b/">voltar ao painel de comunidades</a></p></div></div></div></main></div>${SIDEBAR}</div><script src="/script.js?v=20261123c"></script><script src="/account.js?v=20261126f"></script><script src="/comments.js?v=20261126e"></script></body></html>`, 404);
+  return htmlResponse(`<!DOCTYPE html><html lang="pt-BR">${headHtml("Não encontrado — basedisso")}<body><div class="site-container layout-default" id="siteContainer"><div class="left-area">${NAV}<main class="main-content adm-main"><div class="oldreddit"><div class="or-wrap"><div class="or-listing"><p>${escapeHtml(msg)}</p><p><a href="/b/">voltar ao painel de comunidades</a></p></div></div></div></main></div>${SIDEBAR}</div><script src="/script.js?v=20261126g"></script><script src="/account.js?v=20261126f"></script><script src="/comments.js?v=20261126e"></script></body></html>`, 404);
 }
 
 // Texto de cartão: parágrafos separados por linha em branco, quebras simples como <br>.
