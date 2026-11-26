@@ -124,7 +124,7 @@
     },
   };
 
-  function renderAsciiSection(root, data, reload) {
+  function renderAsciiSection(root, data, reload, flash) {
     var u = data.usuario;
     var art = data.ascii;
     var current = { arte: data.ascii, avatar: data.avatar };
@@ -157,7 +157,7 @@
     if (tools.firstChild) section.appendChild(tools);
     section.appendChild(status);
     section.appendChild(editorHost);
-    if (!art && !tools.firstChild) return null;
+    if (!art && !tools.firstChild && !flash) return null;
 
     function openEditor(kind) {
       var K = KINDS[kind];
@@ -279,7 +279,7 @@
     if (u.is_admin) meta += " · administrador";
     if (u.is_primordial) meta += u.primordial_n != null ? " · primordial #" + u.primordial_n : " · primordial";
     headText.appendChild(el("p", { class: "profile-meta" }, meta));
-    var asciiSec = renderAsciiSection(root, data, reload);
+    var asciiSec = renderAsciiSection(root, data, reload, flash);
     if (asciiSec) {
       root.appendChild(asciiSec);
       if (flash) setSt(asciiSec.querySelector(".ascii-status"), flash, "ok");
