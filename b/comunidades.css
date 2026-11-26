@@ -528,3 +528,21 @@
 .or-card-form button { font: 700 12px verdana, arial, sans-serif; padding: 4px 10px; cursor: pointer; }
 .or-card-body p:last-child { margin-bottom: 8px; }
 .or-side-meta[hidden] { display: none; }
+
+/* Temas (ver style.css): paleta do old reddit */
+[data-theme="dark"] .oldreddit {
+    --or-blue: #1d2a3a;
+    --or-link: #8ab4f8;
+    --or-visited: #c58af9;
+    --or-text: #e4e6eb;
+    --or-muted: #8a8d91;
+    --or-border: #34506e;
+}
+[data-theme="papel"] .oldreddit {
+    --or-blue: #e6d8b8;
+    --or-link: #7a3410;
+    --or-visited: #6b2c5e;
+    --or-text: #3b2f20;
+    --or-muted: #85735a;
+    --or-border: #b39a6a;
+}
