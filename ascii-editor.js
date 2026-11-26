@@ -449,6 +449,8 @@
       try { caret = Array.from(ta.value.slice(0, ta.selectionEnd)).length; } catch (e) { caret = null; }
       mk = shiftMask(rawChars, nc, mk, caret, brush);
       rawChars = nc;
+      var had = hasContent(layers[active]); commit();
+      if (hasContent(layers[active]) !== had) renderLayers(); // atualiza o " · vazia" da lista
       update();
       recordSoon();
     });
