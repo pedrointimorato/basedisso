@@ -292,12 +292,25 @@
     comments.forEach(function (c) {
       var body = el("p", { class: "profile-comment-body" });
       window.BDAccount.appendBodyWithMentions(body, c.body || "", c.mencoes || {});
+      var del = null;
+      if (data.pode_editar_ascii && c.id) {
+        del = el("button", { type: "button", class: "bd-comment-del-btn profile-comment-del", "data-excluir-comentario": c.id }, "excluir");
+        del.addEventListener("click", function () {
+          if (!confirm("Excluir este comentário? Isso não pode ser desfeito.")) return;
+          del.disabled = true;
+          api("DELETE", "/api/comments/" + encodeURIComponent(c.id)).then(function (out) {
+            if (out.res.ok) reload("");
+            else { del.disabled = false; alert((out.data && out.data.erro) || "Não foi possível excluir."); }
+          }).catch(function () { del.disabled = false; alert("Falha de rede."); });
+        });
+      }
       list.appendChild(
         el(
           "li",
-          null,
+          { "data-comment-id": c.id },
           el("p", { class: "profile-comment-page" }, pageLink(c.page), " · ", c.created_at ? new Date(c.created_at).toLocaleString("pt-BR") : ""),
-          body
+          body,
+          del
         )
       );
     });

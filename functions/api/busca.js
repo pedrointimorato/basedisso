@@ -100,7 +100,7 @@ async function searchPosts(db, q, terms) {
     const out = await db
       .prepare(
         `${selectSql}
-         WHERE p.hidden = 0 AND (${termClause})
+         WHERE p.hidden = 0 AND p.author_deleted_at IS NULL AND (${termClause})
          ORDER BY p.created_at DESC
          LIMIT 40`
       )
@@ -109,7 +109,7 @@ async function searchPosts(db, q, terms) {
     results = out.results || [];
   } catch {
     try {
-      const out = await db.prepare(`${selectSql} WHERE p.hidden = 0 ORDER BY p.created_at DESC LIMIT 400`).all();
+      const out = await db.prepare(`${selectSql} WHERE p.hidden = 0 AND p.author_deleted_at IS NULL ORDER BY p.created_at DESC LIMIT 400`).all();
       results = out.results || [];
     } catch {
       return [];
@@ -180,7 +180,7 @@ export async function onRequestGet(context) {
   try {
     const out = await env.DB.prepare(
       `${selectSql}
-       WHERE c.hidden = 0
+       WHERE c.hidden = 0 AND c.author_deleted_at IS NULL
          AND (${termClause})
        ORDER BY c.created_at DESC
        LIMIT 40`
@@ -192,7 +192,7 @@ export async function onRequestGet(context) {
     try {
       const out = await env.DB.prepare(
         `${selectSql}
-         WHERE c.hidden = 0
+         WHERE c.hidden = 0 AND c.author_deleted_at IS NULL
          ORDER BY c.created_at DESC
          LIMIT 400`
       ).all();

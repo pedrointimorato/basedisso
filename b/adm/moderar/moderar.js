@@ -114,9 +114,10 @@
                 " · ",
                 fmtTime(c.created_at),
                 c.parent_id ? " · resposta" : null,
-                c.hidden ? el("span", { class: "mod-hidden-flag" }, "oculto") : null
+                c.hidden ? el("span", { class: "mod-hidden-flag" }, "oculto") : null,
+                c.excluido_pelo_autor ? el("span", { class: "mod-hidden-flag" }, "excluído pelo autor") : null
               ),
-              el("p", { class: "mod-body" }, c.body || ""),
+              el("p", { class: "mod-body" }, c.excluido_pelo_autor ? "[comentário excluído pelo autor — a casca fica por causa das respostas]" : (c.body || "")),
               el("div", { class: "mod-actions" }, hideBtn, delBtn)
             )
           );
@@ -526,14 +527,15 @@
               el(
                 "p",
                 { class: "mod-meta" },
-                el("span", { class: "mod-name" }, p.name || "anônimo"),
+                el("span", { class: "mod-name" }, p.excluida_pelo_autor ? "[excluída]" : (p.name || "anônimo")),
                 " · ",
                 el("a", { class: "mod-page", href: p.url || ("/b/" + p.community + "/p/" + p.id) }, "b/" + p.community),
                 " · ",
                 fmtTime(p.created_at),
-                p.hidden ? el("span", { class: "mod-hidden-flag" }, "oculta") : null
+                p.hidden ? el("span", { class: "mod-hidden-flag" }, "oculta") : null,
+                p.excluida_pelo_autor ? el("span", { class: "mod-hidden-flag" }, "excluída pelo autor") : null
               ),
-              el("p", { class: "mod-body" }, p.title || ""),
+              el("p", { class: "mod-body" }, p.excluida_pelo_autor ? "[postagem excluída pelo autor — os comentários continuam legíveis]" : (p.title || "")),
               p.body ? el("p", { class: "mod-body" }, p.body) : null,
               el("div", { class: "mod-actions" }, hideBtn, delBtn)
             )

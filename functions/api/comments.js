@@ -14,7 +14,22 @@ import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
 import { readAvatar } from "../_lib/ascii.js";
 
-async function formatComment(db, row) {
+export const DELETED_COMMENT_TEXT = "[comentário excluído pelo autor]";
+
+async function formatComment(db, row, viewer = null) {
+  if (row.author_deleted_at) {
+    return {
+      id: row.id,
+      page: row.page,
+      parent_id: row.parent_id,
+      name: null,
+      body: DELETED_COMMENT_TEXT,
+      created_at: row.created_at,
+      usuario: null,
+      mencoes: {},
+      excluido: true,
+    };
+  }
   const mencoes = await lookupMentions(db, row.body);
   const usuario = row.username
     ? {
@@ -34,6 +49,7 @@ async function formatComment(db, row) {
     created_at: row.created_at,
     usuario,
     mencoes,
+    proprio: Boolean(viewer && row.user_id && row.user_id === viewer.id),
   };
 }
 
@@ -44,7 +60,7 @@ export async function onRequestGet(context) {
   const page = normalizePage(url.searchParams.get("page") || "");
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
-    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id,
+    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at,
             u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id
@@ -57,11 +73,18 @@ export async function onRequestGet(context) {
   )
     .bind(page)
     .all();
+  const viewer = await getSessionUser(request, env);
   const comentarios = [];
   for (const row of results || []) {
-    comentarios.push(await formatComment(env.DB, row));
+    comentarios.push(await formatComment(env.DB, row, viewer));
   }
-  return json({ comentarios });
+  let fechado = false;
+  const pk = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
+  if (pk) {
+    const post = await env.DB.prepare("SELECT author_deleted_at FROM posts WHERE id = ?").bind(pk[2]).first();
+    fechado = Boolean(post && post.author_deleted_at);
+  }
+  return json({ comentarios, fechado });
 }
 
 export async function onRequestPost(context) {
@@ -85,11 +108,12 @@ export async function onRequestPost(context) {
   const pm = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
   if (pm) {
     const post = await env.DB.prepare(
-      "SELECT id FROM posts WHERE id = ? AND community = ? AND hidden = 0"
+      "SELECT id, author_deleted_at FROM posts WHERE id = ? AND community = ? AND hidden = 0"
     )
       .bind(pm[2], pm[1])
       .first();
     if (!post) return errorJson("Postagem não encontrada.", 404);
+    if (post.author_deleted_at) return errorJson("Comentários fechados: a postagem foi excluída pelo autor.", 403);
   }
 
   const body = sanitizeBody(data?.body);
@@ -106,13 +130,14 @@ export async function onRequestPost(context) {
   if (parentId) {
     if (!/^[0-9a-f-]{36}$/i.test(parentId)) return errorJson("Resposta inválida.", 400);
     const parent = await env.DB.prepare(
-      "SELECT id, page, parent_id, hidden FROM comments WHERE id = ?"
+      "SELECT id, page, parent_id, hidden, author_deleted_at FROM comments WHERE id = ?"
     )
       .bind(parentId)
       .first();
     if (!parent || parent.page !== page || parent.hidden) {
       return errorJson("O comentário original não foi encontrado.", 400);
     }
+    if (parent.author_deleted_at) return errorJson("Não é possível responder a um comentário excluído.", 400);
     let depth = 1;
     let walk = parent;
     while (walk.parent_id) {
@@ -157,6 +182,7 @@ export async function onRequestPost(context) {
     is_primordial: session ? session.is_primordial : 0,
     primordial_n: session ? session.primordial_n : null,
     avatar: session ? (await readAvatar(env.DB, session.id))?.arte || null : null,
-  });
+    user_id: userId,
+  }, session);
   return json({ ok: true, comentario }, 201);
 }

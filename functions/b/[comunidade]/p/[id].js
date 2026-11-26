@@ -3,6 +3,7 @@ import { SIDEBAR, V, communityCardHtml } from "../../../_lib/page-shell.js";
 import { communityCard, getCommunityDb, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
 import { getVisiblePost } from "../../../_lib/posts.js";
 import { localTimeHtml } from "../../../_lib/hora.js";
+import { getSessionUser } from "../../../_lib/auth.js";
 
 function authorHtml(post) {
   if (post.usuario && post.usuario.username) {
@@ -23,9 +24,10 @@ function domainOf(link) {
   }
 }
 
-export function postPageHtml({ community, post }) {
+export function postPageHtml({ community, post, proprio = false }) {
+  const excluida = Boolean(post.excluida_pelo_autor);
   const slug = community.slug;
-  const title = escapeHtml(post.title || "Postagem");
+  const title = excluida ? "Postagem excluída pelo autor" : escapeHtml(post.title || "Postagem");
   const commName = escapeHtml(community.name);
   const hrefComm = communityHref(slug);
   const hrefPost = postHref(slug, post.id);
@@ -44,7 +46,7 @@ export function postPageHtml({ community, post }) {
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261126b">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
-    <link rel="stylesheet" href="/comments.css?v=20261123f">
+    <link rel="stylesheet" href="/comments.css?v=20261126c">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -92,11 +94,15 @@ export function postPageHtml({ community, post }) {
                         <div class="or-listing">
                             <p class="or-back"><a href="${hrefComm}">← b/${escapeHtml(slug)}</a></p>
                             <article class="or-selfpost" id="post">
-                                <h2 class="or-selfpost-title">${title}</h2>
+                                ${excluida
+                                  ? `<h2 class="or-selfpost-title or-excluida">Postagem excluída pelo autor</h2>
+                                <p class="or-excluida-nota" data-post-excluida>O título, o texto e o autor foram removidos. Os comentários abaixo continuam legíveis, mas não é mais possível comentar.</p>`
+                                  : `<h2 class="or-selfpost-title">${title}</h2>
                                 <p class="or-tagline${post.usuario && post.usuario.avatar ? " has-avatar" : ""}">enviado ${when} por ${authorHtml(post)}</p>
                                 ${link ? `<p class="or-post-link"><a href="${link}" rel="noopener noreferrer">${link}</a>${domain ? ` <span class="or-domain">(${domain})</span>` : ""}</p>` : ""}
                                 ${body ? `<div class="or-md or-post-body">${body}</div>` : ""}
-                                <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="${escapeHtml(pageKey)}" data-title="Comentários"></div>
+                                ${proprio ? `<ul class="or-buttons or-own-actions"><li><button type="button" class="or-excluir" data-excluir-post="${escapeHtml(post.id)}" data-voltar="${hrefComm}">excluir</button></li></ul><p class="or-excluir-msg" role="status" hidden></p>` : ""}`}
+                                <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="${escapeHtml(pageKey)}" data-title="Comentários"${excluida ? ' data-closed="true"' : ""}></div>
                             </article>
                         </div>
                         <aside class="or-side">
@@ -115,17 +121,18 @@ export function postPageHtml({ community, post }) {
         ${SIDEBAR}
     </div>
     <script src="/hora-local.js?v=20261126a"></script>
+    <script src="/b/excluir-post.js?v=20261126a"></script>
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
     <script src="/account.js?v=20261126b"></script>
-    <script src="/comments.js?v=20261126a"></script>
+    <script src="/comments.js?v=20261126c"></script>
 </body>
 </html>`;
 }
 
 export async function onRequestGet(context) {
-  const { env, params } = context;
+  const { env, params, request } = context;
   const community = await getCommunityDb(env.DB, params.comunidade);
   const id = params.id || "";
   if (!community || !UUID_RE.test(id)) {
@@ -138,7 +145,9 @@ export async function onRequestGet(context) {
   if (!row || row.hidden || row.community !== community.slug) {
     return new Response("Postagem não encontrada.", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
   }
-  const html = postPageHtml({ community, post: publicPost(row) });
+  const viewer = await getSessionUser(request, env);
+  const proprio = Boolean(viewer && row.user_id && row.user_id === viewer.id && !row.author_deleted_at);
+  const html = postPageHtml({ community, post: publicPost(row), proprio });
   return new Response(html, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },

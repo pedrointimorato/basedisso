@@ -99,8 +99,10 @@
           { class: "or-buttons" },
           el("li", null, el("a", { href: href }, commentsLabel)),
           el("li", null, el("a", { href: href }, "compartilhar")),
-          el("li", null, el("button", { type: "button", class: "or-save" }, "salvar"))
-        )
+          el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
+          p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null
+        ),
+        p.proprio ? el("p", { class: "or-excluir-msg", role: "status", hidden: "hidden" }) : null
       )
     );
   }

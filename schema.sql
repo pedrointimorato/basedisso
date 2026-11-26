@@ -355,3 +355,7 @@ CREATE TABLE IF NOT EXISTS profile_avatar (
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+
+-- Exclusão pelo autor (ver migrate-exclusao-autor.sql; ALTER já aplicado):
+-- ALTER TABLE comments ADD COLUMN author_deleted_at TEXT;
+-- ALTER TABLE posts ADD COLUMN author_deleted_at TEXT;

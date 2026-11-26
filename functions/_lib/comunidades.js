@@ -141,7 +141,8 @@ export function communityHref(slug) {
 }
 
 export function publicPost(row, extra = {}) {
-  const usuario = row.username
+  const excluida = Boolean(row.author_deleted_at);
+  const usuario = row.username && !excluida
     ? {
         username: row.username,
         is_admin: Boolean(row.is_admin),
@@ -156,9 +157,10 @@ export function publicPost(row, extra = {}) {
     title: row.title,
     body: row.body || "",
     link: row.link || null,
-    name: usuario ? usuario.username : row.name,
+    name: excluida ? null : usuario ? usuario.username : row.name,
     usuario,
     created_at: row.created_at,
+    excluida_pelo_autor: excluida,
     sticky: Boolean(row.sticky),
     url: postHref(row.community, row.id),
     comment_count: Number(row.comment_count || 0),

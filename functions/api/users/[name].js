@@ -32,7 +32,7 @@ export async function onRequestGet(context) {
   const { results } = await env.DB.prepare(
     `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at
      FROM comments c
-     WHERE c.user_id = ? AND c.hidden = 0
+     WHERE c.user_id = ? AND c.hidden = 0 AND c.author_deleted_at IS NULL
      ORDER BY c.created_at DESC
      LIMIT 100`
   )

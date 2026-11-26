@@ -28,7 +28,7 @@ export async function onRequestGet(context) {
   const catalog = await listCommunitiesDb(env.DB);
   const { results: postRows } = await env.DB.prepare(
     `SELECT community, COUNT(*) AS n, MAX(created_at) AS last_at
-     FROM posts WHERE hidden = 0 GROUP BY community`
+     FROM posts WHERE hidden = 0 AND author_deleted_at IS NULL GROUP BY community`
   ).all();
   const bySlug = {};
   for (const row of postRows || []) {

@@ -10,7 +10,7 @@ export async function onRequestGet(context) {
 
   const url = new URL(request.url);
   const limit = Math.min(200, Math.max(1, Number(url.searchParams.get("limit") || 100) || 100));
-  const sel = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden,
+  const sel = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden, c.author_deleted_at,
             u.username, u.is_admin
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id`;
@@ -45,6 +45,7 @@ export async function onRequestGet(context) {
       body: row.body,
       created_at: row.created_at,
       hidden: Boolean(row.hidden),
+      excluido_pelo_autor: Boolean(row.author_deleted_at),
       usuario: row.username
         ? { username: row.username, is_admin: Boolean(row.is_admin) }
         : null,

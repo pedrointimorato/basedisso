@@ -25,7 +25,10 @@ export async function onRequestGet(context) {
   const community = await getCommunityDb(env.DB, params.slug);
   if (!community) return errorJson("Comunidade não encontrada.", 404);
   if (!env.DB) return json({ postagens: [] });
-  const posts = (await listVisiblePosts(env.DB, community.slug, 100, sort)).map((row) => publicPost(row));
+  const viewer = await getSessionUser(request, env);
+  const posts = (await listVisiblePosts(env.DB, community.slug, 100, sort)).map((row) =>
+    publicPost(row, { proprio: Boolean(viewer && row.user_id && row.user_id === viewer.id) })
+  );
   return json({ sort, postagens: posts });
 }
 
@@ -97,5 +100,5 @@ export async function onRequestPost(context) {
     is_primordial: session ? session.is_primordial : 0,
     primordial_n: session ? session.primordial_n : null,
     comment_count: 0,
-  }) }, 201);
+  }, { proprio: Boolean(session) }) }, 201);
 }

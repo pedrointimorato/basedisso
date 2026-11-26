@@ -57,6 +57,7 @@
   }
 
   function authorNode(c) {
+    if (c.excluido) return el("span", { class: "bd-comment-name bd-comment-excluido-nome" }, "[excluído]");
     if (c.usuario && c.usuario.username && window.BDAccount) {
       return window.BDAccount.userLink(c.usuario, "bd-comment-name");
     }
@@ -64,6 +65,7 @@
   }
 
   function bodyNode(c) {
+    if (c.excluido) return el("p", { class: "bd-comment-body bd-comment-excluido" }, c.body || "[comentário excluído pelo autor]");
     var p = el("p", { class: "bd-comment-body" });
     if (window.BDAccount && window.BDAccount.appendBodyWithMentions) {
       window.BDAccount.appendBodyWithMentions(p, c.body || "", c.mencoes || {});
@@ -195,9 +197,26 @@
     return form;
   }
 
-  function renderComment(c, page, reload) {
-    var replyWrap = el("div");
-    var avatar = c.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(c.usuario, "sm") : null;
+  function deleteButton(c, page) {
+    var b = el("button", { type: "button", class: "bd-comment-del-btn", "data-excluir-comentario": c.id }, "excluir");
+    b.addEventListener("click", function () {
+      if (!confirm("Excluir este comentário? Isso não pode ser desfeito.")) return;
+      b.disabled = true;
+      fetch(API + "/" + encodeURIComponent(c.id), { method: "DELETE", credentials: "same-origin", headers: { Accept: "application/json" } })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (d) {
+            if (res.ok) reloadWidgets(page);
+            else { b.disabled = false; alert((d && d.erro) || "Não foi possível excluir."); }
+          });
+        })
+        .catch(function () { b.disabled = false; alert("Falha de rede."); });
+    });
+    return b;
+  }
+
+  function renderComment(c, page, reload, closed) {
+    var replyWrap = el("div", { class: "bd-comment-actions-row" });
+    var avatar = c.excluido ? null : c.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(c.usuario, "sm") : null;
     var main = el("div", { class: "bd-comment-main" },
       el("p", { class: "bd-comment-meta" }, authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
       bodyNode(c),
@@ -210,11 +229,18 @@
     );
     var open = false;
     var btn = el("button", { type: "button", class: "bd-comment-reply-btn" }, "responder");
+    var delBtn = c.proprio && !c.excluido ? deleteButton(c, page) : null;
+    if (c.excluido || closed) {
+      if (delBtn) replyWrap.appendChild(delBtn);
+      return item;
+    }
     replyWrap.appendChild(btn);
+    if (delBtn) replyWrap.appendChild(delBtn);
     btn.addEventListener("click", function () {
       if (open) {
         while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
         replyWrap.appendChild(btn);
+        if (delBtn) replyWrap.appendChild(delBtn);
         open = false;
         return;
       }
@@ -224,6 +250,7 @@
       cancel.addEventListener("click", function () {
         while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
         replyWrap.appendChild(btn);
+        if (delBtn) replyWrap.appendChild(delBtn);
         open = false;
       });
       while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
@@ -233,21 +260,21 @@
     return item;
   }
 
-  function appendThread(list, comment, page, reload, byParent, depth) {
-    var item = renderComment(comment, page, reload);
+  function appendThread(list, comment, page, reload, byParent, depth, closed) {
+    var item = renderComment(comment, page, reload, closed);
     var kids = byParent[comment.id] || [];
     if (kids.length) {
       var subClass = "bd-comment-replies" + (depth >= 4 ? " bd-comment-replies-cap" : "");
       var sub = el("ul", { class: subClass });
       kids.forEach(function (k) {
-        appendThread(sub, k, page, reload, byParent, depth + 1);
+        appendThread(sub, k, page, reload, byParent, depth + 1, closed);
       });
       item.appendChild(sub);
     }
     list.appendChild(item);
   }
 
-  function renderList(root, comments, page, reload) {
+  function renderList(root, comments, page, reload, closed) {
     var list = el("ul", { class: "bd-comment-list" });
     var byParent = {};
     var tops = [];
@@ -260,11 +287,11 @@
       }
     });
     if (!tops.length && !(comments || []).length) {
-      root.appendChild(el("p", { class: "bd-comments-empty" }, "Nenhum comentário ainda. Seja o primeiro."));
+      root.appendChild(el("p", { class: "bd-comments-empty" }, closed ? "Nenhum comentário." : "Nenhum comentário ainda. Seja o primeiro."));
       return;
     }
     tops.forEach(function (c) {
-      appendThread(list, c, page, reload, byParent, 0);
+      appendThread(list, c, page, reload, byParent, 0, closed);
     });
     root.appendChild(list);
   }
@@ -275,6 +302,8 @@
     var page = box.getAttribute("data-page") || "";
     var title = box.getAttribute("data-title") || "Comentários";
     var formOnly = box.getAttribute("data-form-only") === "true";
+    var closed = box.getAttribute("data-closed") === "true";
+    var formNode = null;
     var compact = formOnly || box.classList.contains("bd-comments-sidebar");
     var listHost = formOnly ? null : el("div", { class: "bd-comments-thread" });
 
@@ -297,9 +326,13 @@
             );
             return;
           }
+          if (out.data.fechado && !closed) {
+            closed = true;
+            if (formNode && formNode.parentNode) formNode.parentNode.replaceChild(closedNote(), formNode);
+          }
           renderList(listHost, out.data.comentarios || [], page, function () {
             reloadWidgets(page);
-          });
+          }, closed);
         })
         .catch(function () {
           while (listHost.firstChild) listHost.removeChild(listHost.firstChild);
@@ -309,11 +342,13 @@
 
     widgets.push({ page: page, box: box, reload: reload, formOnly: formOnly });
     if (!formOnly) box.appendChild(el("h2", { class: "bd-comments-title" }, title));
-    box.appendChild(
-      buildForm(page, null, function () {
-        reloadWidgets(page);
-      }, { formOnly: formOnly, compact: compact })
-    );
+    function closedNote() {
+      return el("p", { class: "bd-comments-fechados" }, "Comentários fechados: a postagem foi excluída pelo autor.");
+    }
+    formNode = closed ? closedNote() : buildForm(page, null, function () {
+      reloadWidgets(page);
+    }, { formOnly: formOnly, compact: compact });
+    box.appendChild(formNode);
     if (!formOnly) {
       box.appendChild(listHost);
       reload();
