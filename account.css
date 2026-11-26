@@ -478,3 +478,4 @@ a.ascii-avatar:hover { border-color: var(--accent-red, var(--t-red, #b92b27)); }
 .ac-caret-5 { caret-color: var(--ac-5); } .ac-caret-6 { caret-color: var(--ac-6); } .ac-caret-7 { caret-color: var(--ac-7); } .ac-caret-8 { caret-color: var(--ac-8); }
 .ascii-input.ac-caret-1 { border-color: var(--ac-1); } .ascii-input.ac-caret-2 { border-color: var(--ac-2); } .ascii-input.ac-caret-3 { border-color: var(--ac-3); } .ascii-input.ac-caret-4 { border-color: var(--ac-4); }
 .ascii-input.ac-caret-5 { border-color: var(--ac-5); } .ascii-input.ac-caret-6 { border-color: var(--ac-6); } .ascii-input.ac-caret-7 { border-color: var(--ac-7); } .ascii-input.ac-caret-8 { border-color: var(--ac-8); }
+.ascii-typing, .ascii-typing *, .ascii-swatch, .ascii-swatch * { transition: none; }
