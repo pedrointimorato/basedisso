@@ -199,7 +199,121 @@
     me().then(fillAccountUI);
   }
 
+
+  // ---- Imagens por link (espelhado em functions/_lib/imagens.js) ----
+  var IMG_MAX = 4;
+  var IMG_EXT_RE = /\.(jpe?g|png|gif|webp|avif)$/i;
+  var IMG_HOSTS = { "i.imgur.com": 1, "i.redd.it": 1, "pbs.twimg.com": 1 };
+  var IMGUR_PAGE_RE = /^\/([A-Za-z0-9]{5,10})(?:\.[a-z0-9]{3,4})?\/?$/;
+  var IMG_PREF = "bd_imagens";
+
+  function imageUrl(raw) {
+    var s = String(raw == null ? "" : raw).trim();
+    if (!s || s.length > 500 || !/^https?:\/\//i.test(s)) return null;
+    var u;
+    try { u = new URL(s); } catch (e) { return null; }
+    if ((u.protocol !== "http:" && u.protocol !== "https:") || u.username || u.password) return null;
+    var host = u.hostname.toLowerCase();
+    if (host === "imgur.com" || host === "www.imgur.com" || host === "m.imgur.com") {
+      var m = u.pathname.match(IMGUR_PAGE_RE);
+      return m ? "https://i.imgur.com/" + m[1] + ".jpg" : null;
+    }
+    if (IMG_HOSTS[host] || IMG_EXT_RE.test(u.pathname)) return u.href;
+    return null;
+  }
+
+  function imagesInText(text, max) {
+    var out = [], seen = {};
+    var toks = String(text || "").split(/\s+/);
+    for (var i = 0; i < toks.length && out.length < (max || IMG_MAX); i++) {
+      var src = imageUrl(toks[i]);
+      if (src && !seen[src]) { seen[src] = 1; out.push({ src: src, href: toks[i] }); }
+    }
+    return out;
+  }
+
+  function imagesEnabled() {
+    try { return localStorage.getItem(IMG_PREF) !== "off"; } catch (e) { return true; }
+  }
+  function applyImagePref() {
+    document.documentElement.classList.toggle("bd-noimg", !imagesEnabled());
+    var btns = document.querySelectorAll("[data-img-toggle]");
+    for (var i = 0; i < btns.length; i++) btns[i].textContent = imagesEnabled() ? "ocultar imagens" : "mostrar imagens";
+  }
+  function setImagesEnabled(on) {
+    try { if (on) localStorage.removeItem(IMG_PREF); else localStorage.setItem(IMG_PREF, "off"); } catch (e) {}
+    applyImagePref();
+  }
+  function imageToggle() {
+    var b = el("button", { type: "button", class: "bd-img-toggle", "data-img-toggle": "1" }, imagesEnabled() ? "ocultar imagens" : "mostrar imagens");
+    return b;
+  }
+
+  document.addEventListener("click", function (ev) {
+    var b = ev.target && ev.target.closest ? ev.target.closest("[data-img-toggle]") : null;
+    if (b) setImagesEnabled(!imagesEnabled());
+  });
+
+  // Imagem quebrada: some (o link no texto continua).
+  function imgFailed(img) {
+    var wrap = img.closest ? img.closest(".bd-img-link, .or-thumb-img") : null;
+    if (wrap && wrap.classList.contains("or-thumb-img")) {
+      wrap.classList.remove("or-thumb-img");
+      img.parentNode.removeChild(img);
+      return;
+    }
+    if (wrap) { wrap.hidden = true; wrap.classList.add("bd-img-falhou"); }
+    else img.hidden = true;
+  }
+  document.addEventListener("error", function (ev) {
+    var t = ev.target;
+    if (t && t.tagName === "IMG" && t.classList && t.classList.contains("bd-img")) imgFailed(t);
+  }, true);
+  function scanBroken() {
+    var imgs = document.querySelectorAll("img.bd-img");
+    for (var i = 0; i < imgs.length; i++) if (imgs[i].complete && imgs[i].naturalWidth === 0 && imgs[i].getAttribute("src")) imgFailed(imgs[i]);
+  }
+
+  function imageNode(src, href, cls) {
+    var img = document.createElement("img");
+    img.className = "bd-img";
+    img.alt = "imagem (abre o original)";
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.referrerPolicy = "no-referrer";
+    img.setAttribute("referrerpolicy", "no-referrer");
+    img.src = src;
+    var a = el("a", { class: "bd-img-link " + (cls || "bd-img-inline"), href: href || src, target: "_blank", rel: "noopener noreferrer nofollow" });
+    a.appendChild(img);
+    return a;
+  }
+
+  // Acrescenta abaixo do texto as imagens soltas (até 4). Devolve quantas.
+  function appendImages(node, text, max) {
+    var list = imagesInText(text, max);
+    if (!list.length) return 0;
+    var box = el("div", { class: "bd-img-list" });
+    list.forEach(function (x) { box.appendChild(imageNode(x.src, imageUrl(x.href) ? x.href : x.src)); });
+    node.appendChild(box);
+    return list.length;
+  }
+
+  function initImages() { applyImagePref(); scanBroken(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initImages);
+  else initImages();
+
   global.BDAccount = {
+    img: {
+      MAX: IMG_MAX,
+      url: imageUrl,
+      inText: imagesInText,
+      node: imageNode,
+      append: appendImages,
+      toggle: imageToggle,
+      enabled: imagesEnabled,
+      setEnabled: setImagesEnabled,
+      scanBroken: scanBroken,
+    },
     el: el,
     me: me,
     userLink: userLink,

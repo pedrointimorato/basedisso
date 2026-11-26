@@ -310,6 +310,7 @@
           { "data-comment-id": c.id },
           el("p", { class: "profile-comment-page" }, pageLink(c.page), " · ", c.created_at ? new Date(c.created_at).toLocaleString("pt-BR") : ""),
           body,
+          (function () { var box = el("div"); window.BDAccount.img && window.BDAccount.img.append(box, c.body || ""); return box.firstChild || null; })(),
           del
         )
       );

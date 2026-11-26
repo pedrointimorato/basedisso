@@ -72,7 +72,12 @@
     } else {
       p.appendChild(document.createTextNode(c.body || ""));
     }
-    return p;
+    var img = window.BDAccount && window.BDAccount.img;
+    if (!img) return p;
+    var frag = document.createDocumentFragment();
+    frag.appendChild(p);
+    if (img.append(frag, c.body || "")) hasImages = true;
+    return frag;
   }
 
   var widgets = [];
@@ -216,6 +221,7 @@
 
   // ADM que pode fixar na página sendo renderizada (renderList é síncrono).
   var pinAllowed = false;
+  var hasImages = false;
 
   function pinButton(c, page) {
     var fixar = !c.fixado;
@@ -308,6 +314,7 @@
 
   function renderList(root, comments, page, reload, closed, podeFixar) {
     pinAllowed = Boolean(podeFixar);
+    hasImages = false;
     var list = el("ul", { class: "bd-comment-list" });
     var byParent = {};
     var tops = [];
@@ -331,6 +338,7 @@
     tops.forEach(function (c) {
       appendThread(list, c, page, reload, byParent, 0, closed);
     });
+    if (hasImages && window.BDAccount.img.toggle) root.appendChild(el("p", { class: "bd-img-toggle-row" }, window.BDAccount.img.toggle()));
     root.appendChild(list);
   }
 

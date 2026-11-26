@@ -4,6 +4,7 @@ import { communityCard, getCommunityDb, communityHref, postHref, publicPost, UUI
 import { getVisiblePost } from "../../../_lib/posts.js";
 import { localTimeHtml } from "../../../_lib/hora.js";
 import { getSessionUser } from "../../../_lib/auth.js";
+import { imageHtml, imageUrl, imagesInText } from "../../../_lib/imagens.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 
 function authorHtml(post) {
@@ -37,6 +38,11 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
   const link = post.link ? escapeHtml(post.link) : "";
   const domain = post.link ? escapeHtml(domainOf(post.link)) : "";
   const when = localTimeHtml(post.created_at);
+  const linkImg = post.link ? imageUrl(post.link) : null;
+  const linkImgHtml = linkImg ? `<div class="or-post-image">${imageHtml(linkImg, post.link, "bd-img-full")}</div>` : "";
+  const bodyImgs = imagesInText(post.body || "");
+  const bodyImgHtml = bodyImgs.length ? `<div class="bd-img-list">${bodyImgs.map((x) => imageHtml(x.src, x.href)).join("")}</div>` : "";
+  const hasImgs = Boolean(linkImg || bodyImgs.length);
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -47,7 +53,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <link rel="stylesheet" href="/style.css?v=20261123c">
     <link rel="stylesheet" href="/account.css?v=20261126b">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
-    <link rel="stylesheet" href="/comments.css?v=20261126d">
+    <link rel="stylesheet" href="/comments.css?v=20261126e">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -101,7 +107,10 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
                                   : `<h2 class="or-selfpost-title">${title}</h2>
                                 <p class="or-tagline${post.usuario && post.usuario.avatar ? " has-avatar" : ""}">${post.fixado ? '<span class="or-sticky-tag or-fixado-tag" title="fixado por um ADM"><i class="fa-solid fa-thumbtack" aria-hidden="true"></i> fixado</span>' : ""}enviado ${when} por ${authorHtml(post)}</p>
                                 ${link ? `<p class="or-post-link"><a href="${link}" rel="noopener noreferrer">${link}</a>${domain ? ` <span class="or-domain">(${domain})</span>` : ""}</p>` : ""}
+                                ${linkImgHtml}
                                 ${body ? `<div class="or-md or-post-body">${body}</div>` : ""}
+                                ${bodyImgHtml}
+                                ${hasImgs ? `<p class="bd-img-toggle-row"><button type="button" class="bd-img-toggle" data-img-toggle="1">ocultar imagens</button></p>` : ""}
                                 ${proprio || podeFixar ? `<ul class="or-buttons or-own-actions">${proprio ? `<li><button type="button" class="or-excluir" data-excluir-post="${escapeHtml(post.id)}" data-voltar="${hrefComm}">excluir</button></li>` : ""}${podeFixar ? `<li><button type="button" class="or-fixar" data-fixar-post="${escapeHtml(post.id)}" data-fixado="${post.fixado ? "1" : "0"}">${post.fixado ? "desafixar" : "fixar"}</button></li>` : ""}</ul><p class="or-excluir-msg" role="status" hidden></p>` : ""}`}
                                 <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="${escapeHtml(pageKey)}" data-title="Comentários"${excluida ? ' data-closed="true"' : ""}></div>
                             </article>
@@ -126,8 +135,8 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261126b"></script>
-    <script src="/comments.js?v=20261126d"></script>
+    <script src="/account.js?v=20261126e"></script>
+    <script src="/comments.js?v=20261126e"></script>
 </body>
 </html>`;
 }
