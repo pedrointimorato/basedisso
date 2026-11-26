@@ -2,7 +2,7 @@ import { postPageKey } from "./comunidades.js";
 
 export function postsSelectSql() {
   return `SELECT p.id, p.community, p.title, p.body, p.link, p.name, p.user_id,
-            p.created_at, p.hidden, p.sticky, p.author_deleted_at,
+            p.created_at, p.hidden, p.sticky, p.author_deleted_at, p.pinned_at,
             u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar,
             (SELECT COUNT(*) FROM comments c
               WHERE c.hidden = 0 AND c.page = '/b/' || p.community || '/p/' || p.id) AS comment_count
@@ -37,7 +37,7 @@ export async function listVisiblePosts(db, slug, limit = 100, sort = "links") {
     .prepare(
       `${postsSelectSql()}
        WHERE p.community = ? AND p.hidden = 0 AND p.author_deleted_at IS NULL
-       ORDER BY ${order}
+       ORDER BY (p.pinned_at IS NULL) ASC, p.pinned_at DESC, ${order}
        LIMIT ?`
     )
     .bind(slug, cap)

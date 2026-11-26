@@ -1,5 +1,6 @@
 import { errorJson, isSameOrigin, json } from "../../../_lib/shared.js";
 import { canModerate, communityOfPage, getAdminContext } from "../../../_lib/admins.js";
+import { setCommentPin } from "../../../_lib/fixar.js";
 
 async function authz(request, env) {
   const ctx = await getAdminContext(request, env);
@@ -27,15 +28,26 @@ export async function onRequestPatch(context) {
   } catch {
     return errorJson("Pedido inválido.", 400);
   }
-  if (typeof data?.hidden !== "boolean") return errorJson("Informe hidden: true ou false.", 400);
+  const wantsPin = typeof data?.fixado === "boolean";
+  if (!wantsPin && typeof data?.hidden !== "boolean") return errorJson("Informe hidden ou fixado: true ou false.", 400);
 
-  const existing = await env.DB.prepare("SELECT id, page FROM comments WHERE id = ?").bind(id).first();
+  const existing = await env.DB.prepare(
+    "SELECT id, page, parent_id, hidden, author_deleted_at, pinned_at FROM comments WHERE id = ?"
+  ).bind(id).first();
   if (!existing) return errorJson("Comentário não encontrado.", 404);
   if (!canModerate(a.ctx, communityOfPage(existing.page))) {
-    return errorJson("Você não modera esta comunidade.", 403);
+    return errorJson(communityOfPage(existing.page) ? "Você não modera esta comunidade." : "Apenas ADMs do site podem moderar esta página.", 403);
   }
-  await env.DB.prepare("UPDATE comments SET hidden = ? WHERE id = ?")
-    .bind(data.hidden ? 1 : 0, id)
+  if (wantsPin) {
+    const r = await setCommentPin(env.DB, a.ctx, existing, data.fixado);
+    if (!r.ok) return errorJson(r.erro, r.status);
+    return json({ ok: true, fixado: r.fixado });
+  }
+  // Ocultar também desafixa.
+  await env.DB.prepare(
+    data.hidden ? "UPDATE comments SET hidden = 1, pinned_at = NULL, pinned_by = NULL WHERE id = ?" : "UPDATE comments SET hidden = 0 WHERE id = ?"
+  )
+    .bind(id)
     .run();
   return json({ ok: true, hidden: data.hidden });
 }

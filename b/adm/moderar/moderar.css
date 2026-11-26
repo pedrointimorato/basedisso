@@ -209,3 +209,4 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .ma-tipo { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 1px 6px; border-radius: 3px; background: var(--border-subtle); color: var(--text-secondary); }
 .ma-tipo.avatar { background: #e8f0fb; color: #1a4f9c; }
 [data-theme="dark"] .ma-tipo.avatar { background: #1d2a3d; color: #9cc1f5; }
+.mod-fixado-flag { color: #228822; border-color: #228822; }

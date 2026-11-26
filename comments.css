@@ -245,3 +245,15 @@
 .or-excluir-msg { font-size: 12px; margin: 4px 0 0; color: #b92b27; }
 .or-selfpost-title.or-excluida { color: var(--text-light, #8f9092) !important; font-style: italic; }
 .or-excluida-nota { font-size: 13px; color: var(--text-secondary, #636466); margin: 4px 0 12px; }
+/* Fixados (ADMs) */
+.bd-comment-pin-btn {
+    background: none; border: 0; padding: 0 0 0 10px; color: var(--text-secondary, #636466);
+    font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.bd-comment-pin-btn:hover { color: #228822; text-decoration: underline; }
+.bd-comment-pin-btn:disabled { opacity: 0.5; cursor: default; }
+.bd-comments-reddit .bd-comment-pin-btn { color: #888; font-weight: 700; text-transform: lowercase; }
+.bd-comment-fixado { color: #228822; font-weight: 700; font-size: 11px; margin-right: 6px; text-transform: lowercase; }
+.bd-comment-fixado i { font-size: 10px; }
+.or-fixado-tag i { font-size: 10px; }
+.or-buttons .or-fixar:hover, .or-own-actions .or-fixar:hover { color: #228822; }

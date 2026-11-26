@@ -359,3 +359,11 @@ CREATE TABLE IF NOT EXISTS profile_avatar (
 -- Exclusão pelo autor (ver migrate-exclusao-autor.sql; ALTER já aplicado):
 -- ALTER TABLE comments ADD COLUMN author_deleted_at TEXT;
 -- ALTER TABLE posts ADD COLUMN author_deleted_at TEXT;
+
+-- Fixar (ver migrate-fixar.sql; ALTERs já aplicados):
+-- ALTER TABLE posts ADD COLUMN pinned_at TEXT;
+-- ALTER TABLE posts ADD COLUMN pinned_by TEXT;
+-- ALTER TABLE comments ADD COLUMN pinned_at TEXT;
+-- ALTER TABLE comments ADD COLUMN pinned_by TEXT;
+CREATE INDEX IF NOT EXISTS idx_posts_pinned ON posts(community, pinned_at);
+CREATE INDEX IF NOT EXISTS idx_comments_pinned ON comments(page, pinned_at);

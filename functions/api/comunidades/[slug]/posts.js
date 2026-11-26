@@ -10,6 +10,7 @@ import {
   sanitizeName,
 } from "../../../_lib/shared.js";
 import { getSessionUser } from "../../../_lib/auth.js";
+import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 import {
   getCommunityDb,
   publicPost,
@@ -29,7 +30,12 @@ export async function onRequestGet(context) {
   const posts = (await listVisiblePosts(env.DB, community.slug, 100, sort)).map((row) =>
     publicPost(row, { proprio: Boolean(viewer && row.user_id && row.user_id === viewer.id) })
   );
-  return json({ sort, postagens: posts });
+  let podeFixar = false;
+  if (request.headers.get("Cookie")) {
+    const ctx = await getAdminContext(request, env);
+    podeFixar = ctx.any && canModerate(ctx, community.slug);
+  }
+  return json({ sort, postagens: posts, pode_fixar: podeFixar });
 }
 
 export async function onRequestPost(context) {

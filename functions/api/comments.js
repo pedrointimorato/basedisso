@@ -13,6 +13,7 @@ import {
 import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
 import { readAvatar } from "../_lib/ascii.js";
+import { canModerate, communityOfPage, getAdminContext } from "../_lib/admins.js";
 
 export const DELETED_COMMENT_TEXT = "[comentário excluído pelo autor]";
 
@@ -50,6 +51,8 @@ async function formatComment(db, row, viewer = null) {
     usuario,
     mencoes,
     proprio: Boolean(viewer && row.user_id && row.user_id === viewer.id),
+    fixado: Boolean(row.pinned_at) && !row.parent_id,
+    fixado_em: row.pinned_at || null,
   };
 }
 
@@ -60,7 +63,7 @@ export async function onRequestGet(context) {
   const page = normalizePage(url.searchParams.get("page") || "");
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
-    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at,
+    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at, c.pinned_at,
             u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id
@@ -84,7 +87,17 @@ export async function onRequestGet(context) {
     const post = await env.DB.prepare("SELECT author_deleted_at FROM posts WHERE id = ?").bind(pk[2]).first();
     fechado = Boolean(post && post.author_deleted_at);
   }
-  return json({ comentarios, fechado });
+  // ADMs que podem fixar nesta página (site: qualquer página; /b/: a comunidade da página).
+  let podeFixar = false;
+  if (viewer || request.headers.get("Cookie")) {
+    try {
+      const ctx = await getAdminContext(request, env);
+      podeFixar = ctx.any && canModerate(ctx, communityOfPage(page));
+    } catch {
+      podeFixar = false;
+    }
+  }
+  return json({ comentarios, fechado, pode_fixar: podeFixar });
 }
 
 export async function onRequestPost(context) {

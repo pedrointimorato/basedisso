@@ -58,7 +58,11 @@
     }
   }
 
-  function renderPost(p, rank) {
+  function pinTag() {
+    return el("span", { class: "or-sticky-tag or-fixado-tag", title: "fixado por um ADM" }, el("i", { class: "fa-solid fa-thumbtack", "aria-hidden": "true" }), " fixado");
+  }
+
+  function renderPost(p, rank, podeFixar) {
     var href = p.url || "/b/" + p.community + "/p/" + p.id;
     var n = Number(p.comment_count || 0);
     var commentsLabel = n === 1 ? "1 comentário" : n + " comentários";
@@ -75,10 +79,11 @@
     }
     var av = p.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(p.usuario, "xs") : null;
     var tagline = el("p", { class: "or-tagline" + (av ? " has-avatar" : "") }, "enviado " + relativeTime(p.created_at) + " por ", av, authorNode(p));
+    if (p.fixado) tagline.insertBefore(pinTag(), tagline.firstChild);
     var exp = p.body ? el("p", { class: "or-exp" }, p.body.length > 220 ? p.body.slice(0, 220) + "…" : p.body) : null;
     return el(
       "article",
-      { class: "or-thing", "data-post-id": p.id },
+      { class: "or-thing" + (p.fixado ? " or-fixado" : ""), "data-post-id": p.id },
       el("div", { class: "or-rank" }, String(rank)),
       el(
         "div",
@@ -100,9 +105,12 @@
           el("li", null, el("a", { href: href }, commentsLabel)),
           el("li", null, el("a", { href: href }, "compartilhar")),
           el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
-          p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null
+          p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null,
+          podeFixar
+            ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar"))
+            : null
         ),
-        p.proprio ? el("p", { class: "or-excluir-msg", role: "status", hidden: "hidden" }) : null
+        p.proprio || podeFixar ? el("p", { class: "or-excluir-msg", role: "status", hidden: "hidden" }) : null
       )
     );
   }
@@ -183,7 +191,7 @@
           return;
         }
         posts.forEach(function (p, i) {
-          host.appendChild(renderPost(p, i + 1));
+          host.appendChild(renderPost(p, i + 1, Boolean(out.data.pode_fixar)));
         });
         bindVotes(host);
       })

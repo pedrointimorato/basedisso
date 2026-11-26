@@ -161,6 +161,8 @@ export function publicPost(row, extra = {}) {
     usuario,
     created_at: row.created_at,
     excluida_pelo_autor: excluida,
+    fixado: Boolean(row.pinned_at) && !excluida && !row.hidden,
+    fixado_em: row.pinned_at || null,
     sticky: Boolean(row.sticky),
     url: postHref(row.community, row.id),
     comment_count: Number(row.comment_count || 0),

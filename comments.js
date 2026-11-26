@@ -214,33 +214,65 @@
     return b;
   }
 
+  // ADM que pode fixar na página sendo renderizada (renderList é síncrono).
+  var pinAllowed = false;
+
+  function pinButton(c, page) {
+    var fixar = !c.fixado;
+    var b = el("button", { type: "button", class: "bd-comment-pin-btn", "data-fixar-comentario": c.id }, fixar ? "fixar" : "desafixar");
+    b.addEventListener("click", function () {
+      b.disabled = true;
+      fetch("/api/moderation/comments/" + encodeURIComponent(c.id), {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ fixado: fixar }),
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (d) {
+            if (res.ok) reloadWidgets(page);
+            else { b.disabled = false; alert((d && d.erro) || "Não foi possível " + (fixar ? "fixar." : "desafixar.")); }
+          });
+        })
+        .catch(function () { b.disabled = false; alert("Falha de rede."); });
+    });
+    return b;
+  }
+
   function renderComment(c, page, reload, closed) {
     var replyWrap = el("div", { class: "bd-comment-actions-row" });
     var avatar = c.excluido ? null : c.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(c.usuario, "sm") : null;
     var main = el("div", { class: "bd-comment-main" },
-      el("p", { class: "bd-comment-meta" }, authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
+      el("p", { class: "bd-comment-meta" },
+        c.fixado ? el("span", { class: "bd-comment-fixado", title: "fixado por um ADM" }, el("i", { class: "fa-solid fa-thumbtack", "aria-hidden": "true" }), " fixado") : null,
+        authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
       bodyNode(c),
       replyWrap
     );
     var item = el(
       "li",
-      { class: "bd-comment", id: c.id ? "c-" + c.id : undefined, dataset: { id: c.id } },
+      { class: "bd-comment" + (c.fixado ? " bd-comment-pinned" : ""), id: c.id ? "c-" + c.id : undefined, dataset: { id: c.id } },
       el("div", { class: "bd-comment-row" + (avatar ? " has-avatar" : "") }, avatar, main)
     );
     var open = false;
     var btn = el("button", { type: "button", class: "bd-comment-reply-btn" }, "responder");
     var delBtn = c.proprio && !c.excluido ? deleteButton(c, page) : null;
-    if (c.excluido || closed) {
+    var pinBtn = pinAllowed && !c.parent_id && (!c.excluido || c.fixado) ? pinButton(c, page) : null;
+    function extras() {
       if (delBtn) replyWrap.appendChild(delBtn);
+      if (pinBtn) replyWrap.appendChild(pinBtn);
+    }
+    if (c.excluido || closed) {
+      extras();
       return item;
     }
     replyWrap.appendChild(btn);
-    if (delBtn) replyWrap.appendChild(delBtn);
+    extras();
     btn.addEventListener("click", function () {
       if (open) {
         while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
         replyWrap.appendChild(btn);
-        if (delBtn) replyWrap.appendChild(delBtn);
+        extras();
         open = false;
         return;
       }
@@ -250,7 +282,7 @@
       cancel.addEventListener("click", function () {
         while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
         replyWrap.appendChild(btn);
-        if (delBtn) replyWrap.appendChild(delBtn);
+        extras();
         open = false;
       });
       while (replyWrap.firstChild) replyWrap.removeChild(replyWrap.firstChild);
@@ -274,7 +306,8 @@
     list.appendChild(item);
   }
 
-  function renderList(root, comments, page, reload, closed) {
+  function renderList(root, comments, page, reload, closed, podeFixar) {
+    pinAllowed = Boolean(podeFixar);
     var list = el("ul", { class: "bd-comment-list" });
     var byParent = {};
     var tops = [];
@@ -290,6 +323,11 @@
       root.appendChild(el("p", { class: "bd-comments-empty" }, closed ? "Nenhum comentário." : "Nenhum comentário ainda. Seja o primeiro."));
       return;
     }
+    // Fixados primeiro (o mais recente no topo); o resto na ordem de sempre.
+    var pinned = tops.filter(function (c) { return c.fixado; }).sort(function (a, b) {
+      return String(b.fixado_em || "").localeCompare(String(a.fixado_em || ""));
+    });
+    tops = pinned.concat(tops.filter(function (c) { return !c.fixado; }));
     tops.forEach(function (c) {
       appendThread(list, c, page, reload, byParent, 0, closed);
     });
@@ -332,7 +370,7 @@
           }
           renderList(listHost, out.data.comentarios || [], page, function () {
             reloadWidgets(page);
-          }, closed);
+          }, closed, out.data.pode_fixar);
         })
         .catch(function () {
           while (listHost.firstChild) listHost.removeChild(listHost.firstChild);

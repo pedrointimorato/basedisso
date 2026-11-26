@@ -34,4 +34,31 @@
         if (msg) { msg.hidden = false; msg.textContent = "Falha de rede."; msg.className = "or-excluir-msg erro"; }
       });
   });
+  // ADMs: "fixar"/"desafixar" postagem (lista da comunidade e página da postagem).
+  document.addEventListener("click", function (ev) {
+    var btn = ev.target && ev.target.closest ? ev.target.closest("[data-fixar-post]") : null;
+    if (!btn) return;
+    ev.preventDefault();
+    var id = btn.getAttribute("data-fixar-post");
+    var fixar = btn.getAttribute("data-fixado") !== "1";
+    var thing = btn.closest(".or-thing");
+    var msg = thing ? thing.querySelector(".or-excluir-msg") : document.querySelector(".or-excluir-msg");
+    btn.disabled = true;
+    fetch("/api/moderation/posts/" + encodeURIComponent(id), {
+      method: "PATCH",
+      credentials: "same-origin",
+      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ fixado: fixar }),
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (d) {
+          if (res.ok) { location.reload(); return; }
+          btn.disabled = false;
+          var t = (d && d.erro) || "Não foi possível " + (fixar ? "fixar." : "desafixar.");
+          if (msg) { msg.hidden = false; msg.textContent = t; msg.className = "or-excluir-msg erro"; }
+          else alert(t);
+        });
+      })
+      .catch(function () { btn.disabled = false; alert("Falha de rede."); });
+  });
 })();

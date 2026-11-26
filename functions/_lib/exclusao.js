@@ -49,7 +49,7 @@ export async function deleteOwnComment(db, user, id) {
   if (row.user_id !== user.id) return { status: 403, erro: "Você só pode excluir os seus próprios comentários." };
   if ((await childCount(db, row.id)) > 0) {
     await db
-      .prepare("UPDATE comments SET body = '', author_deleted_at = ? WHERE id = ?")
+      .prepare("UPDATE comments SET body = '', author_deleted_at = ?, pinned_at = NULL, pinned_by = NULL WHERE id = ?")
       .bind(new Date().toISOString(), row.id)
       .run();
     return { ok: true, modo: "marcado" };
@@ -71,7 +71,7 @@ export async function deleteOwnPost(db, user, id) {
   const c = await db.prepare("SELECT COUNT(*) AS n FROM comments WHERE page = ?").bind(page).first();
   if (Number(c?.n || 0) > 0) {
     await db
-      .prepare("UPDATE posts SET title = '', body = '', link = NULL, sticky = 0, author_deleted_at = ? WHERE id = ?")
+      .prepare("UPDATE posts SET title = '', body = '', link = NULL, sticky = 0, author_deleted_at = ?, pinned_at = NULL, pinned_by = NULL WHERE id = ?")
       .bind(new Date().toISOString(), row.id)
       .run();
     return { ok: true, modo: "marcado", community: row.community };
