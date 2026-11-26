@@ -8,7 +8,9 @@ import { lookupMentions } from "../../_lib/mentions.js";
 export async function onRequestGet(context) {
   const { env, params } = context;
   if (!env.DB) return errorJson("Serviço de contas indisponível.", 503);
-  if (foldName(params.name || "") === "anonimo") return anonProfile(context);
+  let rawName = String(params.name || "");
+  try { rawName = decodeURIComponent(rawName); } catch { /* mantém */ }
+  if (foldName(rawName) === "anonimo") return anonProfile(context);
   const parsed = normalizeUsername(params.name || "");
   if (!parsed) return errorJson("Nome inválido.", 400);
 
