@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script>try{var t=localStorage.getItem("tema");if(t==="dark"||t==="papel")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arte ASCII — basedisso</title>
+    <meta name="description" content="Desenhe arte ASCII com camadas, cores e pincel. Copie, baixe ou use no seu perfil.">
+    <link rel="stylesheet" href="/style.css?v=20261127d">
+    <link rel="stylesheet" href="/account.css?v=20261129a">
+    <link rel="stylesheet" href="/comments.css?v=20261127b">
+    <link rel="stylesheet" href="tools.css">
+    <link rel="stylesheet" href="arte.css?v=20261129a">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    
+                    <form class="nav-search-box" action="/busca" method="get" role="search">
+                        <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="search" name="q" class="nav-search-input" placeholder="base de busca" autocomplete="off" enterkeyhint="search">
+                    </form>
+
+                    <div class="nav-icons">
+                        <a href="../index.html" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="../s/index.html" class="nav-icon-link"><span class="nav-letter-icon">S</span></a>
+                        <a href="index.html" class="nav-icon-link active"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/b/" class="nav-icon-link" title="Comunidades" aria-label="Comunidades"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <div class="tool-page arte-tool">
+                    <p class="tool-back"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Ferramentas</a></p>
+                    <header>
+                        <h1>Arte ASCII</h1>
+                        <p class="tool-lead">Desenhe com texto em até 4 camadas, com cores e pincel. Fica salvo neste navegador enquanto você desenha. Copie, baixe ou, com conta, use no seu perfil.</p>
+                    </header>
+                    <div class="arte-layout">
+                        <section class="tool-card arte-editor-card" id="arte-editor-host" aria-label="Editor"></section>
+                        <aside class="arte-side">
+                            <section class="tool-card arte-preview-card" id="arte-preview-host" aria-label="Pré-visualização"></section>
+                            <section class="tool-card arte-export" aria-labelledby="arte-export-title">
+                                <h2 id="arte-export-title">Exportar</h2>
+                                <div class="tool-actions">
+                                    <button type="button" class="tool-btn tool-btn-primary" id="arte-copiar"><i class="fa-regular fa-copy"></i> Copiar texto</button>
+                                    <button type="button" class="tool-btn" id="arte-copiar-bloco"><i class="fa-solid fa-code"></i> Copiar como bloco de código</button>
+                                    <button type="button" class="tool-btn" id="arte-baixar-txt"><i class="fa-solid fa-file-lines"></i> Baixar .txt</button>
+                                    <button type="button" class="tool-btn" id="arte-baixar-png"><i class="fa-regular fa-image"></i> Baixar imagem (.png)</button>
+                                </div>
+                                <p class="arte-status" id="arte-export-status" role="status"></p>
+                            </section>
+                            <section class="tool-card arte-perfil" id="arte-perfil" aria-labelledby="arte-perfil-title">
+                                <h2 id="arte-perfil-title">Usar no perfil</h2>
+                                <div id="arte-perfil-body"><p class="tool-lead">Carregando…</p></div>
+                                <p class="arte-status" id="arte-perfil-status" role="status"></p>
+                            </section>
+                            <section class="tool-card arte-trabalho">
+                                <h2>Este desenho</h2>
+                                <p class="arte-autosave" id="arte-autosave">Salvo automaticamente neste navegador.</p>
+                                <div class="tool-actions">
+                                    <button type="button" class="tool-btn" id="arte-novo"><i class="fa-regular fa-file"></i> Novo desenho</button>
+                                </div>
+                            </section>
+                        </aside>
+                    </div>
+                    <noscript><p class="tool-lead">A ferramenta precisa de JavaScript.</p></noscript>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block tema-block">
+                        <h3>Tema</h3>
+                        <div class="tema-options" role="group" aria-label="Tema">
+                            <label class="tema-item"><span>Escuro</span><input type="checkbox" role="switch" data-tema="dark"><span class="tema-pill" aria-hidden="true"></span></label>
+                            <label class="tema-item"><span>Papel</span><input type="checkbox" role="switch" data-tema="papel"><span class="tema-pill" aria-hidden="true"></span></label>
+                        </div>
+                    </div>
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                        <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="/script.js?v=20261126g"></script>
+    <script src="/account.js?v=20261129a"></script>
+    <script src="/comments.js?v=20261128c"></script>
+    <script src="/ascii-editor.js?v=20261129a"></script>
+    <script src="arte.js?v=20261129a"></script>
+</body>
+</html>

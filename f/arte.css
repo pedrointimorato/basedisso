@@ -1,0 +1,53 @@
+/* Ferramenta de arte ASCII (/f/arte.html) */
+.tool-page.arte-tool { max-width: 1240px; }
+.arte-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 16px; align-items: start; }
+@media (min-width: 1000px) {
+    .arte-layout { grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); }
+    .arte-side { position: sticky; top: 12px; }
+}
+.arte-editor-card .ascii-editor { margin-top: 0; border: 0; padding: 0; }
+.arte-editor-card .ascii-paint-scroll { overflow: auto; max-height: 70vh; }
+.arte-editor-card .ascii-input { font-size: 13px; }
+.arte-preview-card .ascii-preview-label { margin-top: 0; }
+.arte-preview-wrap {
+    container-type: inline-size; max-width: 100%; overflow: auto; max-height: 60vh;
+    border: 1px dashed var(--border-color, #dee0e1); border-radius: 10px; padding: 8px; box-sizing: border-box;
+}
+.arte-preview-wrap .ascii-art { margin: 0; }
+.arte-side .tool-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.arte-side .tool-btn { flex: 1 1 auto; }
+.arte-status { font-size: 13px; margin: 10px 0 0; color: var(--text-secondary); min-height: 1em; }
+.arte-status:empty { display: none; }
+.arte-status.ok { color: var(--text-primary); }
+.arte-status.erro { color: var(--accent-red, #c0392b); }
+.arte-perfil-row { margin: 10px 0 0; }
+.arte-perfil-row .tool-btn { width: 100%; }
+.arte-cabe { font-size: 12px; color: var(--text-light); margin: 4px 0 0; }
+.arte-cabe.ok { color: var(--text-secondary); }
+.arte-adm { margin-top: 14px; font-size: 13px; }
+.arte-abrir { margin-top: 14px; }
+.arte-autosave { font-size: 13px; color: var(--text-secondary); margin: 0 0 10px; }
+.arte-copy-tmp { position: fixed; left: -9999px; top: 0; opacity: 0; }
+.arte-probe { position: absolute; visibility: hidden; pointer-events: none; }
+
+/* Ferramentas extras do editor (só nesta página) */
+.ascii-tools-bar { align-items: center; }
+.ascii-fill { display: inline-flex; align-items: center; gap: 4px; }
+.ascii-fill-char {
+    width: 2.6em; min-height: 34px; text-align: center; box-sizing: border-box;
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; font-size: 15px;
+    border: 1px solid var(--border-color, #dee0e1); border-radius: 6px;
+    background: var(--search-bg, #f7f7f8); color: var(--text-primary, #2e3031);
+}
+.ascii-chars { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0 0; }
+.ascii-char {
+    min-width: 32px; min-height: 32px; padding: 0 4px; cursor: pointer;
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; font-size: 15px; line-height: 1;
+    border: 1px solid var(--border-color, #dee0e1); border-radius: 6px;
+    background: var(--bg-card, #fff); color: var(--text-primary, #2e3031);
+}
+.ascii-char:hover { border-color: var(--text-secondary, #636466); }
+@media (max-width: 480px) {
+    .arte-tool .tool-card { padding: 12px; }
+    .ascii-char { min-width: 34px; min-height: 34px; }
+}

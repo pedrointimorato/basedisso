@@ -355,7 +355,8 @@
         );
         box.appendChild(row);
         var links = el("div", { class: "sidebar-account-links" },
-          el("a", { href: "/convites/", class: "sidebar-link-sutil" }, "Códigos de convite")
+          el("a", { href: "/convites/", class: "sidebar-link-sutil" }, "Códigos de convite"),
+          el("a", { href: "/f/arte.html", class: "sidebar-link-sutil sidebar-link-arte" }, "Arte ASCII")
         );
         if (user.is_site_admin) {
           links.appendChild(el("a", { href: "/b/adm/moderar/", class: "sidebar-link-sutil" }, "Moderação"));
@@ -368,6 +369,8 @@
           el("a", { href: "/cadastro", class: "sidebar-btn-cadastro" }, "Cadastrar")
         );
         box.appendChild(actions);
+        box.appendChild(el("div", { class: "sidebar-account-links" },
+          el("a", { href: "/f/arte.html", class: "sidebar-link-sutil sidebar-link-arte" }, "Arte ASCII")));
       }
     }
   }
