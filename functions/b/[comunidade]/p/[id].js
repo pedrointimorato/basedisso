@@ -2,15 +2,7 @@ import { escapeHtml } from "../../../_lib/shared.js";
 import { SIDEBAR, V, communityCardHtml } from "../../../_lib/page-shell.js";
 import { communityCard, getCommunityDb, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
 import { getVisiblePost } from "../../../_lib/posts.js";
-
-function relativeOrIso(iso) {
-  if (!iso) return "";
-  try {
-    return new Date(iso).toLocaleString("pt-BR");
-  } catch {
-    return escapeHtml(iso);
-  }
-}
+import { localTimeHtml } from "../../../_lib/hora.js";
 
 function authorHtml(post) {
   if (post.usuario && post.usuario.username) {
@@ -41,7 +33,7 @@ export function postPageHtml({ community, post }) {
   const body = escapeHtml(post.body || "");
   const link = post.link ? escapeHtml(post.link) : "";
   const domain = post.link ? escapeHtml(domainOf(post.link)) : "";
-  const when = escapeHtml(relativeOrIso(post.created_at));
+  const when = localTimeHtml(post.created_at);
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -122,6 +114,7 @@ export function postPageHtml({ community, post }) {
         </div>
         ${SIDEBAR}
     </div>
+    <script src="/hora-local.js?v=20261126a"></script>
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
