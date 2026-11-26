@@ -546,3 +546,43 @@
     --or-muted: #85735a;
     --or-border: #b39a6a;
 }
+
+/* ===== Painel lateral (computador): postagens recentes + comunidades, abaixo do cartão da b/ ===== */
+.or-painel { display: none; }
+@media (min-width: 901px) {
+    .or-painel { display: block; }
+}
+@media (min-width: 1500px) {
+    .or-side { width: 360px; }
+}
+.or-painel-box {
+    border: 1px solid var(--t-border, #ddd);
+    background: var(--t-surface, #fff);
+    padding: 8px 10px 10px;
+    margin-top: 10px;
+    font-size: 12px;
+}
+.or-painel-h {
+    font-size: 11px; font-weight: 700; text-transform: lowercase; color: var(--or-muted);
+    margin: 0 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--t-border, #eee);
+}
+.or-painel-list { list-style: none; margin: 0; padding: 0; }
+.or-painel-list > li { padding: 5px 0; border-bottom: 1px solid var(--t-border, #f0f0f0); }
+.or-painel-list > li:last-child { border-bottom: 0; padding-bottom: 0; }
+.or-painel-titulo { color: var(--or-link); text-decoration: none; font-size: 13px; line-height: 1.3; overflow-wrap: anywhere; }
+.or-painel-titulo:visited { color: var(--or-visited); }
+.or-painel-titulo:hover, .or-painel-comm-nome:hover, .or-painel-meta a:hover, .or-painel-mais a:hover { text-decoration: underline; }
+.or-painel-dominio { font-size: 10px; color: var(--or-muted); }
+.or-painel-meta { font-size: 10px; color: var(--or-muted); margin: 2px 0 0; line-height: 1.4; }
+.or-painel-meta a { color: var(--t-link2, #369); text-decoration: none; }
+.or-painel-autor { font-weight: 700; }
+.or-painel-autor.is-guest { color: var(--t-text2, #555); }
+.or-painel-selo { color: var(--accent-red, #c0392b); font-weight: 700; }
+.or-painel-fixado { color: var(--t-green, #228822); font-weight: 700; }
+.or-painel-post.is-fixado .or-painel-titulo { color: var(--t-green, #228822); }
+.or-painel-comm-nome { color: var(--or-link); font-weight: 700; text-decoration: none; font-size: 13px; }
+.or-painel-comm-alt { color: var(--t-text2, #555); }
+.or-painel-comm.is-atual { background: var(--or-blue); margin: 0 -6px; padding-left: 6px; padding-right: 6px; }
+.or-painel-vazio { margin: 0; color: var(--t-text2, #555); line-height: 1.45; }
+.or-painel-vazio a, .or-painel-mais a { color: var(--t-link2, #369); }
+.or-painel-mais { margin: 8px 0 0; font-size: 11px; }

@@ -1,6 +1,6 @@
 import { escapeHtml } from "./shared.js";
 
-export const V = "20261127b";
+export const V = "20261130a";
 
 export const SIDEBAR = `<aside class="right-sidebar">
             <div class="sidebar-header">
