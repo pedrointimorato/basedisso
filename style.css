@@ -34,6 +34,9 @@
     --text-light: #8a8d91;
     
     --search-bg: #3a3b3c;
+    /* vermelho da marca mais claro para ler bem no fundo escuro */
+    --accent-red: #f05a52;
+    --accent-red-hover: #d9443d;
 }
 
 /* Configurações Gerais e Reset */
