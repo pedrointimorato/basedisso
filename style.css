@@ -1030,3 +1030,5 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
 }
 .ac-1 { color: var(--ac-1); } .ac-2 { color: var(--ac-2); } .ac-3 { color: var(--ac-3); } .ac-4 { color: var(--ac-4); }
 .ac-5 { color: var(--ac-5); } .ac-6 { color: var(--ac-6); } .ac-7 { color: var(--ac-7); } .ac-8 { color: var(--ac-8); }
+/* Os spans de cor herdam a fonte monoespaçada da arte (há regra global de fonte em span). */
+.ac-1, .ac-2, .ac-3, .ac-4, .ac-5, .ac-6, .ac-7, .ac-8 { font-family: inherit; font-size: inherit; font-weight: inherit; line-height: inherit; letter-spacing: inherit; }

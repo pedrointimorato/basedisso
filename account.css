@@ -464,6 +464,6 @@ a.ascii-avatar:hover { border-color: var(--accent-red, var(--t-red, #b92b27)); }
     cursor: crosshair; width: max-content; max-width: 100%;
 }
 .ascii-paint-row { display: block; height: 1.25em; }
-.ascii-cell { display: inline-block; width: 0.62em; text-align: center; }
+.ascii-cell { display: inline-block; width: 0.62em; text-align: center; font-family: inherit; font-size: inherit; }
 .ascii-cell:not(.is-space):hover { outline: 1px solid var(--t-text3, #999); }
 .ascii-limpar { margin-top: 6px; }
