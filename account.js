@@ -75,6 +75,23 @@
     return wrap;
   }
 
+  // Avatar ASCII (até 8×16) num espaço fixo, como foto de perfil. Só textContent.
+  // size: "sm" (comentários/postagens), "xs" (lista de postagens), "lg" (perfil).
+  function avatarNode(user, size) {
+    var art = user && typeof user.avatar === "string" ? user.avatar : "";
+    if (!art) return null;
+    var pre = document.createElement("pre");
+    pre.textContent = art;
+    var a = el("a", {
+      class: "ascii-avatar ascii-avatar-" + (size || "sm"),
+      href: profileHref(user.username),
+      "aria-hidden": "true",
+      tabindex: "-1",
+    });
+    a.appendChild(pre);
+    return a;
+  }
+
   function tokenizeMentions(text) {
     var s = String(text || "");
     var parts = [];
@@ -184,6 +201,7 @@
     el: el,
     me: me,
     userLink: userLink,
+    avatarNode: avatarNode,
     displayName: displayName,
     profileHref: profileHref,
     appendBodyWithMentions: appendBodyWithMentions,

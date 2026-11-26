@@ -34,26 +34,29 @@
         if (!out.res.ok) { setStatus(st, (out.data && out.data.erro) || "Falha ao listar artes.", "erro"); return; }
         while (root.firstChild) root.removeChild(root.firstChild);
         var items = out.data.artes || [];
-        setStatus(st, items.length + " arte(s).");
-        if (!items.length) { root.appendChild(el("p", { class: "mod-empty" }, "Nenhum perfil com arte ASCII.")); return; }
+        var nAv = items.filter(function (x) { return x.tipo === "avatar"; }).length;
+        setStatus(st, (items.length - nAv) + " arte(s) · " + nAv + " avatar(es).");
+        if (!items.length) { root.appendChild(el("p", { class: "mod-empty" }, "Nenhum perfil com arte ou avatar ASCII.")); return; }
         items.forEach(function (a) {
-          var pre = el("pre", { class: "ma-art" });
+          var isAv = a.tipo === "avatar";
+          var pre = el("pre", { class: "ma-art" + (isAv ? " ma-avatar" : "") });
           pre.textContent = a.arte; // texto puro, sempre escapado
-          var del = el("button", { type: "button", class: "mod-btn danger mod-btn-sm ma-del" }, "Remover arte");
+          var del = el("button", { type: "button", class: "mod-btn danger mod-btn-sm ma-del" }, isAv ? "Remover avatar" : "Remover arte");
           del.addEventListener("click", function () {
-            if (!confirm("Remover a arte ASCII de >>" + a.username + "?")) return;
+            if (!confirm((isAv ? "Remover o avatar ASCII de >>" : "Remover a arte ASCII de >>") + a.username + "?")) return;
             del.disabled = true;
-            fetch("/api/moderation/ascii/" + encodeURIComponent(a.username), { method: "DELETE", credentials: "same-origin", headers: { Accept: "application/json" } })
+            fetch("/api/moderation/ascii/" + encodeURIComponent(a.username) + "?tipo=" + (isAv ? "avatar" : "arte"), { method: "DELETE", credentials: "same-origin", headers: { Accept: "application/json" } })
               .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) {
                 if (res.ok) load();
                 else { del.disabled = false; setStatus(st, (d && d.erro) || "Não foi possível remover.", "erro"); }
               }); })
               .catch(function () { del.disabled = false; setStatus(st, "Falha de rede.", "erro"); });
           });
-          root.appendChild(el("div", { class: "ma-item" },
+          root.appendChild(el("div", { class: "ma-item", "data-tipo": isAv ? "avatar" : "arte", "data-user": a.username },
             el("div", { class: "ma-head" },
               el("a", { class: "user-mention", href: "/@" + a.username }, ">>" + a.username),
-              el("span", { class: "ma-meta" }, (a.moldura === "nenhuma" ? "sem moldura" : "moldura simples") + " · " + fmt(a.atualizada_em)),
+              el("span", { class: "ma-tipo" + (isAv ? " avatar" : "") }, isAv ? "avatar" : "arte"),
+              el("span", { class: "ma-meta" }, (isAv ? "8×16" : a.moldura === "nenhuma" ? "sem moldura" : "moldura simples") + " · " + fmt(a.atualizada_em)),
               del),
             el("div", { class: "ma-scroll" }, pre)));
         });

@@ -197,12 +197,16 @@
 
   function renderComment(c, page, reload) {
     var replyWrap = el("div");
-    var item = el(
-      "li",
-      { class: "bd-comment", id: c.id ? "c-" + c.id : undefined, dataset: { id: c.id } },
+    var avatar = c.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(c.usuario, "sm") : null;
+    var main = el("div", { class: "bd-comment-main" },
       el("p", { class: "bd-comment-meta" }, authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
       bodyNode(c),
       replyWrap
+    );
+    var item = el(
+      "li",
+      { class: "bd-comment", id: c.id ? "c-" + c.id : undefined, dataset: { id: c.id } },
+      el("div", { class: "bd-comment-row" + (avatar ? " has-avatar" : "") }, avatar, main)
     );
     var open = false;
     var btn = el("button", { type: "button", class: "bd-comment-reply-btn" }, "responder");

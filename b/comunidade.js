@@ -73,7 +73,8 @@
       title.appendChild(document.createTextNode(" "));
       title.appendChild(el("span", { class: "or-domain" }, "(self." + p.community + ")"));
     }
-    var tagline = el("p", { class: "or-tagline" }, "enviado " + relativeTime(p.created_at) + " por ", authorNode(p));
+    var av = p.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(p.usuario, "xs") : null;
+    var tagline = el("p", { class: "or-tagline" + (av ? " has-avatar" : "") }, "enviado " + relativeTime(p.created_at) + " por ", av, authorNode(p));
     var exp = p.body ? el("p", { class: "or-exp" }, p.body.length > 220 ? p.body.slice(0, 220) + "…" : p.body) : null;
     return el(
       "article",

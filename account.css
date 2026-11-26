@@ -374,3 +374,70 @@
     .ascii-editor { padding: 10px; }
     .ascii-preview-phone { width: 100%; }
 }
+
+/* ---------- Avatar ASCII (8 linhas × 16 colunas num espaço fixo, como foto de perfil) ---------- */
+/* A arte é desenhada a 10px e reduzida com transform, para não depender do tamanho mínimo de fonte do navegador. */
+.ascii-avatar {
+    --av-scale: 0.56;
+    position: relative;
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 60px;
+    height: 56px;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color, #dee0e1);
+    border-radius: 4px;
+    background: var(--search-bg, #f7f7f8);
+    color: var(--text-primary, #2e3031);
+    text-decoration: none !important;
+    vertical-align: middle;
+}
+.ascii-avatar pre {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 0;
+    padding: 0;
+    font-family: "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", "Courier New", ui-monospace, monospace;
+    font-variant-ligatures: none;
+    font-size: 10px;
+    line-height: 1.1;
+    white-space: pre;
+    color: inherit;
+    background: none;
+    border: 0;
+    transform: translate(-50%, -50%) scale(var(--av-scale));
+    transform-origin: 50% 50%;
+    pointer-events: none;
+}
+.ascii-avatar-xs { width: 44px; height: 40px; --av-scale: 0.4; }
+.ascii-avatar-lg { width: 112px; height: 104px; --av-scale: 1.05; border-radius: 6px; }
+a.ascii-avatar:hover { border-color: var(--accent-red, #b92b27); }
+
+.profile-head { margin: 0 0 20px; }
+.profile-head .profile-meta { margin-bottom: 0; }
+.profile-head.has-avatar { display: flex; align-items: center; gap: 14px; }
+.profile-head-text { min-width: 0; }
+.profile-head-text .profile-name { overflow-wrap: anywhere; }
+
+/* Comentários com avatar: avatar à esquerda, conteúdo ao lado; respostas continuam abaixo. */
+.bd-comment-row.has-avatar { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; }
+.bd-comment-main { min-width: 0; }
+/* Postagens: avatar pequeno na linha "enviado … por" */
+.or-tagline.has-avatar .ascii-avatar { margin: 2px 4px 2px 1px; }
+
+/* Editor do avatar */
+.avatar-input { max-width: 320px; }
+.avatar-preview-sizes .ascii-preview { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
+.avatar-preview-item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.avatar-preview-item > span { font-size: 11px; color: var(--text-light, #8f9092); }
+.avatar-preview-comment { display: flex; gap: 10px; align-items: flex-start; border-top: 1px solid var(--border-subtle, #f1f2f2); padding-top: 8px; }
+.avatar-preview-comment .bd-comment-meta { font-size: 12px; margin: 0 0 2px; color: var(--text-secondary, #636466); }
+.avatar-preview-body { font-size: 13px; margin: 0; color: var(--text-primary, #2e3031); }
+.ascii-editor-host .ascii-editor { margin-top: 14px; }
+@media (max-width: 480px) {
+    .ascii-avatar-lg { width: 96px; height: 90px; --av-scale: 0.9; }
+    .profile-head.has-avatar { gap: 12px; }
+    .profile-head.has-avatar .profile-name { font-size: 22px; }
+}

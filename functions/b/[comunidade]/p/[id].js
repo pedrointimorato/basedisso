@@ -15,7 +15,10 @@ function relativeOrIso(iso) {
 function authorHtml(post) {
   if (post.usuario && post.usuario.username) {
     const name = escapeHtml(post.usuario.username);
-    return `<a href="/@${name}" class="or-author user-mention">&gt;&gt;${name}</a>`;
+    const av = post.usuario.avatar
+      ? `<a href="/@${name}" class="ascii-avatar ascii-avatar-sm" aria-hidden="true" tabindex="-1"><pre>${escapeHtml(post.usuario.avatar)}</pre></a>`
+      : "";
+    return `${av}<a href="/@${name}" class="or-author user-mention">&gt;&gt;${name}</a>`;
   }
   return `<span class="or-author">${escapeHtml(post.name || "anônimo")}</span>`;
 }
@@ -47,7 +50,7 @@ export function postPageHtml({ community, post }) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261123c">
-    <link rel="stylesheet" href="/account.css?v=20261124a">
+    <link rel="stylesheet" href="/account.css?v=20261126a">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261123f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -98,7 +101,7 @@ export function postPageHtml({ community, post }) {
                             <p class="or-back"><a href="${hrefComm}">← b/${escapeHtml(slug)}</a></p>
                             <article class="or-selfpost" id="post">
                                 <h2 class="or-selfpost-title">${title}</h2>
-                                <p class="or-tagline">enviado ${when} por ${authorHtml(post)}</p>
+                                <p class="or-tagline${post.usuario && post.usuario.avatar ? " has-avatar" : ""}">enviado ${when} por ${authorHtml(post)}</p>
                                 ${link ? `<p class="or-post-link"><a href="${link}" rel="noopener noreferrer">${link}</a>${domain ? ` <span class="or-domain">(${domain})</span>` : ""}</p>` : ""}
                                 ${body ? `<div class="or-md or-post-body">${body}</div>` : ""}
                                 <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="${escapeHtml(pageKey)}" data-title="Comentários"></div>
@@ -122,8 +125,8 @@ export function postPageHtml({ community, post }) {
     <script src="/script.js?v=20261123c"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261124a"></script>
-    <script src="/comments.js?v=20261123f"></script>
+    <script src="/account.js?v=20261126a"></script>
+    <script src="/comments.js?v=20261126a"></script>
 </body>
 </html>`;
 }

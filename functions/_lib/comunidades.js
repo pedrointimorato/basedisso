@@ -147,6 +147,7 @@ export function publicPost(row, extra = {}) {
         is_admin: Boolean(row.is_admin),
         is_primordial: Boolean(row.is_primordial),
         primordial_n: row.primordial_n == null ? null : Number(row.primordial_n),
+        avatar: row.avatar || null,
       }
     : null;
   return {

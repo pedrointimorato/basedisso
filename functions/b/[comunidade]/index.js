@@ -84,8 +84,8 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/comunidade.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261124a"></script>
-    <script src="/comments.js?v=20261123f"></script>
+    <script src="/account.js?v=20261126a"></script>
+    <script src="/comments.js?v=20261126a"></script>
 </body>
 </html>`;
 }

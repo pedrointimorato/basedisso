@@ -12,6 +12,7 @@ import {
 } from "../_lib/shared.js";
 import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
+import { readAvatar } from "../_lib/ascii.js";
 
 async function formatComment(db, row) {
   const mencoes = await lookupMentions(db, row.body);
@@ -21,6 +22,7 @@ async function formatComment(db, row) {
         is_admin: Boolean(row.is_admin),
         is_primordial: Boolean(row.is_primordial),
         primordial_n: row.primordial_n == null ? null : Number(row.primordial_n),
+        avatar: row.avatar || null,
       }
     : null;
   return {
@@ -43,9 +45,10 @@ export async function onRequestGet(context) {
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
     `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id,
-            u.username, u.is_admin, u.is_primordial, u.primordial_n
+            u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id
+     LEFT JOIN profile_avatar av ON av.user_id = c.user_id
      LEFT JOIN comments p ON c.parent_id = p.id
      WHERE c.page = ? AND c.hidden = 0
        AND (c.parent_id IS NULL OR (p.id IS NOT NULL AND p.hidden = 0))
@@ -153,6 +156,7 @@ export async function onRequestPost(context) {
     is_admin: session ? session.is_admin : 0,
     is_primordial: session ? session.is_primordial : 0,
     primordial_n: session ? session.primordial_n : null,
+    avatar: session ? (await readAvatar(env.DB, session.id))?.arte || null : null,
   });
   return json({ ok: true, comentario }, 201);
 }

@@ -206,3 +206,6 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .ma-meta { font-size: 12px; color: var(--text-secondary); }
 .ma-scroll { overflow-x: auto; max-width: 100%; }
 .ma-art { margin: 0; font-family: "DejaVu Sans Mono", Menlo, Consolas, "Courier New", monospace; font-size: 11px; line-height: 1.2; white-space: pre; color: var(--text-primary); background: var(--search-bg); border-radius: 4px; padding: 6px 8px; display: inline-block; }
+.ma-tipo { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 1px 6px; border-radius: 3px; background: var(--border-subtle); color: var(--text-secondary); }
+.ma-tipo.avatar { background: #e8f0fb; color: #1a4f9c; }
+[data-theme="dark"] .ma-tipo.avatar { background: #1d2a3d; color: #9cc1f5; }

@@ -1,6 +1,6 @@
 import { CLAIMABLE_ADMIN, getSessionUser, isClaimableAdminName, normalizeUsername, publicUser } from "../../_lib/auth.js";
 import { isSiteAdmin } from "../../_lib/admins.js";
-import { ASCII_MAX_COLS, ASCII_MAX_LINES, readAscii } from "../../_lib/ascii.js";
+import { ASCII_MAX_COLS, ASCII_MAX_LINES, AVATAR_MAX_COLS, AVATAR_MAX_LINES, readAscii, readAvatar } from "../../_lib/ascii.js";
 import { errorJson, json } from "../../_lib/shared.js";
 import { lookupMentions } from "../../_lib/mentions.js";
 
@@ -56,9 +56,10 @@ export async function onRequestGet(context) {
 
   const viewer = await getSessionUser(context.request, env);
   const ascii = await readAscii(env.DB, row.id);
+  const avatar = await readAvatar(env.DB, row.id);
   const podeEditar = Boolean(viewer && viewer.id === row.id);
   let podeRemover = false;
-  if (viewer && ascii) {
+  if (viewer && (ascii || avatar)) {
     try {
       podeRemover = await isSiteAdmin(env.DB, viewer);
     } catch {
@@ -67,9 +68,11 @@ export async function onRequestGet(context) {
   }
   return json({
     reservado: false,
-    usuario: publicUser(row),
+    usuario: { ...publicUser(row), avatar: avatar ? avatar.arte : null },
     comentarios,
     ascii,
+    avatar,
+    avatar_limites: { linhas: AVATAR_MAX_LINES, colunas: AVATAR_MAX_COLS },
     ascii_limites: { linhas: ASCII_MAX_LINES, colunas: ASCII_MAX_COLS },
     pode_editar_ascii: podeEditar,
     pode_remover_ascii: podeRemover,
