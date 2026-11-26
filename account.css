@@ -388,7 +388,7 @@
     box-sizing: border-box;
     border: 1px solid var(--border-color, var(--t-border, #dee0e1));
     border-radius: 4px;
-    background: var(--search-bg, var(--t-surface2, #f7f7f8));
+    background: transparent; /* quadro transparente: só a borda, o fundo da página aparece por trás */
     color: var(--text-primary, var(--t-text, #2e3031));
     text-decoration: none !important;
     vertical-align: middle;
