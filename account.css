@@ -393,7 +393,8 @@
     text-decoration: none !important;
     vertical-align: middle;
 }
-.ascii-avatar pre {
+.ascii-avatar .av-pre {
+    display: block;
     position: absolute;
     left: 50%;
     top: 50%;

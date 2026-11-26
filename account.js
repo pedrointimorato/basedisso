@@ -80,7 +80,9 @@
   function avatarNode(user, size) {
     var art = user && typeof user.avatar === "string" ? user.avatar : "";
     if (!art) return null;
-    var pre = document.createElement("pre");
+    // <span> (não <pre>): pode ficar dentro de <p> sem o HTML fechar o parágrafo.
+    var pre = document.createElement("span");
+    pre.className = "av-pre";
     pre.textContent = art;
     var a = el("a", {
       class: "ascii-avatar ascii-avatar-" + (size || "sm"),
