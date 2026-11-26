@@ -67,8 +67,10 @@ export async function onRequestPost(context) {
     ? await env.DB.prepare("SELECT id, community, user_id, anon_by, ip_hash FROM posts WHERE id = ?").bind(data.id).first()
     : await env.DB.prepare("SELECT id, page, user_id, anon_by, ip_hash FROM comments WHERE id = ?").bind(data.id).first();
   if (!row) return errorJson("Item não encontrado.", 404);
-  if (!isLoggedOutRow(row)) return errorJson("Só dá para banir a conexão de itens publicados sem conta.", 400);
   const slug = tipo === "postagem" ? row.community : communityOfPage(row.page);
+  // Primeiro o escopo: quem não modera o item não descobre nada sobre ele.
+  if (!ctx.site && !(slug && canModerate(ctx, slug))) return errorJson("Você não modera esta b/.", 403);
+  if (!isLoggedOutRow(row)) return errorJson("Só dá para banir a conexão de itens publicados sem conta.", 400);
   const escopo = data?.escopo === "site" ? "site" : "b";
   let scope;
   if (escopo === "site") {
