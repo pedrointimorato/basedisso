@@ -11,6 +11,9 @@ import {
 } from "../../../_lib/shared.js";
 import { getSessionUser } from "../../../_lib/auth.js";
 import { canModerate, getAdminContext, isSiteAdmin } from "../../../_lib/admins.js";
+import { activeBan, attachConnections, banMessage } from "../../../_lib/conexoes.js";
+import { TURNSTILE_ERRO, verifyTurnstile } from "../../../_lib/turnstile.js";
+import { attachAnonAvatar } from "../../../_lib/anonimo.js";
 import { ANON_NAME, anonBadgeAtPost, isBAdmin, isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
 import {
   getCommunityDb,
@@ -33,6 +36,8 @@ export async function onRequestGet(context) {
   const rows = await listVisiblePosts(env.DB, community.slug, 100, sort);
   const reais = await realAuthors(env.DB, rows, ctx, (r) => r.community);
   const posts = rows.map((row) => withRealAuthor(publicPost(row, { proprio: isOwn(row, viewer) }), reais));
+  await attachConnections(env.DB, rows, posts, ctx, (r) => r.community);
+  await attachAnonAvatar(env.DB, posts);
   const podeFixar = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
   return json({ sort, postagens: posts, pode_fixar: podeFixar });
 }
@@ -82,6 +87,12 @@ export async function onRequestPost(context) {
   const anonBadge = comoAnon ? await anonBadgeAtPost(env.DB, session, community.slug) : null;
 
   const ipHash = await hashIp(request, env);
+  if (!session) {
+    const ban = await activeBan(env.DB, ipHash, community.slug);
+    if (ban) return json({ erro: banMessage(ban), banida: true, ate: ban.expires_at }, 403);
+    const ts = await verifyTurnstile(request, env, data?.turnstile, "postagem");
+    if (!ts.ok) return json({ erro: TURNSTILE_ERRO, turnstile: true, codigos: ts.codes }, 403);
+  }
   const rateMsg = await checkPostRate(env.DB, ipHash);
   if (rateMsg) return errorJson(rateMsg, 429);
 

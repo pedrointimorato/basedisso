@@ -2,6 +2,7 @@
 // Gravação: user_id NULL, name 'anônimo', anon_by = id real (só no servidor), anon_badge = 'site' se ADM do site.
 // Leitura: o autor real NUNCA é serializado, exceto para ADMs (site: tudo; b/: só itens da própria comunidade).
 import { canModerate, communityOfPage, isSiteAdmin } from "./admins.js";
+import { readAvatar } from "./ascii.js";
 
 export const ANON_NAME = "anônimo";
 
@@ -117,4 +118,15 @@ export async function realAuthors(db, rows, ctx, slugOf) {
 export function withRealAuthor(item, map) {
   const a = map && map.get(item.id);
   return a ? { ...item, autor_real: a } : item;
+}
+
+// Avatar do perfil coletivo >>anônimo (editável por ADMs do site) aparece nos itens anônimos.
+export const ANON_PROFILE_ID = "anonimo";
+export async function attachAnonAvatar(db, items) {
+  const alvo = (items || []).filter((it) => it && it.usuario && it.usuario.anonimo);
+  if (!db || !alvo.length) return items;
+  const av = await readAvatar(db, ANON_PROFILE_ID);
+  if (!av) return items;
+  for (const it of alvo) it.usuario = { ...it.usuario, avatar: av.arte, avatar_cores: av.cores };
+  return items;
 }

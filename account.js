@@ -103,6 +103,130 @@
     return label;
   }
 
+  // ---- Banir conexão (itens sem conta; só ADMs recebem item.conexao do servidor) ----
+  var BAN_DUR = [["24h", "24 horas"], ["7d", "7 dias"], ["30d", "30 dias"], ["perm", "permanente"]];
+  function fmtAte(iso) {
+    if (!iso) return "permanente";
+    try { return "até " + new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return "até " + iso; }
+  }
+  function banButton(tipo, id, cx) {
+    var b = el("button", { type: "button", class: "bd-ban-btn", "data-banir-conexao": id, "data-tipo": tipo, "data-rotulo": cx.rotulo,
+      "data-pode-site": cx.pode_site ? "1" : "0", "data-b": cx.b || "", "data-banida": JSON.stringify(cx.banida || []) },
+      "banir conexão" + (cx.banida && cx.banida.length ? " (banida)" : ""));
+    return b;
+  }
+  function openBanDialog(btn) {
+    var opts = { id: btn.getAttribute("data-banir-conexao"), tipo: btn.getAttribute("data-tipo"), rotulo: btn.getAttribute("data-rotulo") || "conexão",
+      podeSite: btn.getAttribute("data-pode-site") === "1", b: btn.getAttribute("data-b") || "" };
+    var banida = [];
+    try { banida = JSON.parse(btn.getAttribute("data-banida") || "[]") || []; } catch (e) { banida = []; }
+    var old = document.getElementById("bd-ban-dialog");
+    if (old) old.parentNode.removeChild(old);
+    var status = el("p", { class: "bd-ban-status", role: "status" });
+    var scopes = el("fieldset", { class: "bd-ban-scopes" }, el("legend", null, "Onde"));
+    var first = true;
+    function radio(val, label) {
+      var r = el("input", { type: "radio", name: "bd-ban-escopo", value: val });
+      if (first) { r.checked = true; first = false; }
+      scopes.appendChild(el("label", { class: "bd-ban-opt" }, r, " " + label));
+    }
+    if (opts.b) radio("b", "só em b/" + opts.b);
+    if (opts.podeSite) radio("site", "no site todo");
+    var dur = el("select", { name: "duracao", class: "bd-ban-select", id: "bd-ban-duracao" });
+    BAN_DUR.forEach(function (d) { dur.appendChild(el("option", { value: d[0] }, d[1])); });
+    var motivo = el("input", { type: "text", name: "motivo", maxlength: "200", placeholder: "opcional", class: "bd-ban-motivo", id: "bd-ban-motivo" });
+    var ocultar = el("input", { type: "checkbox", name: "ocultar", id: "bd-ban-ocultar" });
+    var go = el("button", { type: "button", class: "bd-ban-go", id: "bd-ban-go" }, "Banir conexão");
+    var cancel = el("button", { type: "button", class: "bd-ban-cancel" }, "Cancelar");
+    var box = el("div", { class: "bd-ban-box", role: "dialog", "aria-modal": "true", "aria-labelledby": "bd-ban-title" },
+      el("h2", { id: "bd-ban-title" }, "Banir conexão"),
+      el("p", { class: "bd-ban-label" }, el("strong", null, opts.rotulo), " — impede esta conexão de postar e comentar ", el("em", null, "sem conta"), ". Contas nunca são afetadas: quem entrar na conta continua participando."),
+      banida.length ? el("p", { class: "bd-ban-ja" }, "Já banida: " + banida.map(function (x) { return (x.escopo === "site" ? "site todo" : "b/" + x.escopo) + " (" + fmtAte(x.ate) + ")"; }).join("; ") + ". Banir de novo substitui o prazo.") : null,
+      scopes,
+      el("label", { class: "bd-ban-field" }, "Duração", dur),
+      el("label", { class: "bd-ban-field" }, "Motivo", motivo),
+      el("label", { class: "bd-ban-check" }, ocultar, " ocultar também os itens sem conta dessa conexão (no escopo escolhido; dá para reexibir na moderação)"),
+      el("div", { class: "bd-ban-actions" }, go, cancel),
+      status);
+    var overlay = el("div", { class: "bd-ban-overlay", id: "bd-ban-dialog" }, box);
+    function close() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); document.removeEventListener("keydown", onKey); }
+    function onKey(ev) { if (ev.key === "Escape") close(); }
+    overlay.addEventListener("click", function (ev) { if (ev.target === overlay) close(); });
+    document.addEventListener("keydown", onKey);
+    cancel.addEventListener("click", close);
+    go.addEventListener("click", function () {
+      var esc = scopes.querySelector("input:checked");
+      go.disabled = true; status.textContent = "Banindo…"; status.className = "bd-ban-status";
+      fetch("/api/moderation/conexoes", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ tipo: opts.tipo, id: opts.id, escopo: esc ? esc.value : "b", duracao: dur.value, motivo: motivo.value, ocultar: ocultar.checked }) })
+        .then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { return { res: res, d: d }; }); })
+        .then(function (o) {
+          if (!o.res.ok) { go.disabled = false; status.textContent = (o.d && o.d.erro) || "Não foi possível banir."; status.className = "bd-ban-status erro"; return; }
+          var oc = o.d.ocultados || {};
+          status.textContent = o.d.rotulo + " banida " + (o.d.escopo === "site" ? "no site todo" : "em b/" + o.d.escopo) + " (" + fmtAte(o.d.expira_em) + ")." +
+            (ocultar.checked ? " Ocultados: " + (oc.postagens || 0) + " postagem(ns), " + (oc.comentarios || 0) + " comentário(s)." : "");
+          status.className = "bd-ban-status ok";
+          go.style.display = "none"; cancel.textContent = "Fechar";
+          btn.textContent = "banir conexão (banida)";
+          try { document.dispatchEvent(new CustomEvent("bd-conexao-banida", { detail: { ocultou: ocultar.checked } })); } catch (e) {}
+          if (ocultar.checked) cancel.addEventListener("click", function () { location.reload(); });
+        })
+        .catch(function () { go.disabled = false; status.textContent = "Falha de rede."; status.className = "bd-ban-status erro"; });
+    });
+    document.body.appendChild(overlay);
+    (scopes.querySelector("input:checked") || dur).focus();
+  }
+  document.addEventListener("click", function (ev) {
+    var btn = ev.target && ev.target.closest ? ev.target.closest("[data-banir-conexao]") : null;
+    if (!btn) return;
+    ev.preventDefault();
+    openBanDialog(btn);
+  });
+
+  // ---- Turnstile: só nos formulários de quem está sem conta ----
+  var TURNSTILE_SITEKEY = "0x4AAAAAAGUg7y8y8hPDor4e";
+  var tsLoading = null;
+  function loadTurnstile() {
+    if (global.turnstile) return Promise.resolve(global.turnstile);
+    if (tsLoading) return tsLoading;
+    tsLoading = new Promise(function (resolve, reject) {
+      global.__bdTurnstileReady = function () { resolve(global.turnstile); };
+      var sc = document.createElement("script");
+      sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__bdTurnstileReady";
+      sc.async = true; sc.defer = true;
+      sc.onerror = function () { tsLoading = null; reject(new Error("turnstile")); };
+      document.head.appendChild(sc);
+    });
+    return tsLoading;
+  }
+  function tsTheme() {
+    return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  }
+  var tsWidgets = [];
+  function turnstileMount(container, action) {
+    var w = { id: null, container: container, action: action, active: false };
+    function render() {
+      loadTurnstile().then(function (ts) {
+        if (!w.active) return;
+        if (w.id != null) { try { ts.remove(w.id); } catch (e) {} w.id = null; }
+        w.id = ts.render(container, { sitekey: TURNSTILE_SITEKEY, action: action, theme: tsTheme(), size: "flexible", language: "pt-br", "refresh-expired": "auto" });
+      }).catch(function () {
+        container.textContent = "Não foi possível carregar a verificação anti-robô. Recarregue a página ou entre na sua conta.";
+      });
+    }
+    w.show = function () { if (w.active) return; w.active = true; container.hidden = false; render(); };
+    w.hide = function () { w.active = false; container.hidden = true; if (w.id != null && global.turnstile) { try { global.turnstile.remove(w.id); } catch (e) {} } w.id = null; };
+    w.token = function () { return w.id != null && global.turnstile ? (global.turnstile.getResponse(w.id) || "") : ""; };
+    w.reset = function () { if (w.id != null && global.turnstile) { try { global.turnstile.reset(w.id); } catch (e) {} } };
+    w.rerender = function () { if (w.active) render(); };
+    tsWidgets.push(w);
+    return w;
+  }
+  try {
+    new MutationObserver(function () { tsWidgets.forEach(function (w) { w.rerender(); }); })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  } catch (e) {}
+
   // Cores das artes ASCII: máscara com o mesmo formato da arte ('.' = padrão, '1'..'8' = paleta).
   // Junta sequências da mesma cor num só <span class="ac-N"> (texto via textNode, nunca HTML).
   var ASCII_CORES = [
@@ -384,6 +508,8 @@
     anonExtras: anonExtras,
     appendAnonExtras: appendAnonExtras,
     anonCheckbox: anonCheckbox,
+    banButton: banButton,
+    turnstile: { mount: turnstileMount, load: loadTurnstile },
     avatarNode: avatarNode,
     colorize: colorize,
     asciiCores: ASCII_CORES,

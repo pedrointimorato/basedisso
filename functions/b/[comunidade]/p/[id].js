@@ -9,7 +9,8 @@ import { readPoll } from "../../../_lib/enquete.js";
 import { coloredHtml } from "../../../_lib/ascii.js";
 import { pollHtml } from "../../../_lib/enquete-html.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
-import { isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
+import { attachAnonAvatar, isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
+import { attachConnections } from "../../../_lib/conexoes.js";
 
 function badgeHtml(u) {
   if (!u) return "";
@@ -36,7 +37,10 @@ function anonExtrasHtml(post) {
 
 function authorHtml(post) {
   if (post.usuario && post.usuario.anonimo) {
-    return `<a href="/@an%C3%B4nimo" class="or-author user-mention">&gt;&gt;anônimo</a>${badgeHtml(post.usuario)}${anonExtrasHtml(post)}`;
+    const av = post.usuario.avatar
+      ? `<a href="/@an%C3%B4nimo" class="ascii-avatar ascii-avatar-sm" aria-hidden="true" tabindex="-1"><span class="av-pre">${coloredHtml(post.usuario.avatar, post.usuario.avatar_cores, escapeHtml)}</span></a>`
+      : "";
+    return `${av}<a href="/@an%C3%B4nimo" class="or-author user-mention">&gt;&gt;anônimo</a>${badgeHtml(post.usuario)}${anonExtrasHtml(post)}`;
   }
   if (post.usuario && post.usuario.username) {
     const name = escapeHtml(post.usuario.username);
@@ -46,6 +50,12 @@ function authorHtml(post) {
     return `${av}<a href="/@${name}" class="or-author user-mention">&gt;&gt;${name}</a>${badgeHtml(post.usuario)}`;
   }
   return `<span class="or-author">${escapeHtml(post.name || "anônimo")}</span>`;
+}
+
+// Botão "banir conexão" (só chega para ADMs, em itens sem conta). O clique abre o diálogo em account.js.
+function banButtonHtml(tipo, id, cx) {
+  const ban = cx.banida && cx.banida.length ? " (banida)" : "";
+  return `<button type="button" class="or-banir bd-ban-btn" data-banir-conexao="${escapeHtml(id)}" data-tipo="${tipo}" data-rotulo="${escapeHtml(cx.rotulo)}" data-pode-site="${cx.pode_site ? "1" : "0"}" data-b="${escapeHtml(cx.b || "")}" data-banida="${escapeHtml(JSON.stringify(cx.banida || []))}">banir conexão${ban}</button>`;
 }
 
 function domainOf(link) {
@@ -82,7 +92,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261128b">
+    <link rel="stylesheet" href="/account.css?v=20261128c">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -143,7 +153,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
                                 ${bodyImgHtml}
                                 ${enquete ? pollHtml(enquete) : ""}
                                 ${hasImgs ? `<p class="bd-img-toggle-row"><button type="button" class="bd-img-toggle" data-img-toggle="1">ocultar imagens</button></p>` : ""}
-                                ${proprio || podeFixar ? `<ul class="or-buttons or-own-actions">${proprio ? `<li><button type="button" class="or-excluir" data-excluir-post="${escapeHtml(post.id)}" data-voltar="${hrefComm}">excluir</button></li>` : ""}${podeFixar ? `<li><button type="button" class="or-fixar" data-fixar-post="${escapeHtml(post.id)}" data-fixado="${post.fixado ? "1" : "0"}">${post.fixado ? "desafixar" : "fixar"}</button></li>` : ""}</ul><p class="or-excluir-msg" role="status" hidden></p>` : ""}`}
+                                ${proprio || podeFixar || post.conexao ? `<ul class="or-buttons or-own-actions">${post.conexao ? `<li>${banButtonHtml("postagem", post.id, post.conexao)}</li>` : ""}${proprio ? `<li><button type="button" class="or-excluir" data-excluir-post="${escapeHtml(post.id)}" data-voltar="${hrefComm}">excluir</button></li>` : ""}${podeFixar ? `<li><button type="button" class="or-fixar" data-fixar-post="${escapeHtml(post.id)}" data-fixado="${post.fixado ? "1" : "0"}">${post.fixado ? "desafixar" : "fixar"}</button></li>` : ""}</ul><p class="or-excluir-msg" role="status" hidden></p>` : ""}`}
                                 <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="${escapeHtml(pageKey)}" data-title="Comentários"${excluida ? ' data-closed="true"' : ""}></div>
                             </article>
                         </div>
@@ -168,8 +178,8 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/script.js?v=20261126g"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261128b"></script>
-    <script src="/comments.js?v=20261128a"></script>
+    <script src="/account.js?v=20261128c"></script>
+    <script src="/comments.js?v=20261128b"></script>
 </body>
 </html>`;
 }
@@ -200,7 +210,11 @@ export async function onRequestGet(context) {
   if (!row.author_deleted_at && row.poll_closes_at) {
     try { enquete = await readPoll(env.DB, row, viewer, ctx); } catch { enquete = null; }
   }
-  const html = postPageHtml({ community, post: withRealAuthor(publicPost(row, { proprio }), await realAuthors(env.DB, [row], ctx, (r) => r.community)), proprio, podeFixar, enquete });
+  const post = withRealAuthor(publicPost(row, { proprio }), await realAuthors(env.DB, [row], ctx, (r) => r.community));
+  const one = [post];
+  await attachConnections(env.DB, [row], one, ctx, (r) => r.community);
+  await attachAnonAvatar(env.DB, one);
+  const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete });
   return new Response(html, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },

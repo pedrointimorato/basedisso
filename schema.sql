@@ -398,3 +398,9 @@ CREATE INDEX IF NOT EXISTS idx_poll_votes_user ON poll_votes(user_id);
 -- >>anônimo (migrate-anonimo.sql)
 -- ALTER TABLE posts ADD COLUMN anon_by TEXT; ALTER TABLE posts ADD COLUMN anon_badge TEXT;
 -- ALTER TABLE comments ADD COLUMN anon_by TEXT; ALTER TABLE comments ADD COLUMN anon_badge TEXT;
+
+-- Conexões banidas e log do perfil >>anônimo (migrate-conexoes.sql)
+CREATE TABLE IF NOT EXISTS connection_bans (id TEXT PRIMARY KEY, ip_hash TEXT NOT NULL, scope TEXT NOT NULL, reason TEXT, created_by TEXT, created_at TEXT NOT NULL, expires_at TEXT);
+CREATE INDEX IF NOT EXISTS idx_connection_bans_hash ON connection_bans(ip_hash, scope);
+CREATE INDEX IF NOT EXISTS idx_connection_bans_scope ON connection_bans(scope, created_at);
+CREATE TABLE IF NOT EXISTS profile_edit_log (target_id TEXT PRIMARY KEY, edited_by TEXT, edited_at TEXT NOT NULL, what TEXT);

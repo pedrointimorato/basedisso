@@ -14,6 +14,9 @@ import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
 import { maskFor, readAvatar } from "../_lib/ascii.js";
 import { canModerate, communityOfPage, getAdminContext, isSiteAdmin } from "../_lib/admins.js";
+import { activeBan, attachConnections, banMessage } from "../_lib/conexoes.js";
+import { TURNSTILE_ERRO, verifyTurnstile } from "../_lib/turnstile.js";
+import { attachAnonAvatar } from "../_lib/anonimo.js";
 import { ANON_NAME, B_ADMIN_COMMENT_SQL, anonBadgeAtPost, bAdminOf, isBAdmin, isOwn, anonUsuario, isAnonRow, realAuthors, withRealAuthor } from "../_lib/anonimo.js";
 
 export const DELETED_COMMENT_TEXT = "[comentário excluído pelo autor]";
@@ -68,7 +71,7 @@ export async function onRequestGet(context) {
   const page = normalizePage(url.searchParams.get("page") || "");
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
-    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at, c.pinned_at, c.anon_by, c.anon_badge,
+    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at, c.pinned_at, c.anon_by, c.anon_badge, c.ip_hash,
             u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar, av.colors AS avatar_colors, ${B_ADMIN_COMMENT_SQL}
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id
@@ -91,6 +94,8 @@ export async function onRequestGet(context) {
   for (const row of results || []) {
     comentarios.push(withRealAuthor(await formatComment(env.DB, row, viewer), reais));
   }
+  await attachConnections(env.DB, results, comentarios, ctx, (r) => communityOfPage(r.page));
+  await attachAnonAvatar(env.DB, comentarios);
   let fechado = false;
   const pk = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
   if (pk) {
@@ -175,6 +180,12 @@ export async function onRequestPost(context) {
   }
 
   const ipHash = await hashIp(request, env);
+  if (!session) {
+    const ban = await activeBan(env.DB, ipHash, communityOfPage(page));
+    if (ban) return json({ erro: banMessage(ban), banida: true, ate: ban.expires_at }, 403);
+    const ts = await verifyTurnstile(request, env, data?.turnstile, "comentario");
+    if (!ts.ok) return json({ erro: TURNSTILE_ERRO, turnstile: true, codigos: ts.codes }, 403);
+  }
   const rateMsg = await checkPostRate(env.DB, ipHash);
   if (rateMsg) return errorJson(rateMsg, 429);
 

@@ -3,6 +3,7 @@ import { getAdminContext } from "../../_lib/admins.js";
 import { publicPost } from "../../_lib/comunidades.js";
 import { postsSelectSql } from "../../_lib/posts.js";
 import { realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
+import { attachConnections } from "../../_lib/conexoes.js";
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -26,7 +27,9 @@ export async function onRequestGet(context) {
       .all());
   }
   const reais = await realAuthors(env.DB, results, ctx, (r) => r.community);
+  const postagens = (results || []).map((row) => withRealAuthor(publicPost(row, { hidden: Boolean(row.hidden) }), reais));
+  await attachConnections(env.DB, results, postagens, ctx, (r) => r.community);
   return json({
-    postagens: (results || []).map((row) => withRealAuthor(publicPost(row, { hidden: Boolean(row.hidden) }), reais)),
+    postagens,
   });
 }

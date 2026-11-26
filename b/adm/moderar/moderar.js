@@ -30,6 +30,19 @@
     node.className = "mod-status" + (kind ? " " + kind : "");
   }
 
+  // "banir conexão" em itens sem conta (o servidor só manda item.conexao para quem modera aquele item).
+  function modBan(tipo, it) {
+    if (!it.conexao || !window.BDAccount || !window.BDAccount.banButton) return null;
+    var b = window.BDAccount.banButton(tipo, it.id, it.conexao);
+    b.className = "mod-btn secondary bd-ban-btn";
+    var wrap = el("span", { class: "mod-conexao" }, el("span", { class: "mod-conexao-label" }, it.conexao.rotulo), b);
+    return wrap;
+  }
+  document.addEventListener("bd-conexao-banida", function (ev) {
+    if (window.BDModConexoes) window.BDModConexoes.load();
+    if (ev.detail && ev.detail.ocultou) { loadList(); loadPosts(); }
+  });
+
   function fmtTime(iso) {
     try {
       return new Date(iso).toLocaleString("pt-BR");
@@ -119,7 +132,7 @@
                 c.fixado ? el("span", { class: "mod-hidden-flag mod-fixado-flag" }, "fixado") : null
               ),
               el("p", { class: "mod-body" }, c.excluido_pelo_autor ? "[comentário excluído pelo autor — a casca fica por causa das respostas]" : (c.body || "")),
-              el("div", { class: "mod-actions" }, hideBtn, delBtn)
+              el("div", { class: "mod-actions" }, hideBtn, delBtn, modBan("comentario", c))
             )
           );
         });
@@ -407,6 +420,7 @@
       }
       loadList();
       loadPosts();
+      if (window.BDModConexoes) window.BDModConexoes.load();
       if (v.is_site_admin) loadReservas();
       if (v.is_site_admin && window.BDModConvites) window.BDModConvites.init();
       if (v.is_site_admin && window.BDModAscii) window.BDModAscii.init();
@@ -539,7 +553,7 @@
               ),
               el("p", { class: "mod-body" }, p.excluida_pelo_autor ? "[postagem excluída pelo autor — os comentários continuam legíveis]" : (p.title || "")),
               p.body ? el("p", { class: "mod-body" }, p.body) : null,
-              el("div", { class: "mod-actions" }, hideBtn, delBtn)
+              el("div", { class: "mod-actions" }, hideBtn, delBtn, modBan("postagem", p))
             )
           );
         });

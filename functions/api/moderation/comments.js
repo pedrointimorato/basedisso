@@ -1,5 +1,6 @@
 import { errorJson, json } from "../../_lib/shared.js";
 import { communityOfPage, getAdminContext } from "../../_lib/admins.js";
+import { attachConnections } from "../../_lib/conexoes.js";
 import { B_ADMIN_COMMENT_SQL, anonUsuario, bAdminOf, isAnonRow, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
 
 export async function onRequestGet(context) {
@@ -11,7 +12,7 @@ export async function onRequestGet(context) {
 
   const url = new URL(request.url);
   const limit = Math.min(200, Math.max(1, Number(url.searchParams.get("limit") || 100) || 100));
-  const sel = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden, c.author_deleted_at, c.pinned_at, c.user_id, c.anon_by, c.anon_badge,
+  const sel = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden, c.author_deleted_at, c.pinned_at, c.user_id, c.anon_by, c.anon_badge, c.ip_hash,
             u.username, u.is_admin, ${B_ADMIN_COMMENT_SQL}
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id`;
@@ -38,8 +39,7 @@ export async function onRequestGet(context) {
   }
 
   const reais = await realAuthors(env.DB, results, ctx, (r) => communityOfPage(r.page));
-  return json({
-    comentarios: (results || []).map((row) => withRealAuthor({
+  const comentarios = (results || []).map((row) => withRealAuthor({
       id: row.id,
       page: row.page,
       parent_id: row.parent_id,
@@ -53,6 +53,7 @@ export async function onRequestGet(context) {
       usuario: isAnonRow(row) ? anonUsuario(row) : row.username
         ? { username: row.username, is_admin: Boolean(row.is_admin), b_admin: bAdminOf(row) }
         : null,
-    }, reais)),
-  });
+    }, reais));
+  await attachConnections(env.DB, results, comentarios, ctx, (r) => communityOfPage(r.page));
+  return json({ comentarios });
 }

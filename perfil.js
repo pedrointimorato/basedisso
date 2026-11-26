@@ -186,6 +186,7 @@
 
   function renderAsciiSection(root, data, reload, flash) {
     var u = data.usuario;
+    var alvoQs = data.perfil_alvo ? "?perfil=" + encodeURIComponent(data.perfil_alvo) : "";
     var art = data.ascii;
     var current = { arte: data.ascii, avatar: data.avatar };
     var section = el("section", { class: "profile-ascii", id: "perfil-ascii" });
@@ -382,15 +383,15 @@
         save.disabled = true;
         setSt(status, "Salvando…");
         var body = K.frames ? { arte: cur.texto, cores: cur.mascara, moldura: curFrame } : { arte: cur.texto, cores: cur.mascara };
-        api("PUT", K.api, body).then(function (out) {
+        api("PUT", K.api + alvoQs, body).then(function (out) {
           if (out.res.ok) reload(K.savedMsg);
           else { save.disabled = false; setSt(status, (out.data && out.data.erro) || "Não foi possível salvar.", "erro"); }
         }).catch(function () { save.disabled = false; setSt(status, "Falha de rede.", "erro"); });
       });
       if (remove) remove.addEventListener("click", function () {
-        if (!confirm(K.confirmOwn)) return;
+        if (!confirm(alvoQs ? "Remover " + (K.frames ? "a arte ASCII" : "o avatar") + " do perfil >>anônimo?" : K.confirmOwn)) return;
         remove.disabled = true;
-        api("DELETE", K.api).then(function (out) {
+        api("DELETE", K.api + alvoQs).then(function (out) {
           if (out.res.ok) reload(K.removedMsg);
           else { remove.disabled = false; setSt(status, (out.data && out.data.erro) || "Não foi possível remover.", "erro"); }
         }).catch(function () { remove.disabled = false; setSt(status, "Falha de rede.", "erro"); });
@@ -427,7 +428,7 @@
       return;
     }
     if (data.anonimo) {
-      renderAnon(root, headText, data);
+      renderAnon(root, headText, data, reload, flash);
       return;
     }
     var meta = "No basedisso desde " + relativeTime(u.created_at);
@@ -475,8 +476,21 @@
   }
 
   // Perfil coletivo >>anônimo: postagens e comentários publicados como >>anônimo, 30 por página.
-  function renderAnon(root, headText, data) {
+  function renderAnon(root, headText, data, reload, flash) {
     headText.appendChild(el("p", { class: "profile-meta" }, "Perfil coletivo: tudo o que foi publicado como >>anônimo (por quem marcou a caixinha ou postou sem conta e sem nome)."));
+    if (data.pode_editar_ascii) headText.appendChild(el("p", { class: "profile-meta profile-anon-adm" }, "Você é ADM do site: pode editar a arte e o avatar deste perfil coletivo."));
+    if (data.ultima_edicao) {
+      var ue = data.ultima_edicao;
+      var line = el("p", { class: "profile-meta profile-anon-log", id: "perfil-anon-log" }, "Última edição (visível só para ADMs): ");
+      line.appendChild(ue.por && window.BDAccount ? window.BDAccount.userLink(ue.por) : document.createTextNode("[conta removida]"));
+      line.appendChild(document.createTextNode((ue.o_que ? " · " + ue.o_que : "") + " · " + (ue.em ? new Date(ue.em).toLocaleString("pt-BR") : "")));
+      headText.appendChild(line);
+    }
+    var asciiSec = renderAsciiSection(root, data, reload, flash);
+    if (asciiSec) {
+      root.appendChild(asciiSec);
+      if (flash) setSt(asciiSec.querySelector(".ascii-status"), flash, "ok");
+    }
     var items = data.contribuicoes || [];
     var pagina = data.pagina || 1;
     root.appendChild(el("h2", { class: "bd-comments-title" }, items.length ? "Contribuições" + (pagina > 1 ? " — página " + pagina : "") : (pagina > 1 ? "Nada nesta página." : "Ainda sem contribuições.")));

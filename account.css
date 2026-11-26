@@ -494,3 +494,37 @@ label.bd-anon-toggle input[type="checkbox"] { margin: 0; width: 15px; height: 15
 .bd-autor-real .user-mention { font-size: inherit; }
 .profile-anon-title { margin: 2px 0; font-weight: bold; }
 .profile-anon-pager { margin: 14px 0; font-size: 14px; }
+
+/* Banir conexão */
+.bd-ban-btn { background: none; border: 0; padding: 0; font: inherit; font-size: 11px; color: var(--accent-red, #b92b27); cursor: pointer; text-decoration: underline dotted; }
+.bd-ban-btn:hover { text-decoration: underline; }
+.mod-actions .bd-ban-btn.mod-btn { text-decoration: none; font-size: 13px; padding: 6px 12px; }
+.mod-conexao { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.mod-conexao-label { font-size: 12px; font-family: ui-monospace, Menlo, Consolas, monospace; opacity: .8; }
+.bd-ban-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, .55); display: flex; align-items: flex-start; justify-content: center; padding: 6vh 12px 12px; overflow-y: auto; }
+.bd-ban-box { width: 100%; max-width: 440px; box-sizing: border-box; background: var(--card-bg, var(--t-surface, #fff)); color: var(--text-primary, var(--t-text, #222)); border: 1px solid var(--border-color, var(--t-border, #ccc)); border-radius: 8px; padding: 16px 18px; box-shadow: 0 10px 40px rgba(0,0,0,.35); font-size: 14px; }
+[data-theme="dark"] .bd-ban-box { background: #1f2124; color: #e8e8e8; border-color: #3a3d42; }
+[data-theme="papel"] .bd-ban-box { background: #f6efdc; color: #2b2418; border-color: #c9b98f; }
+.bd-ban-box h2 { margin: 0 0 8px; font-size: 18px; }
+.bd-ban-box p { margin: 0 0 10px; line-height: 1.4; }
+.bd-ban-label strong { font-family: ui-monospace, Menlo, Consolas, monospace; }
+.bd-ban-ja { font-size: 12px; padding: 6px 8px; border-left: 3px solid var(--accent-red, #b92b27); background: rgba(185, 43, 39, .08); }
+.bd-ban-scopes { border: 0; padding: 0; margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.bd-ban-scopes legend { font-weight: 600; padding: 0; margin-bottom: 4px; width: 100%; }
+.bd-ban-opt, .bd-ban-check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.bd-ban-check { align-items: flex-start; font-size: 13px; margin: 0 0 12px; }
+.bd-ban-check input { margin-top: 2px; }
+.bd-ban-field { display: flex; flex-direction: column; gap: 3px; font-weight: 600; margin: 0 0 10px; }
+.bd-ban-select, .bd-ban-motivo { font: inherit; font-weight: 400; padding: 6px 8px; border: 1px solid var(--border-color, var(--t-border, #bbb)); border-radius: 4px; background: var(--input-bg, var(--t-surface, #fff)); color: inherit; width: 100%; box-sizing: border-box; }
+[data-theme="dark"] .bd-ban-select, [data-theme="dark"] .bd-ban-motivo { background: #2a2d31; border-color: #4a4e55; }
+[data-theme="papel"] .bd-ban-select, [data-theme="papel"] .bd-ban-motivo { background: #fffaf0; border-color: #c9b98f; }
+.bd-ban-actions { display: flex; gap: 8px; margin-bottom: 6px; }
+.bd-ban-go, .bd-ban-cancel { font: inherit; font-weight: 600; padding: 7px 14px; border-radius: 4px; cursor: pointer; border: 1px solid var(--accent-red, #b92b27); }
+.bd-ban-go { background: var(--accent-red, #b92b27); color: #fff; }
+.bd-ban-cancel { background: transparent; color: inherit; border-color: currentColor; }
+.bd-ban-status { font-size: 13px; min-height: 1em; }
+.bd-ban-status.erro { color: var(--accent-red, #b92b27); }
+.bd-ban-status.ok { color: var(--t-green, #228822); }
+/* Turnstile (só sem conta) */
+.bd-turnstile { margin: 2px 0 4px; max-width: 100%; min-height: 65px; }
+.bd-turnstile[hidden] { display: none; }

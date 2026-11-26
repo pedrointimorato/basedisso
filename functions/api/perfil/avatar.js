@@ -1,13 +1,9 @@
-import { getSessionUser } from "../../_lib/auth.js";
+import { logAnonEdit, profileTarget } from "../../_lib/perfil-alvo.js";
 import { errorJson, isSameOrigin, json } from "../../_lib/shared.js";
 import { cleanColorMask, AVATAR_LIMITS, cleanAsciiArt, readAvatar } from "../../_lib/ascii.js";
 
 async function owner(request, env) {
-  if (!env.DB) return { res: errorJson("Serviço indisponível.", 503) };
-  if (!isSameOrigin(request)) return { res: errorJson("Origem não permitida.", 403) };
-  const user = await getSessionUser(request, env);
-  if (!user) return { res: errorJson("Entre na sua conta para editar o perfil.", 401) };
-  return { user };
+  return profileTarget(request, env);
 }
 
 // PUT /api/perfil/avatar { arte } — avatar ASCII (até 8 linhas × 16 colunas), só a própria conta.
@@ -31,9 +27,10 @@ export async function onRequestPut(context) {
     `INSERT INTO profile_avatar (user_id, art, colors, created_at, updated_at) VALUES (?, ?, ?, ?, ?)
      ON CONFLICT(user_id) DO UPDATE SET art = excluded.art, colors = excluded.colors, updated_at = excluded.updated_at`
   )
-    .bind(o.user.id, c.arte, cm.cores, now, now)
+    .bind(o.targetId, c.arte, cm.cores, now, now)
     .run();
-  return json({ ok: true, avatar: await readAvatar(env.DB, o.user.id) });
+  if (o.anon) await logAnonEdit(env.DB, o.user, "avatar (salvou)");
+  return json({ ok: true, avatar: await readAvatar(env.DB, o.targetId) });
 }
 
 // DELETE /api/perfil/avatar — remove o próprio avatar.
@@ -41,6 +38,7 @@ export async function onRequestDelete(context) {
   const { request, env } = context;
   const o = await owner(request, env);
   if (o.res) return o.res;
-  await env.DB.prepare("DELETE FROM profile_avatar WHERE user_id = ?").bind(o.user.id).run();
+  await env.DB.prepare("DELETE FROM profile_avatar WHERE user_id = ?").bind(o.targetId).run();
+  if (o.anon) await logAnonEdit(env.DB, o.user, "avatar (removeu)");
   return json({ ok: true, avatar: null });
 }

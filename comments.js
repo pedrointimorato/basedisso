@@ -132,6 +132,8 @@
       "aria-hidden": "true",
     });
     var submit = el("button", { type: "submit", class: "bd-comments-submit" }, parentId ? "Responder" : "Enviar comentário");
+    var tsBox = el("div", { class: "bd-turnstile", hidden: "hidden" });
+    var ts = window.BDAccount && window.BDAccount.turnstile ? window.BDAccount.turnstile.mount(tsBox, "comentario") : null;
     var form = el(
       "form",
       { class: parentId ? "bd-comment-reply-form" : "bd-comments-form" },
@@ -140,6 +142,7 @@
       nameLabel,
       el("label", null, "Comentário", bodyInput),
       hp,
+      tsBox,
       el("div", { class: "bd-comments-actions" }, submit, status)
     );
 
@@ -151,7 +154,9 @@
         asUser.appendChild(document.createTextNode("Comentar como "));
         asUser.appendChild(window.BDAccount.userLink(currentUser));
         if (anonBox) anonBox.style.display = "";
+        if (ts) ts.hide();
       } else {
+        if (ts) ts.show();
         nameLabel.style.display = "";
         asUser.style.display = "none";
         if (anonBox) { anonBox.style.display = "none"; anonBox._input.checked = false; }
@@ -179,6 +184,7 @@
           parent_id: parentId || null,
           name: nameInput.value,
           anonimo: Boolean(anonBox && anonBox.style.display !== "none" && anonBox._input.checked),
+          turnstile: ts && !currentUser ? ts.token() : undefined,
           body: body,
           website: hp.value,
         }),
@@ -189,6 +195,7 @@
           });
         })
         .then(function (out) {
+          if (ts) ts.reset();
           if (!out.res.ok) {
             status.textContent = out.data && out.data.erro ? out.data.erro : "Não foi possível enviar.";
             status.classList.add("erro");
@@ -200,6 +207,7 @@
           if (typeof onDone === "function") onDone();
         })
         .catch(function () {
+          if (ts) ts.reset();
           status.textContent = "Falha de rede. Tente de novo.";
           status.classList.add("erro");
         })
@@ -271,10 +279,13 @@
     var open = false;
     var btn = el("button", { type: "button", class: "bd-comment-reply-btn" }, "responder");
     var delBtn = c.proprio && !c.excluido ? deleteButton(c, page) : null;
+    var banBtn = c.conexao && !c.excluido && window.BDAccount && window.BDAccount.banButton ? window.BDAccount.banButton("comentario", c.id, c.conexao) : null;
+    if (banBtn) banBtn.classList.add("bd-comment-ban-btn");
     var pinBtn = pinAllowed && !c.parent_id && (!c.excluido || c.fixado) ? pinButton(c, page) : null;
     function extras() {
       if (delBtn) replyWrap.appendChild(delBtn);
       if (pinBtn) replyWrap.appendChild(pinBtn);
+      if (banBtn) replyWrap.appendChild(banBtn);
     }
     if (c.excluido || closed) {
       extras();

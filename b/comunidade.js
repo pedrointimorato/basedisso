@@ -139,7 +139,8 @@
           p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null,
           podeFixar
             ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar"))
-            : null
+            : null,
+          p.conexao && window.BDAccount && window.BDAccount.banButton ? el("li", null, window.BDAccount.banButton("postagem", p.id, p.conexao)) : null
         ),
         p.proprio || podeFixar ? el("p", { class: "or-excluir-msg", role: "status", hidden: "hidden" }) : null
       )
@@ -360,7 +361,18 @@
       anonBox.style.display = "none";
       asUser.parentNode.insertBefore(anonBox, asUser.nextSibling);
     }
+    var tsBox = null, ts = null;
+    if (submit && window.BDAccount && window.BDAccount.turnstile) {
+      tsBox = el("div", { class: "bd-turnstile", hidden: "hidden" });
+      var actions = submit.closest(".bd-comments-actions") || submit;
+      actions.parentNode.insertBefore(tsBox, actions);
+      ts = window.BDAccount.turnstile.mount(tsBox, "postagem");
+    }
+    var loggedIn = false;
+    document.addEventListener("bd-composer-open", function () { if (ts && !loggedIn) ts.rerender(); });
     function applyUser(user) {
+      loggedIn = Boolean(user && user.username);
+      if (ts) { if (loggedIn) ts.hide(); else ts.show(); }
       if (!nameField || !asUser) return;
       if (user && user.username && window.BDAccount) {
         nameField.style.display = "none";
@@ -423,6 +435,7 @@
           enquete: enquete || undefined,
           name: nameInput ? nameInput.value : "",
           anonimo: Boolean(anonBox && anonBox.style.display !== "none" && anonBox._input.checked),
+          turnstile: ts && !loggedIn ? ts.token() : undefined,
           website: hp ? hp.value : "",
         }),
       })
@@ -432,6 +445,7 @@
           });
         })
         .then(function (out) {
+          if (ts) ts.reset();
           if (!out.res.ok || !out.data.postagem) {
             if (status) {
               status.textContent = out.data && out.data.erro ? out.data.erro : "Não foi possível publicar.";
@@ -451,6 +465,7 @@
           if (typeof onCreated === "function") onCreated(out.data.postagem);
         })
         .catch(function () {
+          if (ts) ts.reset();
           if (status) {
             status.textContent = "Falha de rede. Tente de novo.";
             status.classList.add("erro");
@@ -510,7 +525,7 @@
     var section = document.getElementById("criar");
     var btn = document.getElementById("or-postar-btn");
     if (!section || !btn) return;
-    if (open) section.removeAttribute("hidden");
+    if (open) { section.removeAttribute("hidden"); try { document.dispatchEvent(new CustomEvent("bd-composer-open")); } catch (e) {} }
     else section.setAttribute("hidden", "");
     btn.setAttribute("aria-expanded", open ? "true" : "false");
     btn.textContent = open ? COMPOSER_OPEN_LABEL : COMPOSER_CLOSED;

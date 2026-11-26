@@ -1,6 +1,7 @@
 import { CLAIMABLE_ADMIN, getSessionUser, isClaimableAdminName, normalizeUsername, publicUser } from "../../_lib/auth.js";
 import { communitiesModeratedBy, communityOfPage, getAdminContext, isSiteAdmin } from "../../_lib/admins.js";
-import { anonUsuario, foldName, isOwn, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
+import { ANON_PROFILE_ID, anonUsuario, attachAnonAvatar, foldName, isOwn, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
+import { readAnonEditLog } from "../../_lib/perfil-alvo.js";
 import { ASCII_MAX_COLS, ASCII_MAX_LINES, AVATAR_MAX_COLS, AVATAR_MAX_LINES, readAscii, readAvatar } from "../../_lib/ascii.js";
 import { errorJson, json } from "../../_lib/shared.js";
 import { lookupMentions } from "../../_lib/mentions.js";
@@ -128,10 +129,27 @@ async function anonProfile(context) {
     };
     contribuicoes.push(withRealAuthor(item, reais));
   }
+  await attachAnonAvatar(env.DB, contribuicoes);
+  const ascii = await readAscii(env.DB, ANON_PROFILE_ID);
+  const avatar = await readAvatar(env.DB, ANON_PROFILE_ID);
+  const podeEditar = Boolean(ctx && ctx.site && viewer);
+  let ultima = null;
+  if (ctx && ctx.any) {
+    const l = await readAnonEditLog(env.DB);
+    if (l) ultima = { por: l.username || null, em: l.edited_at, o_que: l.what || null };
+  }
   return json({
     reservado: false,
     anonimo: true,
-    usuario: anonUsuario({}),
+    usuario: { ...anonUsuario({}), avatar: avatar ? avatar.arte : null, avatar_cores: avatar ? avatar.cores : null },
+    ascii,
+    avatar,
+    avatar_limites: { linhas: AVATAR_MAX_LINES, colunas: AVATAR_MAX_COLS },
+    ascii_limites: { linhas: ASCII_MAX_LINES, colunas: ASCII_MAX_COLS },
+    pode_editar_ascii: podeEditar,
+    pode_remover_ascii: false,
+    perfil_alvo: podeEditar ? "anonimo" : null,
+    ultima_edicao: ultima,
     comentarios: [],
     contribuicoes,
     pagina,

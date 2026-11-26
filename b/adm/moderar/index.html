@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261128b">
+    <link rel="stylesheet" href="/account.css?v=20261128c">
     <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261126h">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -64,6 +64,7 @@
                 <a href="#mod-sec-criar" data-site-only>Criar /b</a>
                 <a href="#mod-sec-comentarios">Comentários</a>
                 <a href="#mod-sec-posts">Postagens</a>
+                <a href="#mod-sec-conexoes">Conexões banidas</a>
                 <a href="#mod-sec-res" data-site-only>Reservas</a>
                 <a href="#sec-convites" data-site-only>Códigos</a>
                 <a href="#sec-caixas" data-site-only>Caixas</a>
@@ -139,6 +140,14 @@
                 </div>
                 <div class="mod-card" id="mod-posts-list"></div>
             </div>
+            <div class="mod-section mod-conexoes" id="mod-sec-conexoes">
+                <h2>Conexões banidas</h2>
+                <p class="mod-lead" id="mod-conexoes-lead">Conexões impedidas de postar e comentar sem conta. Contas nunca são afetadas. O rótulo é diferente em cada escopo (site ou b/), então não dá para cruzar quem posta sem conta entre comunidades.</p>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="mod-conexoes-status" role="status"></p>
+                </div>
+                <div class="mod-card" id="mod-conexoes-list"></div>
+            </div>
             <div class="mod-section mod-reservas" id="mod-sec-res" data-site-only>
                 <h2>Reservas de nomes primordiais</h2>
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
@@ -204,10 +213,11 @@
         </section>
     </main>
 
-    <script src="/account.js?v=20261128b"></script>
+    <script src="/account.js?v=20261128c"></script>
     <script src="/b/adm/moderar/moderar-convites.js?v=20261124d"></script>
     <script src="/b/adm/moderar/moderar-ascii.js?v=20261127c"></script>
-    <script src="/b/adm/moderar/moderar.js?v=20261128a"></script>
+    <script src="/b/adm/moderar/moderar-conexoes.js?v=20261128a"></script>
+    <script src="/b/adm/moderar/moderar.js?v=20261128b"></script>
     <script src="/b/adm/moderar/moderar-collapse.js?v=20261124c"></script>
 </body>
 </html>
