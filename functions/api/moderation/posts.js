@@ -2,6 +2,7 @@ import { errorJson, json } from "../../_lib/shared.js";
 import { getAdminContext } from "../../_lib/admins.js";
 import { publicPost } from "../../_lib/comunidades.js";
 import { postsSelectSql } from "../../_lib/posts.js";
+import { realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -24,7 +25,8 @@ export async function onRequestGet(context) {
       .bind(...ctx.communities, limit)
       .all());
   }
+  const reais = await realAuthors(env.DB, results, ctx, (r) => r.community);
   return json({
-    postagens: (results || []).map((row) => publicPost(row, { hidden: Boolean(row.hidden) })),
+    postagens: (results || []).map((row) => withRealAuthor(publicPost(row, { hidden: Boolean(row.hidden) }), reais)),
   });
 }

@@ -75,6 +75,32 @@
     return wrap;
   }
 
+  // >>anônimo: marcas privadas. "(você)" só chega para o autor real; "por >>Nome" só chega para ADMs.
+  function anonExtras(item) {
+    var out = [];
+    if (!item || !item.anonimo) return out;
+    if (item.proprio) out.push(el("span", { class: "bd-anon-voce", title: "só você vê esta marca" }, "(você)"));
+    if (item.autor_real) {
+      var r = item.autor_real;
+      out.push(el("span", { class: "bd-autor-real", title: "autor real — visível só para ADMs" },
+        "por ", r.username ? userLink(r) : "[conta removida]"));
+    }
+    return out;
+  }
+  function appendAnonExtras(node, item) {
+    anonExtras(item).forEach(function (n) { node.appendChild(document.createTextNode(" ")); node.appendChild(n); });
+    return node;
+  }
+
+  // Caixinha "como >>anônimo" abaixo da linha "Postar/Comentar como >>Nome".
+  function anonCheckbox(verbo) {
+    var input = el("input", { type: "checkbox", name: "anonimo", value: "1", "data-anonimo": "1" });
+    var label = el("label", { class: "bd-anon-toggle" }, input, " " + (verbo || "publicar") + " como ", el("span", { class: "user-mention" }, ">>anônimo"));
+    label.title = "Aparece como >>anônimo para todos. Os ADMs continuam vendo quem publicou.";
+    label._input = input;
+    return label;
+  }
+
   // Cores das artes ASCII: máscara com o mesmo formato da arte ('.' = padrão, '1'..'8' = paleta).
   // Junta sequências da mesma cor num só <span class="ac-N"> (texto via textNode, nunca HTML).
   var ASCII_CORES = [
@@ -353,6 +379,9 @@
     el: el,
     me: me,
     userLink: userLink,
+    anonExtras: anonExtras,
+    appendAnonExtras: appendAnonExtras,
+    anonCheckbox: anonCheckbox,
     avatarNode: avatarNode,
     colorize: colorize,
     asciiCores: ASCII_CORES,

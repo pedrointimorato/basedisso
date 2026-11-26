@@ -1,5 +1,6 @@
 import { CLAIMABLE_ADMIN, isClaimableAdminName, normalizeUsername } from "./_lib/auth.js";
 import { profilePageHtml } from "./_lib/profile-page.js";
+import { ANON_NAME, foldName } from "./_lib/anonimo.js";
 
 export async function onRequest(context) {
   const url = new URL(context.request.url);
@@ -10,6 +11,18 @@ export async function onRequest(context) {
       raw = decodeURIComponent(m[1]);
     } catch {
       raw = m[1];
+    }
+    if (foldName(raw) === "anonimo") {
+      if (raw !== ANON_NAME || m[0].endsWith("/")) {
+        const dest = new URL(`/@${ANON_NAME}`, url.origin);
+        dest.search = url.search;
+        return Response.redirect(dest.toString(), 302);
+      }
+      const html = profilePageHtml({ title: `>>${ANON_NAME} — basedisso`, initialPath: `/@${ANON_NAME}` });
+      return new Response(html, {
+        status: 200,
+        headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },
+      });
     }
     const parsed = normalizeUsername(raw);
     if (!parsed) {

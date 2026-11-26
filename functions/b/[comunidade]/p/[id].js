@@ -9,14 +9,40 @@ import { readPoll } from "../../../_lib/enquete.js";
 import { coloredHtml } from "../../../_lib/ascii.js";
 import { pollHtml } from "../../../_lib/enquete-html.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
+import { isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
+
+function badgeHtml(u) {
+  if (!u) return "";
+  let h = "";
+  if (u.is_admin) h += ' <span class="user-badge" title="administrador">[M]</span>';
+  if (u.is_primordial && u.primordial_n != null) h += ` <span class="user-badge primordial" title="usuário primordial">primordial #${escapeHtml(String(u.primordial_n))}</span>`;
+  return h;
+}
+
+// Marcas só para quem pode ver: "(você)" para o autor real; "por >>Nome" para ADMs.
+function anonExtrasHtml(post) {
+  if (!post.anonimo) return "";
+  let h = "";
+  if (post.proprio) h += ' <span class="bd-anon-voce" title="só você vê esta marca">(você)</span>';
+  if (post.autor_real) {
+    const r = post.autor_real;
+    h += r.username
+      ? ` <span class="bd-autor-real" title="autor real — visível só para ADMs">por <a href="/@${escapeHtml(r.username)}" class="user-mention">&gt;&gt;${escapeHtml(r.username)}</a>${badgeHtml(r)}</span>`
+      : ' <span class="bd-autor-real" title="autor real — visível só para ADMs">por [conta removida]</span>';
+  }
+  return h;
+}
 
 function authorHtml(post) {
+  if (post.usuario && post.usuario.anonimo) {
+    return `<a href="/@an%C3%B4nimo" class="or-author user-mention">&gt;&gt;anônimo</a>${badgeHtml(post.usuario)}${anonExtrasHtml(post)}`;
+  }
   if (post.usuario && post.usuario.username) {
     const name = escapeHtml(post.usuario.username);
     const av = post.usuario.avatar
       ? `<a href="/@${name}" class="ascii-avatar ascii-avatar-sm" aria-hidden="true" tabindex="-1"><span class="av-pre">${coloredHtml(post.usuario.avatar, post.usuario.avatar_cores, escapeHtml)}</span></a>`
       : "";
-    return `${av}<a href="/@${name}" class="or-author user-mention">&gt;&gt;${name}</a>`;
+    return `${av}<a href="/@${name}" class="or-author user-mention">&gt;&gt;${name}</a>${badgeHtml(post.usuario)}`;
   }
   return `<span class="or-author">${escapeHtml(post.name || "anônimo")}</span>`;
 }
@@ -55,7 +81,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261127g">
+    <link rel="stylesheet" href="/account.css?v=20261128a">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -141,8 +167,8 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/script.js?v=20261126g"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/account.js?v=20261127c"></script>
-    <script src="/comments.js?v=20261126e"></script>
+    <script src="/account.js?v=20261128a"></script>
+    <script src="/comments.js?v=20261128a"></script>
 </body>
 </html>`;
 }
@@ -162,18 +188,18 @@ export async function onRequestGet(context) {
     return new Response("Postagem não encontrada.", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
   }
   const viewer = await getSessionUser(request, env);
-  const proprio = Boolean(viewer && row.user_id && row.user_id === viewer.id && !row.author_deleted_at);
+  const proprio = Boolean(isOwn(row, viewer) && !row.author_deleted_at);
   let podeFixar = false;
   let ctx = null;
-  if (!row.author_deleted_at && request.headers.get("Cookie")) {
+  if (viewer) {
     ctx = await getAdminContext(request, env);
-    podeFixar = ctx.any && canModerate(ctx, community.slug);
+    podeFixar = !row.author_deleted_at && ctx.any && canModerate(ctx, community.slug);
   }
   let enquete = null;
   if (!row.author_deleted_at && row.poll_closes_at) {
     try { enquete = await readPoll(env.DB, row, viewer, ctx); } catch { enquete = null; }
   }
-  const html = postPageHtml({ community, post: publicPost(row), proprio, podeFixar, enquete });
+  const html = postPageHtml({ community, post: withRealAuthor(publicPost(row, { proprio }), await realAuthors(env.DB, [row], ctx, (r) => r.community)), proprio, podeFixar, enquete });
   return new Response(html, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },

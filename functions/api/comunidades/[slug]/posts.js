@@ -10,7 +10,8 @@ import {
   sanitizeName,
 } from "../../../_lib/shared.js";
 import { getSessionUser } from "../../../_lib/auth.js";
-import { canModerate, getAdminContext } from "../../../_lib/admins.js";
+import { canModerate, getAdminContext, isSiteAdmin } from "../../../_lib/admins.js";
+import { ANON_NAME, isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
 import {
   getCommunityDb,
   publicPost,
@@ -28,14 +29,11 @@ export async function onRequestGet(context) {
   if (!community) return errorJson("Comunidade não encontrada.", 404);
   if (!env.DB) return json({ postagens: [] });
   const viewer = await getSessionUser(request, env);
-  const posts = (await listVisiblePosts(env.DB, community.slug, 100, sort)).map((row) =>
-    publicPost(row, { proprio: Boolean(viewer && row.user_id && row.user_id === viewer.id) })
-  );
-  let podeFixar = false;
-  if (request.headers.get("Cookie")) {
-    const ctx = await getAdminContext(request, env);
-    podeFixar = ctx.any && canModerate(ctx, community.slug);
-  }
+  const ctx = viewer ? await getAdminContext(request, env) : null;
+  const rows = await listVisiblePosts(env.DB, community.slug, 100, sort);
+  const reais = await realAuthors(env.DB, rows, ctx, (r) => r.community);
+  const posts = rows.map((row) => withRealAuthor(publicPost(row, { proprio: isOwn(row, viewer) }), reais));
+  const podeFixar = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
   return json({ sort, postagens: posts, pode_fixar: podeFixar });
 }
 
@@ -77,8 +75,11 @@ export async function onRequestPost(context) {
   }
 
   const session = await getSessionUser(request, env);
-  const name = session ? session.username : sanitizeName(data?.name);
-  const userId = session ? session.id : null;
+  const comoAnon = Boolean(session && data?.anonimo === true);
+  const name = comoAnon ? ANON_NAME : session ? session.username : sanitizeName(data?.name);
+  const userId = session && !comoAnon ? session.id : null;
+  const anonBy = comoAnon ? session.id : null;
+  const anonBadge = comoAnon && (await isSiteAdmin(env.DB, session)) ? "site" : null;
 
   const ipHash = await hashIp(request, env);
   const rateMsg = await checkPostRate(env.DB, ipHash);
@@ -87,10 +88,10 @@ export async function onRequestPost(context) {
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO posts (id, community, title, body, link, name, user_id, created_at, hidden, sticky, ip_hash)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)`
+    `INSERT INTO posts (id, community, title, body, link, name, user_id, created_at, hidden, sticky, ip_hash, anon_by, anon_badge)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?, ?)`
   )
-    .bind(id, community.slug, title, body, link, name, userId, createdAt, ipHash)
+    .bind(id, community.slug, title, body, link, name, userId, createdAt, ipHash, anonBy, anonBadge)
     .run();
   if (poll) {
     try {
@@ -113,10 +114,13 @@ export async function onRequestPost(context) {
     name,
     created_at: createdAt,
     sticky: 0,
-    username: session ? session.username : null,
-    is_admin: session ? session.is_admin : 0,
-    is_primordial: session ? session.is_primordial : 0,
-    primordial_n: session ? session.primordial_n : null,
+    username: userId ? session.username : null,
+    is_admin: userId ? session.is_admin : 0,
+    is_primordial: userId ? session.is_primordial : 0,
+    primordial_n: userId ? session.primordial_n : null,
+    user_id: userId,
+    anon_by: anonBy,
+    anon_badge: anonBadge,
     comment_count: 0,
   }, { proprio: Boolean(session) }) }, 201);
 }

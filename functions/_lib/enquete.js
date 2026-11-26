@@ -91,7 +91,7 @@ export async function readPoll(db, post, user, ctx, now = Date.now()) {
     ? await db.prepare("SELECT option_id FROM poll_votes WHERE post_id = ? AND user_id = ?").bind(post.id, user.id).first()
     : null;
   const encerrada = Date.parse(poll.closes_at) <= now;
-  const autor = Boolean(user && post.user_id && post.user_id === user.id);
+  const autor = Boolean(user && (post.user_id || post.anon_by) && (post.user_id || post.anon_by) === user.id);
   const adm = Boolean(ctx && ctx.any && canModerate(ctx, post.community));
   const mostra = Boolean(mine) || encerrada || autor || adm;
   const elig = voteEligibility(user, ctx, post.community, now);
@@ -137,7 +137,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // Postagem visível (não oculta nem excluída) — senão a enquete "some junto".
 export async function visiblePost(db, id) {
   if (!UUID_RE.test(String(id || ""))) return null;
-  const p = await db.prepare("SELECT id, community, user_id, hidden, author_deleted_at FROM posts WHERE id = ?").bind(id).first();
+  const p = await db.prepare("SELECT id, community, user_id, anon_by, hidden, author_deleted_at FROM posts WHERE id = ?").bind(id).first();
   if (!p || p.hidden || p.author_deleted_at) return null;
   return p;
 }

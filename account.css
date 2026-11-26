@@ -479,3 +479,13 @@ a.ascii-avatar:hover { border-color: var(--accent-red, var(--t-red, #b92b27)); }
 .ascii-input.ac-caret-1 { border-color: var(--ac-1); } .ascii-input.ac-caret-2 { border-color: var(--ac-2); } .ascii-input.ac-caret-3 { border-color: var(--ac-3); } .ascii-input.ac-caret-4 { border-color: var(--ac-4); }
 .ascii-input.ac-caret-5 { border-color: var(--ac-5); } .ascii-input.ac-caret-6 { border-color: var(--ac-6); } .ascii-input.ac-caret-7 { border-color: var(--ac-7); } .ascii-input.ac-caret-8 { border-color: var(--ac-8); }
 .ascii-typing, .ascii-typing *, .ascii-swatch, .ascii-swatch * { transition: none; }
+
+/* >>anônimo */
+.bd-anon-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; margin: -4px 0 8px; cursor: pointer; color: var(--text-primary, var(--t-text, #2e3031)); }
+.bd-anon-toggle input { margin: 0; width: 15px; height: 15px; cursor: pointer; }
+.bd-anon-post { font-size: 12px; margin: 2px 0 6px; }
+.bd-anon-voce { font-size: 11px; opacity: .75; font-style: italic; }
+.bd-autor-real { font-size: 11px; padding: 0 4px; border: 1px dashed currentColor; border-radius: 3px; opacity: .85; white-space: nowrap; }
+.bd-autor-real .user-mention { font-size: inherit; }
+.profile-anon-title { margin: 2px 0; font-weight: bold; }
+.profile-anon-pager { margin: 14px 0; font-size: 14px; }

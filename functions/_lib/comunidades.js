@@ -1,3 +1,4 @@
+import { anonUsuario, isAnonRow } from "./anonimo.js";
 import { maskFor } from "./ascii.js";
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const SLUG_RE = /^[a-z0-9][a-z0-9_-]{0,23}$/;
@@ -143,7 +144,8 @@ export function communityHref(slug) {
 
 export function publicPost(row, extra = {}) {
   const excluida = Boolean(row.author_deleted_at);
-  const usuario = row.username && !excluida
+  const anon = !excluida && isAnonRow(row);
+  const usuario = anon ? anonUsuario(row) : row.username && !excluida
     ? {
         username: row.username,
         is_admin: Boolean(row.is_admin),
@@ -160,6 +162,7 @@ export function publicPost(row, extra = {}) {
     body: row.body || "",
     link: row.link || null,
     name: excluida ? null : usuario ? usuario.username : row.name,
+    anonimo: anon,
     usuario,
     created_at: row.created_at,
     excluida_pelo_autor: excluida,

@@ -13,7 +13,8 @@ import {
 import { getSessionUser, publicUser } from "../_lib/auth.js";
 import { lookupMentions } from "../_lib/mentions.js";
 import { maskFor, readAvatar } from "../_lib/ascii.js";
-import { canModerate, communityOfPage, getAdminContext } from "../_lib/admins.js";
+import { canModerate, communityOfPage, getAdminContext, isSiteAdmin } from "../_lib/admins.js";
+import { ANON_NAME, isOwn, anonUsuario, isAnonRow, realAuthors, withRealAuthor } from "../_lib/anonimo.js";
 
 export const DELETED_COMMENT_TEXT = "[comentário excluído pelo autor]";
 
@@ -32,7 +33,8 @@ async function formatComment(db, row, viewer = null) {
     };
   }
   const mencoes = await lookupMentions(db, row.body);
-  const usuario = row.username
+  const anon = isAnonRow(row);
+  const usuario = anon ? anonUsuario(row) : row.username
     ? {
         username: row.username,
         is_admin: Boolean(row.is_admin),
@@ -51,7 +53,8 @@ async function formatComment(db, row, viewer = null) {
     created_at: row.created_at,
     usuario,
     mencoes,
-    proprio: Boolean(viewer && row.user_id && row.user_id === viewer.id),
+    anonimo: anon,
+    proprio: isOwn(row, viewer),
     fixado: Boolean(row.pinned_at) && !row.parent_id,
     fixado_em: row.pinned_at || null,
   };
@@ -64,7 +67,7 @@ export async function onRequestGet(context) {
   const page = normalizePage(url.searchParams.get("page") || "");
   if (!page) return errorJson("Página inválida.", 400);
   const { results } = await env.DB.prepare(
-    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at, c.pinned_at,
+    `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.user_id, c.author_deleted_at, c.pinned_at, c.anon_by, c.anon_badge,
             u.username, u.is_admin, u.is_primordial, u.primordial_n, av.art AS avatar, av.colors AS avatar_colors
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id
@@ -78,9 +81,14 @@ export async function onRequestGet(context) {
     .bind(page)
     .all();
   const viewer = await getSessionUser(request, env);
+  let ctx = null;
+  if (viewer) {
+    try { ctx = await getAdminContext(request, env); } catch { ctx = null; }
+  }
+  const reais = await realAuthors(env.DB, results, ctx, (r) => communityOfPage(r.page));
   const comentarios = [];
   for (const row of results || []) {
-    comentarios.push(await formatComment(env.DB, row, viewer));
+    comentarios.push(withRealAuthor(await formatComment(env.DB, row, viewer), reais));
   }
   let fechado = false;
   const pk = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
@@ -89,15 +97,7 @@ export async function onRequestGet(context) {
     fechado = Boolean(post && post.author_deleted_at);
   }
   // ADMs que podem fixar nesta página (site: qualquer página; /b/: a comunidade da página).
-  let podeFixar = false;
-  if (viewer || request.headers.get("Cookie")) {
-    try {
-      const ctx = await getAdminContext(request, env);
-      podeFixar = ctx.any && canModerate(ctx, communityOfPage(page));
-    } catch {
-      podeFixar = false;
-    }
-  }
+  const podeFixar = Boolean(ctx && ctx.any && canModerate(ctx, communityOfPage(page)));
   return json({ comentarios, fechado, pode_fixar: podeFixar });
 }
 
@@ -137,8 +137,11 @@ export async function onRequestPost(context) {
   }
 
   const session = await getSessionUser(request, env);
-  const name = session ? session.username : sanitizeName(data?.name);
-  const userId = session ? session.id : null;
+  const comoAnon = Boolean(session && data?.anonimo === true);
+  const name = comoAnon ? ANON_NAME : session ? session.username : sanitizeName(data?.name);
+  const userId = session && !comoAnon ? session.id : null;
+  const anonBy = comoAnon ? session.id : null;
+  const anonBadge = comoAnon && (await isSiteAdmin(env.DB, session)) ? "site" : null;
 
   let parentId = data?.parent_id ? String(data.parent_id).trim() : null;
   if (parentId) {
@@ -177,10 +180,10 @@ export async function onRequestPost(context) {
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO comments (id, page, parent_id, name, body, created_at, hidden, ip_hash, user_id)
-     VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)`
+    `INSERT INTO comments (id, page, parent_id, name, body, created_at, hidden, ip_hash, user_id, anon_by, anon_badge)
+     VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?)`
   )
-    .bind(id, page, parentId, name, body, createdAt, ipHash, userId)
+    .bind(id, page, parentId, name, body, createdAt, ipHash, userId, anonBy, anonBadge)
     .run();
   await recordRate(env.DB, ipHash, "post");
 
@@ -191,12 +194,14 @@ export async function onRequestPost(context) {
     name,
     body,
     created_at: createdAt,
-    username: session ? session.username : null,
-    is_admin: session ? session.is_admin : 0,
-    is_primordial: session ? session.is_primordial : 0,
-    primordial_n: session ? session.primordial_n : null,
-    ...(await (async () => { const a = session ? await readAvatar(env.DB, session.id) : null; return { avatar: a ? a.arte : null, avatar_colors: a ? a.cores : null }; })()),
+    username: userId ? session.username : null,
+    is_admin: userId ? session.is_admin : 0,
+    is_primordial: userId ? session.is_primordial : 0,
+    primordial_n: userId ? session.primordial_n : null,
+    ...(await (async () => { const a = userId ? await readAvatar(env.DB, session.id) : null; return { avatar: a ? a.arte : null, avatar_colors: a ? a.cores : null }; })()),
     user_id: userId,
+    anon_by: anonBy,
+    anon_badge: anonBadge,
   }, session);
   return json({ ok: true, comentario }, 201);
 }

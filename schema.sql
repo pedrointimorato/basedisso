@@ -394,3 +394,7 @@ CREATE INDEX IF NOT EXISTS idx_poll_votes_user ON poll_votes(user_id);
 -- Cores nas artes ASCII (ver migrate-ascii-cores.sql; ALTERs já aplicados):
 -- ALTER TABLE profile_ascii ADD COLUMN colors TEXT;
 -- ALTER TABLE profile_avatar ADD COLUMN colors TEXT;
+
+-- >>anônimo (migrate-anonimo.sql)
+-- ALTER TABLE posts ADD COLUMN anon_by TEXT; ALTER TABLE posts ADD COLUMN anon_badge TEXT;
+-- ALTER TABLE comments ADD COLUMN anon_by TEXT; ALTER TABLE comments ADD COLUMN anon_badge TEXT;

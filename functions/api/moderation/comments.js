@@ -1,5 +1,6 @@
 import { errorJson, json } from "../../_lib/shared.js";
 import { communityOfPage, getAdminContext } from "../../_lib/admins.js";
+import { anonUsuario, isAnonRow, realAuthors, withRealAuthor } from "../../_lib/anonimo.js";
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -10,7 +11,7 @@ export async function onRequestGet(context) {
 
   const url = new URL(request.url);
   const limit = Math.min(200, Math.max(1, Number(url.searchParams.get("limit") || 100) || 100));
-  const sel = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden, c.author_deleted_at, c.pinned_at,
+  const sel = `SELECT c.id, c.page, c.parent_id, c.name, c.body, c.created_at, c.hidden, c.author_deleted_at, c.pinned_at, c.user_id, c.anon_by, c.anon_badge,
             u.username, u.is_admin
      FROM comments c
      LEFT JOIN users u ON u.id = c.user_id`;
@@ -36,20 +37,22 @@ export async function onRequestGet(context) {
     results = (results || []).filter((r) => ctx.communities.includes(communityOfPage(r.page)));
   }
 
+  const reais = await realAuthors(env.DB, results, ctx, (r) => communityOfPage(r.page));
   return json({
-    comentarios: (results || []).map((row) => ({
+    comentarios: (results || []).map((row) => withRealAuthor({
       id: row.id,
       page: row.page,
       parent_id: row.parent_id,
-      name: row.username || row.name,
+      name: isAnonRow(row) ? "anônimo" : row.username || row.name,
       body: row.body,
       created_at: row.created_at,
       hidden: Boolean(row.hidden),
       excluido_pelo_autor: Boolean(row.author_deleted_at),
       fixado: Boolean(row.pinned_at),
-      usuario: row.username
+      anonimo: isAnonRow(row),
+      usuario: isAnonRow(row) ? anonUsuario(row) : row.username
         ? { username: row.username, is_admin: Boolean(row.is_admin) }
         : null,
-    })),
+    }, reais)),
   });
 }

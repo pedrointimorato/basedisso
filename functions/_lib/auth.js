@@ -1,3 +1,4 @@
+import { ANON_RESERVED } from "./anonimo.js";
 import { hashIp, isSameOrigin, parseCookies, sha256Hex } from "./shared.js";
 import { USERNAME_RE } from "./mentions.js";
 
@@ -80,7 +81,7 @@ const RESERVED = new Set(
 
 // Intimorato is reserved but claimable with a moderation session.
 export function isReservedUsername(lc) {
-  return RESERVED.has(lc);
+  return RESERVED.has(lc) || ANON_RESERVED.includes(String(lc || "").toLowerCase());
 }
 
 export function isClaimableAdminName(lc) {

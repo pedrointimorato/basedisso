@@ -107,7 +107,7 @@
                 "p",
                 { class: "mod-meta" },
                 (c.usuario && c.usuario.username && window.BDAccount)
-                  ? window.BDAccount.userLink(c.usuario)
+                  ? (c.anonimo && window.BDAccount.appendAnonExtras ? window.BDAccount.appendAnonExtras(el("span", { class: "bd-anon-author" }, window.BDAccount.userLink(c.usuario)), c) : window.BDAccount.userLink(c.usuario))
                   : el("span", { class: "mod-name" }, c.name || "anônimo"),
                 " · ",
                 el("span", { class: "mod-page" }, c.page || ""),
@@ -528,7 +528,7 @@
               el(
                 "p",
                 { class: "mod-meta" },
-                el("span", { class: "mod-name" }, p.excluida_pelo_autor ? "[excluída]" : (p.name || "anônimo")),
+                p.anonimo && !p.excluida_pelo_autor && window.BDAccount && window.BDAccount.appendAnonExtras ? window.BDAccount.appendAnonExtras(el("span", { class: "mod-name bd-anon-author" }, ">>anônimo"), p) : el("span", { class: "mod-name" }, p.excluida_pelo_autor ? "[excluída]" : (p.name || "anônimo")),
                 " · ",
                 el("a", { class: "mod-page", href: p.url || ("/b/" + p.community + "/p/" + p.id) }, "b/" + p.community),
                 " · ",

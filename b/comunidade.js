@@ -45,7 +45,9 @@
 
   function authorNode(p) {
     if (p.usuario && p.usuario.username && window.BDAccount) {
-      return window.BDAccount.userLink(p.usuario, "or-author user-mention");
+      var link = window.BDAccount.userLink(p.usuario, "or-author user-mention");
+      if (!p.anonimo || !window.BDAccount.appendAnonExtras) return link;
+      return window.BDAccount.appendAnonExtras(el("span", { class: "bd-anon-author" }, link), p);
     }
     return el("span", { class: "or-author" }, p.name || "anônimo");
   }
@@ -351,6 +353,13 @@
       linkInput.addEventListener("change", updateLinkPreview);
     }
 
+    var anonBox = null;
+    if (asUser && window.BDAccount && window.BDAccount.anonCheckbox) {
+      anonBox = window.BDAccount.anonCheckbox("postar");
+      anonBox.classList.add("bd-anon-post");
+      anonBox.style.display = "none";
+      asUser.parentNode.insertBefore(anonBox, asUser.nextSibling);
+    }
     function applyUser(user) {
       if (!nameField || !asUser) return;
       if (user && user.username && window.BDAccount) {
@@ -359,9 +368,11 @@
         while (asUser.firstChild) asUser.removeChild(asUser.firstChild);
         asUser.appendChild(document.createTextNode("Postar como "));
         asUser.appendChild(window.BDAccount.userLink(user));
+        if (anonBox) anonBox.style.display = "";
       } else {
         nameField.style.display = "";
         asUser.style.display = "none";
+        if (anonBox) { anonBox.style.display = "none"; anonBox._input.checked = false; }
       }
     }
 
@@ -411,6 +422,7 @@
           link: link,
           enquete: enquete || undefined,
           name: nameInput ? nameInput.value : "",
+          anonimo: Boolean(anonBox && anonBox.style.display !== "none" && anonBox._input.checked),
           website: hp ? hp.value : "",
         }),
       })

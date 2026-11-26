@@ -59,7 +59,9 @@
   function authorNode(c) {
     if (c.excluido) return el("span", { class: "bd-comment-name bd-comment-excluido-nome" }, "[excluído]");
     if (c.usuario && c.usuario.username && window.BDAccount) {
-      return window.BDAccount.userLink(c.usuario, "bd-comment-name");
+      var link = window.BDAccount.userLink(c.usuario, "bd-comment-name");
+      if (!c.anonimo || !window.BDAccount.appendAnonExtras) return link;
+      return window.BDAccount.appendAnonExtras(el("span", { class: "bd-anon-author" }, link), c);
     }
     return el("span", { class: "bd-comment-name" }, c.name || "anônimo");
   }
@@ -112,6 +114,8 @@
     });
     var nameLabel = el("label", { class: "bd-name-field" }, "Nome (opcional)", nameInput);
     var asUser = el("p", { class: "bd-as-user" });
+    var anonBox = window.BDAccount && window.BDAccount.anonCheckbox ? window.BDAccount.anonCheckbox(parentId ? "responder" : "comentar") : null;
+    if (anonBox) anonBox.classList.add("bd-anon-comment");
     var bodyInput = el("textarea", {
       name: "body",
       maxlength: "2000",
@@ -132,6 +136,7 @@
       "form",
       { class: parentId ? "bd-comment-reply-form" : "bd-comments-form" },
       asUser,
+      anonBox,
       nameLabel,
       el("label", null, "Comentário", bodyInput),
       hp,
@@ -145,9 +150,11 @@
         while (asUser.firstChild) asUser.removeChild(asUser.firstChild);
         asUser.appendChild(document.createTextNode("Comentar como "));
         asUser.appendChild(window.BDAccount.userLink(currentUser));
+        if (anonBox) anonBox.style.display = "";
       } else {
         nameLabel.style.display = "";
         asUser.style.display = "none";
+        if (anonBox) { anonBox.style.display = "none"; anonBox._input.checked = false; }
       }
     }
     applyUser();
@@ -171,6 +178,7 @@
           page: page,
           parent_id: parentId || null,
           name: nameInput.value,
+          anonimo: Boolean(anonBox && anonBox.style.display !== "none" && anonBox._input.checked),
           body: body,
           website: hp.value,
         }),

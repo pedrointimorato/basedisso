@@ -426,6 +426,10 @@
       headText.appendChild(el("p", { class: "profile-meta" }, data.mensagem || "Conta reservada."));
       return;
     }
+    if (data.anonimo) {
+      renderAnon(root, headText, data);
+      return;
+    }
     var meta = "No basedisso desde " + relativeTime(u.created_at);
     if (u.is_admin) meta += " · administrador";
     if (u.is_primordial) meta += u.primordial_n != null ? " · primordial #" + u.primordial_n : " · primordial";
@@ -469,6 +473,49 @@
     root.appendChild(list);
   }
 
+  // Perfil coletivo >>anônimo: postagens e comentários publicados como >>anônimo, 30 por página.
+  function renderAnon(root, headText, data) {
+    headText.appendChild(el("p", { class: "profile-meta" }, "Perfil coletivo: tudo o que foi publicado como >>anônimo (por quem marcou a caixinha ou postou sem conta e sem nome)."));
+    var items = data.contribuicoes || [];
+    var pagina = data.pagina || 1;
+    root.appendChild(el("h2", { class: "bd-comments-title" }, items.length ? "Contribuições" + (pagina > 1 ? " — página " + pagina : "") : (pagina > 1 ? "Nada nesta página." : "Ainda sem contribuições.")));
+    if (items.length) {
+      var list = el("ul", { class: "profile-comments profile-anon-list" });
+      items.forEach(function (c) {
+        var meta = el("p", { class: "profile-comment-page" });
+        if (c.tipo === "postagem") {
+          meta.appendChild(el("span", { class: "profile-anon-kind" }, "postagem em "));
+          meta.appendChild(el("a", { href: "/b/" + c.community + "/" }, "b/" + c.community));
+        } else {
+          meta.appendChild(el("span", { class: "profile-anon-kind" }, "comentário em "));
+          meta.appendChild(pageLink(c.page));
+        }
+        meta.appendChild(document.createTextNode(" · " + (c.created_at ? new Date(c.created_at).toLocaleString("pt-BR") : "")));
+        if (c.usuario && c.usuario.is_admin && window.BDAccount) {
+          meta.appendChild(document.createTextNode(" "));
+          meta.appendChild(el("span", { class: "user-badge", title: "administrador" }, "[M]"));
+        }
+        if (window.BDAccount && window.BDAccount.appendAnonExtras) window.BDAccount.appendAnonExtras(meta, Object.assign({ anonimo: true }, c));
+        var title = c.tipo === "postagem" ? el("p", { class: "profile-anon-title" }, el("a", { href: c.page }, c.title || "(sem título)")) : null;
+        var body = null;
+        if (c.body) {
+          body = el("p", { class: "profile-comment-body" });
+          window.BDAccount.appendBodyWithMentions(body, c.body, c.mencoes || {});
+        }
+        list.appendChild(el("li", { "data-anon-id": c.id, "data-anon-tipo": c.tipo }, meta, title, body,
+          (function () { var box = el("div"); window.BDAccount.img && window.BDAccount.img.append(box, c.body || ""); return box.firstChild || null; })()));
+      });
+      root.appendChild(list);
+    }
+    if (pagina > 1 || data.mais) {
+      var nav = el("p", { class: "profile-anon-pager" });
+      if (pagina > 1) nav.appendChild(el("a", { href: "/@anônimo" + (pagina > 2 ? "?pagina=" + (pagina - 1) : ""), rel: "prev" }, "← mais recentes"));
+      if (pagina > 1 && data.mais) nav.appendChild(document.createTextNode(" · "));
+      if (data.mais) nav.appendChild(el("a", { href: "/@anônimo?pagina=" + (pagina + 1), rel: "next" }, "mais antigas →"));
+      root.appendChild(nav);
+    }
+  }
+
   function init() {
     var root = document.getElementById("profile-root");
     if (!root) return;
@@ -480,7 +527,8 @@
     }
     var name = decodeURIComponent(m[1]);
     function load(flash) {
-    fetch("/api/users/" + encodeURIComponent(name), { headers: { Accept: "application/json" }, credentials: "same-origin" })
+    var pg = (location.search.match(/[?&]pagina=(\d+)/) || [])[1];
+    fetch("/api/users/" + encodeURIComponent(name) + (pg ? "?pagina=" + pg : ""), { headers: { Accept: "application/json" }, credentials: "same-origin" })
       .then(function (res) {
         return res.json().then(function (data) { return { res: res, data: data }; });
       })

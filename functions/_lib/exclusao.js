@@ -45,12 +45,13 @@ async function pruneAfterDelete(db, parentId, page) {
 
 export async function deleteOwnComment(db, user, id) {
   const row = await db
-    .prepare("SELECT id, page, parent_id, user_id, author_deleted_at FROM comments WHERE id = ?")
+    .prepare("SELECT id, page, parent_id, user_id, anon_by, author_deleted_at FROM comments WHERE id = ?")
     .bind(id)
     .first();
   if (!row || row.author_deleted_at) return { status: 404, erro: "Comentário não encontrado." };
-  if (!row.user_id) return { status: 403, erro: "Comentários anônimos não podem ser excluídos pelo autor; peça a um ADM." };
-  if (row.user_id !== user.id) return { status: 403, erro: "Você só pode excluir os seus próprios comentários." };
+  const dono = row.user_id || row.anon_by;
+  if (!dono) return { status: 403, erro: "Comentários anônimos não podem ser excluídos pelo autor; peça a um ADM." };
+  if (dono !== user.id) return { status: 403, erro: "Você só pode excluir os seus próprios comentários." };
   if ((await childCount(db, row.id)) > 0) {
     await db
       .prepare("UPDATE comments SET body = '', author_deleted_at = ?, pinned_at = NULL, pinned_by = NULL WHERE id = ?")
@@ -65,12 +66,13 @@ export async function deleteOwnComment(db, user, id) {
 
 export async function deleteOwnPost(db, user, id) {
   const row = await db
-    .prepare("SELECT id, community, user_id, author_deleted_at FROM posts WHERE id = ?")
+    .prepare("SELECT id, community, user_id, anon_by, author_deleted_at FROM posts WHERE id = ?")
     .bind(id)
     .first();
   if (!row || row.author_deleted_at) return { status: 404, erro: "Postagem não encontrada." };
-  if (!row.user_id) return { status: 403, erro: "Postagens anônimas não podem ser excluídas pelo autor; peça a um ADM." };
-  if (row.user_id !== user.id) return { status: 403, erro: "Você só pode excluir as suas próprias postagens." };
+  const dono = row.user_id || row.anon_by;
+  if (!dono) return { status: 403, erro: "Postagens anônimas não podem ser excluídas pelo autor; peça a um ADM." };
+  if (dono !== user.id) return { status: 403, erro: "Você só pode excluir as suas próprias postagens." };
   const page = `/b/${row.community}/p/${row.id}`;
   const c = await db.prepare("SELECT COUNT(*) AS n FROM comments WHERE page = ?").bind(page).first();
   if (Number(c?.n || 0) > 0) {
