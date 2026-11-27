@@ -52,7 +52,13 @@
   }
   function cur() { var s = sel.value; return (data && data.comunidades || []).filter(function (c) { return c.slug === s; })[0] || null; }
 
+  function count() {
+    var cs = (data && data.comunidades) || [];
+    var com = cs.filter(function (c) { return c.avatar; }).length;
+    st(cs.length ? com + " de " + cs.length + " b/ com avatar" : "Nenhuma b/ para gerir.");
+  }
   function render() {
+    count();
     clear(atual); clear(tools); clear(host); ed = null;
     var c = cur();
     if (!c) return;
@@ -124,8 +130,6 @@
       clear(sel);
       var cs = data.comunidades || [];
       cs.forEach(function (c) { var op = el("option", { value: c.slug }, "b/" + c.slug); if (c.slug === foco) op.selected = true; sel.appendChild(op); });
-      var com = cs.filter(function (c) { return c.avatar; }).length;
-      st(cs.length ? com + " de " + cs.length + " b/ com avatar" : "Nenhuma b/ para gerir.");
       render();
     }).catch(function () { st("Falha de rede.", "erro"); });
   }
