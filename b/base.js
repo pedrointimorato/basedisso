@@ -377,6 +377,12 @@
       var btn = card.querySelector("[data-card-edit]");
       if (!btn) return;
       btn.hidden = false;
+      // MOR-36: atalho para a gestão de etiquetas desta b/.
+      if (kind !== "panel" && slug && btn.parentNode && !card.querySelector(".bd-card-tags-link")) {
+        var tl = el("a", { class: "bd-card-tags-link", href: "/b/adm/moderar/?b=" + encodeURIComponent(slug) + "#mod-sec-etiquetas", title: "criar e editar etiquetas de b/" + slug }, "etiquetas");
+        btn.parentNode.insertBefore(tl, btn.nextSibling);
+        btn.parentNode.insertBefore(document.createTextNode(" · "), tl);
+      }
       var form = null;
       btn.addEventListener("click", function () {
         if (form) {

@@ -1,3 +1,4 @@
+import { attachTags } from "../../../_lib/etiquetas.js";
 import { attachVotes } from "../../../_lib/votos.js";
 import { escapeHtml } from "../../../_lib/shared.js";
 import { SIDEBAR, V, communityCardHtml } from "../../../_lib/page-shell.js";
@@ -59,6 +60,15 @@ function banButtonHtml(tipo, id, cx) {
   return `<button type="button" class="or-banir bd-ban-btn" data-banir-conexao="${escapeHtml(id)}" data-tipo="${tipo}" data-rotulo="${escapeHtml(cx.rotulo)}" data-pode-site="${cx.pode_site ? "1" : "0"}" data-b="${escapeHtml(cx.b || "")}" data-banida="${escapeHtml(JSON.stringify(cx.banida || []))}">banir conexão${ban}</button>`;
 }
 
+// MOR-36: chips de etiqueta (HTML pronto, funciona sem JS) + dados para o /etiquetas.js pôr o botão de editar.
+function tagsRowHtml(post, slug, editavel, adm) {
+  const lista = post.etiquetas || [];
+  if (!lista.length && !editavel) return "";
+  const chips = lista.map((t) => `<a class="bd-tag bd-tag-c${/^[0-8]$/.test(t.cor) ? t.cor : "0"}${t.por_adm ? " is-adm" : ""}" href="/b/${escapeHtml(slug)}/?etiqueta=${escapeHtml(t.slug)}" title="${escapeHtml(t.descricao || "etiqueta " + t.nome)}">${escapeHtml(t.nome)}</a>`).join(" ");
+  const data = escapeHtml(JSON.stringify({ tipo: "post", id: post.id, b: slug, lista, editavel: Boolean(editavel), adm: Boolean(adm) }));
+  return `<div class="bd-tags-row" data-etiquetas="${data}"><span class="bd-tags">${chips}</span></div>`;
+}
+
 function domainOf(link) {
   try {
     return new URL(link).hostname.replace(/^www\./, "");
@@ -67,7 +77,7 @@ function domainOf(link) {
   }
 }
 
-export function postPageHtml({ community, post, proprio = false, podeFixar = false, enquete = null, verVotos = false }) {
+export function postPageHtml({ community, post, proprio = false, podeFixar = false, enquete = null, verVotos = false, podeEtiquetar = false }) {
   const excluida = Boolean(post.excluida_pelo_autor);
   const slug = community.slug;
   const title = excluida ? "Postagem excluída pelo autor" : escapeHtml(post.title || "Postagem");
@@ -148,6 +158,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
                                 <p class="or-excluida-nota" data-post-excluida>O título, o texto e o autor foram removidos. Os comentários abaixo continuam legíveis, mas não é mais possível comentar.</p>`
                                   : `<h2 class="or-selfpost-title">${title}</h2>
                                 <p class="or-tagline${post.usuario && post.usuario.avatar ? " has-avatar" : ""}">${post.fixado ? '<span class="or-sticky-tag or-fixado-tag" title="fixado por um ADM"><i class="fa-solid fa-thumbtack" aria-hidden="true"></i> fixado</span>' : ""}enviado ${when} por ${authorHtml(post)}</p>
+                                ${tagsRowHtml(post, slug, proprio || podeEtiquetar, podeEtiquetar)}
                                 ${link ? `<p class="or-post-link"><a href="${link}" rel="noopener noreferrer">${link}</a>${domain ? ` <span class="or-domain">(${domain})</span>` : ""}</p>` : ""}
                                 ${linkImgHtml}
                                 ${body ? `<div class="or-md or-post-body">${body}</div>` : ""}
@@ -181,8 +192,9 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/b/base.js?v=${V}"></script>
     <script src="/b/painel.js?v=20261130a"></script>
     <script src="/account.js?v=20261129a"></script>
+    <script src="/etiquetas.js?v=20261202a"></script>
     <script src="/votos.js?v=20261201c"></script>
-    <script src="/comments.js?v=20261201a"></script>
+    <script src="/comments.js?v=20261202a"></script>
 </body>
 </html>`;
 }
@@ -218,8 +230,9 @@ export async function onRequestGet(context) {
   await attachConnections(env.DB, [row], one, ctx, (r) => r.community);
   await attachAnonAvatar(env.DB, one);
   if (!row.author_deleted_at) await attachVotes(env.DB, "post", one, viewer);
+  if (!row.author_deleted_at) await attachTags(env.DB, "post", one);
   const verVotos = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
-  const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete, verVotos });
+  const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete, verVotos, podeEtiquetar: verVotos });
   return new Response(html, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },

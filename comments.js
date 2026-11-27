@@ -116,6 +116,9 @@
     var asUser = el("p", { class: "bd-as-user" });
     var anonBox = window.BDAccount && window.BDAccount.anonCheckbox ? window.BDAccount.anonCheckbox(parentId ? "responder" : "comentar") : null;
     if (anonBox) anonBox.classList.add("bd-anon-comment");
+    // MOR-36: etiquetas opcionais (até 3) abaixo de "Comentar como" / anônimo.
+    var tagPick = window.BDEtiquetas ? window.BDEtiquetas.picker({ page: page }) : null;
+    if (tagPick) tagPick.node.classList.add("bd-tag-picker-comment");
     var bodyInput = el("textarea", {
       name: "body",
       maxlength: "2000",
@@ -139,6 +142,7 @@
       { class: parentId ? "bd-comment-reply-form" : "bd-comments-form" },
       asUser,
       anonBox,
+      tagPick ? tagPick.node : null,
       nameLabel,
       el("label", null, "Comentário", bodyInput),
       hp,
@@ -184,6 +188,7 @@
           parent_id: parentId || null,
           name: nameInput.value,
           anonimo: Boolean(anonBox && anonBox.style.display !== "none" && anonBox._input.checked),
+          etiquetas: tagPick ? tagPick.value() : undefined,
           turnstile: ts && !currentUser ? ts.token() : undefined,
           body: body,
           website: hp.value,
@@ -203,6 +208,7 @@
             return;
           }
           form.reset();
+          if (tagPick) tagPick.reset();
           applyUser();
           setSentStatus(status, !!opts.formOnly);
           if (typeof onDone === "function") onDone();
@@ -264,6 +270,15 @@
 
   // MOR-35: ADM que pode ver "quem votou" nesta página (vem da API: ver_votos).
   var verVotos = false;
+  var podeEtiquetar = false;
+
+  // MOR-36: chips de etiqueta do comentário + botão "etiquetas" (autor com conta ou ADM da página).
+  function tagParts(c, page) {
+    if (c.excluido || !c.id || !window.BDEtiquetas) return { chips: null, btn: null };
+    var o = { tipo: "comment", id: c.id, page: page, lista: c.etiquetas || [], adm: podeEtiquetar, onChange: function (l) { c.etiquetas = l; } };
+    var h = window.BDEtiquetas.host(o);
+    return { chips: h, btn: c.proprio || podeEtiquetar ? el("span", { class: "bd-tag-anchor" }, window.BDEtiquetas.editButton(h, o)) : null };
+  }
 
   function voteBar(c) {
     if (c.excluido || !c.id || !window.BDVotos) return null;
@@ -275,11 +290,12 @@
   function renderComment(c, page, reload, closed) {
     var replyWrap = el("div", { class: "bd-comment-actions-row" });
     var votos = voteBar(c);
+    var tg = tagParts(c, page);
     var avatar = c.excluido ? null : c.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(c.usuario, "sm") : null;
     var main = el("div", { class: "bd-comment-main" },
       el("p", { class: "bd-comment-meta" },
         c.fixado ? el("span", { class: "bd-comment-fixado", title: "fixado por um ADM" }, el("i", { class: "fa-solid fa-thumbtack", "aria-hidden": "true" }), " fixado") : null,
-        authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
+        authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at)), tg.chips ? " " : null, tg.chips),
       bodyNode(c),
       votos ? el("div", { class: "bd-comment-foot" }, votos, replyWrap) : replyWrap
     );
@@ -295,6 +311,7 @@
     if (banBtn) banBtn.classList.add("bd-comment-ban-btn");
     var pinBtn = pinAllowed && !c.parent_id && (!c.excluido || c.fixado) ? pinButton(c, page) : null;
     function extras() {
+      if (tg.btn) replyWrap.appendChild(tg.btn);
       if (delBtn) replyWrap.appendChild(delBtn);
       if (pinBtn) replyWrap.appendChild(pinBtn);
       if (banBtn) replyWrap.appendChild(banBtn);
@@ -408,6 +425,7 @@
             if (formNode && formNode.parentNode) formNode.parentNode.replaceChild(closedNote(), formNode);
           }
           verVotos = Boolean(out.data.ver_votos);
+          podeEtiquetar = Boolean(out.data.pode_etiquetar);
           renderList(listHost, out.data.comentarios || [], page, function () {
             reloadWidgets(page);
           }, closed, out.data.pode_fixar);

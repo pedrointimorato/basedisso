@@ -34,17 +34,23 @@ export function normalizeSort(raw) {
   return Object.prototype.hasOwnProperty.call(POST_SORTS, s) ? s : "links";
 }
 
-export async function listVisiblePosts(db, slug, limit = 100, sort = "links") {
+export async function listVisiblePosts(db, slug, limit = 100, sort = "links", tagSlug = null) {
   const cap = Math.min(200, Math.max(1, Number(limit) || 100));
   const order = POST_SORTS[normalizeSort(sort)];
+  // MOR-36: ?etiqueta=slug — só postagens com essa etiqueta ativa (do site ou desta b/).
+  const tagSql = tagSlug
+    ? ` AND p.id IN (SELECT it.item_id FROM item_tags it JOIN tags t ON t.id = it.tag_id
+         WHERE it.item_type = 'post' AND t.active = 1 AND t.slug = ? AND (t.scope = 'site' OR t.scope = p.community))`
+    : "";
+  const binds = tagSlug ? [slug, tagSlug, cap] : [slug, cap];
   const { results } = await db
     .prepare(
       `${postsSelectSql()}
-       WHERE p.community = ? AND p.hidden = 0 AND p.author_deleted_at IS NULL
+       WHERE p.community = ? AND p.hidden = 0 AND p.author_deleted_at IS NULL${tagSql}
        ORDER BY (p.pinned_at IS NULL) ASC, p.pinned_at DESC, ${order}
        LIMIT ?`
     )
-    .bind(slug, cap)
+    .bind(...binds)
     .all();
   return results || [];
 }

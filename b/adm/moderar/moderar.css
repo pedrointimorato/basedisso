@@ -222,3 +222,27 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mod-votos-nota { color: #b98a00; font-weight: 700; }
 .mod-votos-item { max-width: 420px; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .mod-votos-item { flex-basis: 100%; max-width: none; } .mod-votos-filtro input { width: 130px; } }
+/* MOR-36: aba Etiquetas */
+.mod-etq-escopo-label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); }
+.mod-etq-list { list-style: none; margin: 0; padding: 0; }
+.mod-etq-item { padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+.mod-etq-item.is-off { opacity: .7; }
+.mod-etq-note { padding: 4px 0 10px; font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-subtle); }
+.mod-etq-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 6px; }
+.mod-etq-chip .bd-tag { font-size: 13px; padding: 1px 10px; }
+.mod-etq-slug { font-size: 12px; color: var(--text-secondary); }
+.mod-etq-usos, .mod-etq-off { font-size: 12px; color: var(--text-secondary); }
+.mod-etq-off { font-weight: 700; }
+.mod-etq-row { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: flex-end; }
+.mod-etq-row label { display: inline-flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--text-secondary); min-width: 0; }
+.mod-etq-row input[type="text"], .mod-etq-row input[type="number"] { padding: 5px 8px; border: 1px solid var(--border-subtle); border-radius: 6px; background: transparent; color: inherit; font: inherit; font-size: 14px; min-width: 0; }
+.mod-etq-row input[type="text"] { width: 150px; }
+.mod-etq-desc input[type="text"] { width: 260px; }
+.mod-etq-ordem { width: 80px; }
+.mod-etq-actions { margin-top: 6px; align-items: center; }
+.mod-etq-msg { font-size: 12px; color: var(--text-secondary); }
+.mod-etq-msg.erro { color: #d33; } .mod-etq-msg.ok { color: #2e7d32; }
+.mod-etq-form { margin-top: 12px; }
+.mod-etq-h { margin: 0 0 6px; font-size: 15px; }
+.mod-etq-prev { margin: 6px 0 0; font-size: 12px; color: var(--text-secondary); }
+@media (max-width: 600px) { .mod-etq-row label, .mod-etq-desc { flex: 1 1 100%; } .mod-etq-row input[type="text"], .mod-etq-desc input[type="text"] { width: 100%; } }

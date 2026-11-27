@@ -100,6 +100,8 @@
       title.appendChild(document.createTextNode(" "));
       title.appendChild(el("span", { class: "or-domain" }, "(self." + p.community + ")"));
     }
+    var tg = tagParts(p, podeFixar);
+    if (tg.chips) { title.appendChild(document.createTextNode(" ")); title.appendChild(tg.chips); }
     var av = p.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(p.usuario, "xs") : null;
     var tagline = el("p", { class: "or-tagline" + (av ? " has-avatar" : "") }, "enviado " + relativeTime(p.created_at) + " por ", av, authorNode(p));
     if (p.fixado) tagline.insertBefore(pinTag(), tagline.firstChild);
@@ -130,6 +132,7 @@
           el("li", null, el("a", { href: href }, commentsLabel)),
           el("li", null, el("a", { href: href }, "compartilhar")),
           el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
+          tg.li,
           p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null,
           podeFixar
             ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar"))
@@ -190,8 +193,9 @@
     var meta = el("span", { class: "bd-thread-meta" + (av ? " has-avatar" : "") }, av, authorNode(p), " ", when,
       el("span", { class: "bd-thread-rel" }, " (" + relativeTime(p.created_at) + ")"));
     var summary = el("span", { class: "bd-thread-resumo" }, " · ", el("a", { href: href }, commentsLabel));
+    var tgt = tagParts(p, podeFixar);
     var head = el("div", { class: "bd-thread-head" }, toggle, " ", p.fixado ? pinTag() : null, p.fixado ? " " : null,
-      el("span", { class: "bd-thread-titleline" }, title, " ", domain), " ", meta,
+      el("span", { class: "bd-thread-titleline" }, title, " ", domain), tgt.chips ? " " : null, tgt.chips, " ", meta,
       p.enquete ? el("span", { class: "or-poll-badge" + (p.enquete.encerrada ? " is-closed" : "") }, " [enquete]") : null, summary);
 
     var body = el("div", { class: "bd-thread-body", id: "thread-" + p.id });
@@ -213,6 +217,7 @@
       el("li", null, el("a", { href: href, class: "bd-thread-comments" }, commentsLabel)),
       el("li", null, el("a", { href: href }, "compartilhar")),
       el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
+      tgt.li,
       p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null,
       podeFixar ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar")) : null,
       p.conexao && window.BDAccount && window.BDAccount.banButton ? el("li", null, window.BDAccount.banButton("postagem", p.id, p.conexao)) : null));
@@ -231,6 +236,15 @@
       setFolded(p.id, fold);
     });
     return art;
+  }
+
+  // MOR-36: etiquetas — chips perto do título (clicar filtra o feed) e botão "etiquetas" no rodapé (autor com conta ou ADM).
+  function tagParts(p, adm) {
+    if (!window.BDEtiquetas) return { chips: null, li: null };
+    var o = { tipo: "post", id: p.id, b: p.community, lista: p.etiquetas || [], adm: Boolean(adm), onChange: function (l) { p.etiquetas = l; } };
+    var h = window.BDEtiquetas.host(o);
+    var li = p.proprio || adm ? el("li", { class: "bd-tag-anchor" }, window.BDEtiquetas.editButton(h, o)) : null;
+    return { chips: h, li: li };
   }
 
   // MOR-35: votos ▲/▼ + nota ★ no rodapé (servidor manda; ver /votos.js). "quem votou" só para ADM desta b/.
@@ -254,6 +268,25 @@
 
   var SORTS = { links: 1, novos: 1, melhores: 1 };
   var currentSort = "links";
+  var currentTag = "";
+  function tagFromUrl() {
+    try { var t = (new URLSearchParams(location.search).get("etiqueta") || "").toLowerCase().trim(); return /^[a-z0-9-]{1,24}$/.test(t) ? t : ""; } catch (e) { return ""; }
+  }
+  function feedQuery(sort, tag) {
+    var q = [];
+    if (sort && sort !== "links") q.push("sort=" + encodeURIComponent(sort));
+    if (tag) q.push("etiqueta=" + encodeURIComponent(tag));
+    return q.length ? "?" + q.join("&") : "";
+  }
+  // Faixa "filtrando por etiqueta" com o link para tirar o filtro.
+  function tagFilterBar(data) {
+    if (!currentTag) return null;
+    var t = (data && data.etiqueta) || { slug: currentTag, nome: currentTag, cor: "0" };
+    var chip = window.BDEtiquetas ? window.BDEtiquetas.chips([t], {}) : el("strong", null, t.nome);
+    return el("p", { class: "bd-tag-filtro", role: "status" }, "Filtrando por etiqueta ", chip,
+      t.inexistente ? el("span", null, " (não existe aqui)") : null,
+      el("a", { class: "bd-tag-filtro-x", href: location.pathname + feedQuery(currentSort, ""), "data-tirar-filtro": "1" }, "× tirar filtro"));
+  }
 
   function sortFromUrl() {
     var s = "";
@@ -285,8 +318,7 @@
         currentSort = SORTS[sort] ? sort : "links";
         markSortTab(currentSort);
         if (window.history && history.replaceState) {
-          var q = currentSort === "links" ? "" : "?sort=" + currentSort;
-          history.replaceState(null, "", location.pathname + q);
+          history.replaceState(null, "", location.pathname + feedQuery(currentSort, currentTag));
         }
         loadPosts(slug, host);
       });
@@ -302,6 +334,8 @@
     host.classList.toggle("bd-feed-compacto", compact);
     var IMG = window.BDAccount && window.BDAccount.img;
     var hasImg = IMG && posts.some(function (p) { return (p.link && IMG.url(p.link)) || (!compact && p.body && IMG.inText(p.body).length); });
+    var fbar = tagFilterBar(data);
+    if (fbar) host.appendChild(fbar);
     if (hasImg) host.appendChild(el("p", { class: "bd-img-toggle-row or-img-toggle-row" }, IMG.toggle()));
     posts.forEach(function (p, i) {
       host.appendChild(compact ? renderPost(p, i + 1, Boolean(data.pode_fixar)) : renderThread(p, Boolean(data.pode_fixar)));
@@ -315,7 +349,7 @@
 
   function loadPosts(slug, host, emptyText) {
     var seq = ++loadSeq;
-    var qs = currentSort === "links" ? "" : "?sort=" + encodeURIComponent(currentSort);
+    var qs = feedQuery(currentSort, currentTag);
     return fetch("/api/comunidades/" + encodeURIComponent(slug) + "/posts" + qs, {
       credentials: "same-origin",
       headers: { Accept: "application/json" },
@@ -336,7 +370,9 @@
         }
         var posts = out.data.postagens || [];
         if (!posts.length) {
-          host.appendChild(el("p", { class: "or-empty" }, emptyText || "Nenhuma postagem ainda. Seja o primeiro."));
+          var fb = tagFilterBar(out.data);
+          if (fb) host.appendChild(fb);
+          host.appendChild(el("p", { class: "or-empty" }, currentTag ? "Nenhuma postagem com esta etiqueta." : (emptyText || "Nenhuma postagem ainda. Seja o primeiro.")));
           return;
         }
         lastFeed = { host: host, data: out.data };
@@ -472,6 +508,15 @@
       anonBox.style.display = "none";
       asUser.parentNode.insertBefore(anonBox, asUser.nextSibling);
     }
+    // MOR-36: etiquetas (opcional, até 3) logo abaixo de "Postar como" / anônimo.
+    var tagPick = null;
+    if (window.BDEtiquetas) {
+      tagPick = window.BDEtiquetas.picker({ b: slug });
+      tagPick.node.classList.add("bd-tag-picker-post");
+      var after = anonBox || asUser || nameField;
+      if (after && after.parentNode) after.parentNode.insertBefore(tagPick.node, after.nextSibling);
+      else form.insertBefore(tagPick.node, form.firstChild);
+    }
     var tsBox = null, ts = null;
     if (submit && window.BDAccount && window.BDAccount.turnstile) {
       tsBox = el("div", { class: "bd-turnstile", hidden: "hidden" });
@@ -546,6 +591,7 @@
           enquete: enquete || undefined,
           name: nameInput ? nameInput.value : "",
           anonimo: Boolean(anonBox && anonBox.style.display !== "none" && anonBox._input.checked),
+          etiquetas: tagPick ? tagPick.value() : undefined,
           turnstile: ts && !loggedIn ? ts.token() : undefined,
           website: hp ? hp.value : "",
         }),
@@ -568,6 +614,7 @@
           form.reset();
           updateLinkPreview();
           poll.reset();
+          if (tagPick) tagPick.reset();
           if (window.BDAccount && window.BDAccount.me) window.BDAccount.me().then(applyUser);
           else applyUser(null);
           if (status) {
@@ -723,6 +770,7 @@
     var slug = (host && host.getAttribute("data-community")) || (form && form.getAttribute("data-community"));
     if (slug && host) {
       currentSort = sortFromUrl();
+      currentTag = tagFromUrl();
       markSortTab(currentSort);
       bindSortTabs(slug, host);
       loadPosts(slug, host);

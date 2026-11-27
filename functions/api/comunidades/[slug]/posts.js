@@ -1,3 +1,4 @@
+import { attachTags, insertTagStatements, publicTag, tagsOf, validateTagIds } from "../../../_lib/etiquetas.js";
 import { attachVotes } from "../../../_lib/votos.js";
 import {
   BODY_MAX,
@@ -34,14 +35,23 @@ export async function onRequestGet(context) {
   if (!env.DB) return json({ postagens: [] });
   const viewer = await getSessionUser(request, env);
   const ctx = viewer ? await getAdminContext(request, env) : null;
-  const rows = await listVisiblePosts(env.DB, community.slug, 100, sort);
+  const tagRaw = String(new URL(request.url).searchParams.get("etiqueta") || "").toLowerCase().trim();
+  let filtro = null;
+  if (tagRaw) {
+    if (!/^[a-z0-9-]{1,24}$/.test(tagRaw)) return errorJson("Etiqueta inválida.", 400);
+    const t = await env.DB.prepare("SELECT id, scope, name, slug, color, description FROM tags WHERE slug = ? AND active = 1 AND (scope = 'site' OR scope = ?) ORDER BY (scope = 'site') DESC LIMIT 1").bind(tagRaw, community.slug).first().catch(() => null);
+    if (!t) return json({ sort, postagens: [], pode_fixar: false, ver_votos: false, etiqueta: { slug: tagRaw, nome: tagRaw, cor: "0", inexistente: true } });
+    filtro = publicTag(t);
+  }
+  const rows = await listVisiblePosts(env.DB, community.slug, 100, sort, filtro ? filtro.slug : null);
   const reais = await realAuthors(env.DB, rows, ctx, (r) => r.community);
   const posts = rows.map((row) => withRealAuthor(publicPost(row, { proprio: isOwn(row, viewer) }), reais));
   await attachConnections(env.DB, rows, posts, ctx, (r) => r.community);
   await attachAnonAvatar(env.DB, posts);
   await attachVotes(env.DB, "post", posts, viewer);
+  await attachTags(env.DB, "post", posts);
   const podeFixar = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
-  return json({ sort, postagens: posts, pode_fixar: podeFixar, ver_votos: podeFixar });
+  return json({ sort, postagens: posts, pode_fixar: podeFixar, ver_votos: podeFixar, pode_etiquetar: podeFixar, etiqueta: filtro });
 }
 
 export async function onRequestPost(context) {
@@ -81,6 +91,9 @@ export async function onRequestPost(context) {
     return errorJson("Escreva um texto, informe um link ou adicione uma enquete.", 400);
   }
 
+  const tagsIn = await validateTagIds(env.DB, data?.etiquetas, community.slug);
+  if (tagsIn.erro) return errorJson(tagsIn.erro, 400);
+
   const session = await getSessionUser(request, env);
   const comoAnon = Boolean(session && data?.anonimo === true);
   const name = comoAnon ? ANON_NAME : session ? session.username : sanitizeName(data?.name);
@@ -115,6 +128,7 @@ export async function onRequestPost(context) {
       return errorJson("Não foi possível criar a enquete.", 500);
     }
   }
+  if (tagsIn.ids.length) await env.DB.batch(insertTagStatements(env.DB, "post", id, tagsIn.ids, "autor", createdAt));
   await recordRate(env.DB, ipHash, "post");
 
   const row = await getVisiblePost(env.DB, id);
@@ -136,5 +150,5 @@ export async function onRequestPost(context) {
     anon_by: anonBy,
     anon_badge: anonBadge,
     comment_count: 0,
-  }, { proprio: Boolean(session) }) }, 201);
+  }, { proprio: Boolean(session) }), etiquetas: (await tagsOf(env.DB, "post", [id]))[id] || [] }, 201);
 }

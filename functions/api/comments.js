@@ -1,3 +1,4 @@
+import { attachTags, insertTagStatements, tagsOf, validateTagIds } from "../_lib/etiquetas.js";
 import { attachVotes } from "../_lib/votos.js";
 import {
   BODY_MAX,
@@ -98,6 +99,7 @@ export async function onRequestGet(context) {
   await attachConnections(env.DB, results, comentarios, ctx, (r) => communityOfPage(r.page));
   await attachAnonAvatar(env.DB, comentarios);
   await attachVotes(env.DB, "comment", comentarios, viewer);
+  await attachTags(env.DB, "comment", comentarios);
   let fechado = false;
   const pk = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
   if (pk) {
@@ -109,7 +111,7 @@ export async function onRequestGet(context) {
   // Quem votou: ADM do site em qualquer página; ADM de b/ só nas páginas da própria b/.
   const slugPage = communityOfPage(page);
   const verVotos = Boolean(ctx && ctx.any && (slugPage ? canModerate(ctx, slugPage) : ctx.site));
-  return json({ comentarios, fechado, pode_fixar: podeFixar, ver_votos: verVotos });
+  return json({ comentarios, fechado, pode_fixar: podeFixar, ver_votos: verVotos, pode_etiquetar: verVotos });
 }
 
 export async function onRequestPost(context) {
@@ -146,6 +148,9 @@ export async function onRequestPost(context) {
   if (body.length > BODY_MAX) {
     return errorJson(`Comentário longo demais (máx. ${BODY_MAX} caracteres).`, 400);
   }
+
+  const tagsIn = await validateTagIds(env.DB, data?.etiquetas, communityOfPage(page));
+  if (tagsIn.erro) return errorJson(tagsIn.erro, 400);
 
   const session = await getSessionUser(request, env);
   const comoAnon = Boolean(session && data?.anonimo === true);
@@ -202,6 +207,7 @@ export async function onRequestPost(context) {
   )
     .bind(id, page, parentId, name, body, createdAt, ipHash, userId, anonBy, anonBadge)
     .run();
+  if (tagsIn.ids.length) await env.DB.batch(insertTagStatements(env.DB, "comment", id, tagsIn.ids, "autor", createdAt));
   await recordRate(env.DB, ipHash, "post");
 
   const comentario = await formatComment(env.DB, {
@@ -221,5 +227,6 @@ export async function onRequestPost(context) {
     anon_by: anonBy,
     anon_badge: anonBadge,
   }, session);
+  comentario.etiquetas = (await tagsOf(env.DB, "comment", [id]))[id] || [];
   return json({ ok: true, comentario }, 201);
 }

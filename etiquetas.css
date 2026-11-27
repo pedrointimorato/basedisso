@@ -1,0 +1,54 @@
+/* MOR-36 — chips de etiqueta (cores da paleta do site, --ac-N, que já mudam por tema). */
+.bd-tags { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: middle; }
+.bd-tags[hidden] { display: none !important; }
+.bd-tag { --tg: var(--t-text2, #555); display: inline-flex; align-items: center; max-width: 100%; padding: 0 7px; min-height: 18px; border: 1px solid color-mix(in srgb, var(--tg) 55%, transparent); border-radius: 9px;
+  background: color-mix(in srgb, var(--tg) 12%, transparent); color: var(--tg); font-family: inherit; font-size: 11px; font-weight: 700; line-height: 16px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+a.bd-tag:hover, a.bd-tag:focus-visible { text-decoration: underline; background: color-mix(in srgb, var(--tg) 22%, transparent); }
+.bd-tag:focus-visible { outline: 2px solid var(--t-link, #0645ad); outline-offset: 1px; }
+.bd-tag.is-adm { border-style: dashed; }
+.bd-tag-c1 { --tg: var(--ac-1); } .bd-tag-c2 { --tg: var(--ac-2); } .bd-tag-c3 { --tg: var(--ac-3); } .bd-tag-c4 { --tg: var(--ac-4); }
+.bd-tag-c5 { --tg: var(--ac-5); } .bd-tag-c6 { --tg: var(--ac-6); } .bd-tag-c7 { --tg: var(--ac-7); } .bd-tag-c8 { --tg: var(--ac-8); }
+/* seletor */
+.bd-tag-picker { border: 0; margin: 6px 0; padding: 0; min-width: 0; }
+.bd-tag-picker[hidden] { display: none !important; }
+.bd-tag-picker legend { padding: 0; margin-bottom: 4px; font-size: 13px; font-weight: 700; color: var(--t-text, #222); }
+.bd-tag-picker-hint { font-weight: 400; color: var(--t-text3, #777); }
+.bd-tag-picker-list { display: flex; flex-wrap: wrap; gap: 6px; }
+button.bd-tag.bd-tag-opt, .or-buttons button.bd-tag.bd-tag-opt { min-height: 26px; padding: 0 10px; font-size: 12px; cursor: pointer; background: transparent; }
+button.bd-tag.bd-tag-opt::before { content: "+"; margin-right: 4px; opacity: .7; }
+button.bd-tag.bd-tag-opt.is-on { background: color-mix(in srgb, var(--tg) 24%, transparent); border-style: solid; border-color: var(--tg); }
+button.bd-tag.bd-tag-opt.is-on::before { content: "✓"; opacity: 1; }
+button.bd-tag.bd-tag-opt:disabled { cursor: not-allowed; opacity: .45; }
+button.bd-tag.bd-tag-opt.is-on:disabled { opacity: .8; }
+.bd-tag-picker-msg { margin: 4px 0 0; font-size: 12px; color: var(--t-text3, #777); min-height: 0; }
+.bd-tag-picker-msg:empty { display: none; }
+/* edição */
+.bd-tag-anchor { position: relative; }
+button.bd-tag-edit { padding: 0; border: 0; background: none; color: var(--or-muted, #888); font: inherit; font-size: 10px; font-weight: 700; cursor: pointer; }
+.bd-tags-row button.bd-tag-edit, .bd-comment-actions-row button.bd-tag-edit { font-size: 12px; }
+button.bd-tag-edit:hover { text-decoration: underline; }
+.bd-tag-editor { position: absolute; z-index: 45; top: calc(100% + 4px); left: 0; width: max-content; min-width: 220px; max-width: min(340px, 88vw); padding: 8px 10px; text-align: left; white-space: normal;
+  background: var(--t-surface, #fff); color: var(--t-text, #222); border: 1px solid var(--t-border, #ccc); border-radius: 6px; box-shadow: 0 4px 14px rgba(0, 0, 0, .18); font-size: 12px; font-weight: 400; }
+.bd-tag-editor .bd-tag-picker { margin: 0; }
+.bd-tag-ed-actions { margin: 8px 0 0; }
+.bd-tag-editor .bd-tag-ed-actions button { padding: 3px 10px; border: 1px solid var(--t-border, #ccc); border-radius: 4px; background: var(--t-surface2, #f3f3f3); color: var(--t-text, #222); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.bd-tag-editor .bd-tag-ed-actions .bd-tag-save { border-color: var(--t-link, #0645ad); color: var(--t-link, #0645ad); }
+.bd-tag-ed-note, .bd-tag-ed-msg { margin: 6px 0 0; font-size: 12px; color: var(--t-text3, #777); }
+.bd-tag-ed-msg:empty { display: none; }
+.bd-tag-ed-msg.erro { color: var(--t-red, #b00020); }
+/* onde aparecem */
+.bd-tags-row { margin: 4px 0 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.bd-tags-row[hidden] { display: none; }
+.bd-thread-head .bd-tags, .or-entry .bd-tags { margin-left: 2px; }
+.bd-comment-meta .bd-tags { margin-left: 4px; }
+.bd-tag-filtro { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px; padding: 6px 10px; border: 1px solid var(--t-border, #ddd); border-radius: 6px; background: var(--t-surface2, #f6f6f6); font-size: 13px; color: var(--t-text, #222); }
+.bd-tag-filtro a.bd-tag-filtro-x { font-weight: 700; color: var(--t-link, #0645ad); }
+@media (max-width: 640px) {
+  .bd-tag { min-height: 20px; }
+  button.bd-tag.bd-tag-opt, .or-buttons button.bd-tag.bd-tag-opt { min-height: 32px; padding: 0 12px; font-size: 13px; }
+  button.bd-tag-edit { font-size: 12px; min-height: 24px; }
+}
+/* dentro do rodapé (.or-buttons zera bordas/cores de botões) */
+.bd-tag-editor button.bd-tag, .or-buttons a.bd-tag { border: 1px solid color-mix(in srgb, var(--tg) 55%, transparent); color: var(--tg); font-weight: 700; }
+.bd-tag-editor button.bd-tag.is-on { border-color: var(--tg); }
+.bd-tag-editor .bd-tag-ed-actions button:hover { text-decoration: none; filter: brightness(.97); }

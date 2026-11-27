@@ -432,3 +432,29 @@ CREATE TABLE IF NOT EXISTS ratings (
 );
 CREATE INDEX IF NOT EXISTS idx_ratings_user ON ratings(user_id, updated_at);
 CREATE INDEX IF NOT EXISTS idx_ratings_updated ON ratings(updated_at);
+
+-- Etiquetas (MOR-36): ver migrate-etiquetas.sql (aplicado; inclui as 6 etiquetas padrão do site).
+CREATE TABLE IF NOT EXISTS tags (
+  id TEXT PRIMARY KEY,
+  scope TEXT NOT NULL,
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL,
+  color TEXT NOT NULL DEFAULT '0' CHECK (color IN ('0', '1', '2', '3', '4', '5', '6', '7', '8')),
+  description TEXT,
+  created_by TEXT,
+  active INTEGER NOT NULL DEFAULT 1,
+  position INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  UNIQUE (scope, slug)
+);
+CREATE INDEX IF NOT EXISTS idx_tags_scope ON tags(scope, active, position);
+CREATE TABLE IF NOT EXISTS item_tags (
+  item_type TEXT NOT NULL CHECK (item_type IN ('post', 'comment')),
+  item_id TEXT NOT NULL,
+  tag_id TEXT NOT NULL,
+  added_by TEXT,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (item_type, item_id, tag_id)
+);
+CREATE INDEX IF NOT EXISTS idx_item_tags_tag ON item_tags(tag_id, item_type);

@@ -7,7 +7,7 @@
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
     <link rel="stylesheet" href="/account.css?v=20261130b">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261201a">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261202a">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -66,6 +66,7 @@
                 <a href="#mod-sec-posts">Postagens</a>
                 <a href="#mod-sec-conexoes">Conexões banidas</a>
                 <a href="#mod-sec-votos">Votos</a>
+                <a href="#mod-sec-etiquetas">Etiquetas</a>
                 <a href="#mod-sec-res" data-site-only>Reservas</a>
                 <a href="#sec-convites" data-site-only>Códigos</a>
                 <a href="#sec-caixas" data-site-only>Caixas</a>
@@ -160,6 +161,29 @@
                 </div>
                 <div class="mod-card" id="mod-votos-list"></div>
             </div>
+            <div class="mod-section mod-etiquetas" id="mod-sec-etiquetas">
+                <h2>Etiquetas</h2>
+                <p class="mod-lead">Etiquetas que autores e ADMs põem em postagens e comentários (até 3 por item). As do <strong>site</strong> valem em todo lugar e só ADMs do site mexem nelas; cada b/ pode ter as próprias, geridas pelos ADMs dela. Desativar tira a etiqueta dos seletores e dos itens (volta se reativar); nada é apagado.</p>
+                <div class="mod-countrow">
+                    <label class="mod-etq-escopo-label">escopo <select id="mod-etq-escopo" class="mod-select"></select></label>
+                    <p class="mod-status" id="mod-etq-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="etiquetas" aria-controls="mod-etq-box" aria-expanded="true">Encolher</button>
+                </div>
+                <div class="mod-card" id="mod-etq-box">
+                    <ul class="mod-etq-list" id="mod-etq-list"></ul>
+                    <form class="mod-inline-form mod-etq-form" id="mod-etq-form">
+                        <h3 class="mod-etq-h">Nova etiqueta</h3>
+                        <div class="mod-row mod-etq-row">
+                            <label>nome <input type="text" name="nome" maxlength="24" required placeholder="ex.: meme" autocomplete="off"></label>
+                            <label>cor <select name="cor" class="mod-select mod-etq-cor"></select></label>
+                            <label class="mod-etq-desc">descrição <input type="text" name="descricao" maxlength="120" placeholder="opcional" autocomplete="off"></label>
+                            <button type="submit" class="mod-btn">Criar</button>
+                        </div>
+                        <p class="mod-etq-prev">prévia: <span id="mod-etq-prev"></span></p>
+                        <p class="mod-status" id="mod-etq-form-status" role="status"></p>
+                    </form>
+                </div>
+            </div>
             <div class="mod-section mod-reservas" id="mod-sec-res" data-site-only>
                 <h2>Reservas de nomes primordiais</h2>
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
@@ -230,6 +254,8 @@
     <script src="/b/adm/moderar/moderar-ascii.js?v=20261127c"></script>
     <script src="/b/adm/moderar/moderar-conexoes.js?v=20261128b"></script>
     <script src="/b/adm/moderar/moderar-votos.js?v=20261201b"></script>
+    <script src="/etiquetas.js?v=20261202a"></script>
+    <script src="/b/adm/moderar/moderar-etiquetas.js?v=20261202a"></script>
     <script src="/b/adm/moderar/moderar.js?v=20261128b"></script>
     <script src="/b/adm/moderar/moderar-collapse.js?v=20261124c"></script>
 </body>
