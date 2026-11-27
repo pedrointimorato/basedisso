@@ -1,4 +1,4 @@
--- MOR-35: votos (+1/-1) e notas de aplicabilidade (1 a 5) em postagens e comentários.
+-- MOR-35: votos (+1/-1) e notas de relevância e coerência (1 a 5) em postagens e comentários.
 -- Só contas votam (user_id obrigatório); um voto e uma nota por conta por item. Sem IP.
 CREATE TABLE IF NOT EXISTS votes (
   item_type TEXT NOT NULL CHECK (item_type IN ('post', 'comment')),

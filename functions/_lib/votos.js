@@ -1,4 +1,4 @@
-// MOR-35: votos (+1/-1) e notas de aplicabilidade (1–5) em postagens e comentários. Só contas.
+// MOR-35: votos (+1/-1) e notas de relevância e coerência (1–5) em postagens e comentários. Só contas.
 import { communityOfPage } from "./admins.js";
 import { ownerId } from "./anonimo.js";
 

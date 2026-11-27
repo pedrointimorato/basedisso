@@ -1,4 +1,4 @@
-/* MOR-35 — votos ▲/▼ e nota ★ (aplicabilidade ao tópico) no rodapé de postagens e comentários. */
+/* MOR-35 — votos ▲/▼ e nota ★ (relevância e coerência) no rodapé de postagens e comentários. */
 .bd-votos { position: relative; display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: 12px; line-height: 1.2; vertical-align: middle; color: var(--t-text2, #555); }
 .bd-votos.is-busy { opacity: .6; }
 .bd-votos .bd-voto { width: 22px; height: 20px; padding: 0; margin: 0; border: 1px solid transparent; border-radius: 3px; background: transparent; cursor: pointer; position: relative; }

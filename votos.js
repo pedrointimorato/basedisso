@@ -1,9 +1,9 @@
-// MOR-35 — votos (▲/▼) e nota de aplicabilidade (★ 1–5) em postagens e comentários.
+// MOR-35 — votos (▲/▼) e nota de relevância e coerência (★ 1–5) em postagens e comentários.
 // O servidor manda: cada clique vai para /api/votos e a barra mostra o que ele devolver.
 // Só contas registram voto; sem conta aparece o convite para entrar.
 (function () {
   "use strict";
-  var V = "20261201b";
+  var V = "20261201c";
   if (!document.querySelector('link[data-votos-css]')) {
     var lk = document.createElement("link");
     lk.rel = "stylesheet"; lk.href = "/votos.css?v=" + V; lk.setAttribute("data-votos-css", "");
@@ -43,7 +43,7 @@
     var up = el("button", { type: "button", class: "bd-voto bd-voto-up", "aria-label": "voto positivo", title: proprio ? "não dá para votar no próprio item" : "voto positivo" });
     var score = el("span", { class: "bd-voto-score", title: "pontuação (soma dos votos)" });
     var down = el("button", { type: "button", class: "bd-voto bd-voto-down", "aria-label": "voto negativo", title: proprio ? "não dá para votar no próprio item" : "voto negativo" });
-    var star = el("button", { type: "button", class: "bd-nota-btn", "aria-haspopup": "dialog", "aria-expanded": "false", title: "nota de aplicabilidade ao tópico" });
+    var star = el("button", { type: "button", class: "bd-nota-btn", "aria-haspopup": "dialog", "aria-expanded": "false", title: "nota de relevância e coerência" });
     var msg = el("span", { class: "bd-votos-msg", role: "status", hidden: "" });
     wrap.appendChild(up); wrap.appendChild(score); wrap.appendChild(down); wrap.appendChild(star);
     var quem = null;
@@ -61,7 +61,7 @@
       star.appendChild(el("span", { class: "bd-nota-media" }, s.total ? num(s.media) : "nota"));
       if (s.total) star.appendChild(el("span", { class: "bd-nota-total" }, "(" + s.total + ")"));
       star.classList.toggle("is-on", s.minha > 0);
-      star.setAttribute("aria-label", "aplicabilidade ao tópico: " + (s.total ? "média " + num(s.media) + " de 5, " + s.total + (s.total === 1 ? " nota" : " notas") : "sem notas") + (s.minha ? "; sua nota " + s.minha : ""));
+      star.setAttribute("aria-label", "relevância e coerência: " + (s.total ? "média " + num(s.media) + " de 5, " + s.total + (s.total === 1 ? " nota" : " notas") : "sem notas") + (s.minha ? "; sua nota " + s.minha : ""));
     }
     function apply(v) { if (!v) return; s.score = +v.score || 0; s.meu = +v.meu || 0; s.media = v.nota_media == null ? null : +v.nota_media; s.total = +v.nota_total || 0; s.minha = +v.minha_nota || 0; paint(); if (typeof o.onChange === "function") { try { o.onChange(v); } catch (e) {} } }
     function say(node, kind) {
@@ -94,8 +94,8 @@
     star.addEventListener("click", function () {
       if (openPop && openPop.btn === star) { closePop(); return; }
       closePop();
-      var pop = el("div", { class: "bd-nota-pop", role: "dialog", "aria-label": "aplicabilidade ao tópico" });
-      pop.appendChild(el("p", { class: "bd-nota-pop-title" }, "aplicabilidade ao tópico"));
+      var pop = el("div", { class: "bd-nota-pop", role: "dialog", "aria-label": "relevância e coerência" });
+      pop.appendChild(el("p", { class: "bd-nota-pop-title" }, "relevância e coerência"));
       var row = el("div", { class: "bd-nota-stars", role: "group", "aria-label": "nota de 1 a 5" });
       var btns = [];
       var opening = true;
