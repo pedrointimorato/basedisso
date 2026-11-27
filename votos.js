@@ -3,7 +3,7 @@
 // Só contas registram voto; sem conta aparece o convite para entrar.
 (function () {
   "use strict";
-  var V = "20261201a";
+  var V = "20261201b";
   if (!document.querySelector('link[data-votos-css]')) {
     var lk = document.createElement("link");
     lk.rel = "stylesheet"; lk.href = "/votos.css?v=" + V; lk.setAttribute("data-votos-css", "");
@@ -98,11 +98,12 @@
       pop.appendChild(el("p", { class: "bd-nota-pop-title" }, "aplicabilidade ao tópico"));
       var row = el("div", { class: "bd-nota-stars", role: "group", "aria-label": "nota de 1 a 5" });
       var btns = [];
+      var opening = true;
       function hi(n) { btns.forEach(function (b, i) { b.classList.toggle("is-hi", i < n); b.textContent = i < n ? "★" : "☆"; }); }
       for (var i = 1; i <= 5; i++) (function (n) {
         var b = el("button", { type: "button", class: "bd-nota-star" + (s.minha === n ? " is-mine" : ""), "data-nota": n, "aria-pressed": s.minha === n ? "true" : "false", "aria-label": n + (n === 1 ? " estrela" : " estrelas"), title: n + " de 5" }, "☆");
         b.addEventListener("mouseenter", function () { hi(n); });
-        b.addEventListener("focus", function () { hi(n); });
+        b.addEventListener("focus", function () { if (!opening) hi(n); });
         b.addEventListener("click", function () {
           if (proprio) return;
           post({ tipo: o.tipo, id: o.id, nota: s.minha === n ? 0 : n }, "dar nota").then(function (ok) { closePop(); });
@@ -125,6 +126,7 @@
       openPop = { node: pop, btn: star };
       var first = pop.querySelector(".bd-nota-star.is-mine") || btns[0];
       try { first.focus({ preventScroll: true }); } catch (e) {}
+      opening = false;
     });
 
     if (quem) quem.addEventListener("click", function () {

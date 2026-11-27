@@ -89,7 +89,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
     <script src="/b/base.js?v=${V}"></script>
     <script src="/b/painel.js?v=20261130a"></script>
     <script src="/account.js?v=20261129a"></script>
-    <script src="/votos.js?v=20261201a"></script>
+    <script src="/votos.js?v=20261201b"></script>
     <script src="/comments.js?v=20261201a"></script>
 </body>
 </html>`;
