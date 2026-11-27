@@ -207,18 +207,44 @@
     return el("span", { class: cls + " ascii-avatar", "aria-hidden": "true", "data-b-avatar": slug }, avatarPre(av));
   }
   // Cabeçalho das páginas estáticas (b/adm, b/atoa): troca o "b" pelo avatar, se houver. As outras já vêm do servidor.
-  function hydrateHeaders(items) {
-    items.forEach(function (c) {
-      if (!c.avatar || !c.avatar.arte || !/^[a-z0-9_-]+$/.test(c.slug)) return;
-      Array.prototype.forEach.call(document.querySelectorAll('.or-header a.or-snoo[aria-label="b/' + c.slug + '"]'), function (a) {
-        if (a.hasAttribute("data-b-avatar")) return;
-        clear(a);
-        a.className = "or-snoo or-snoo-art ascii-avatar ascii-avatar-b";
-        a.setAttribute("data-b-avatar", c.slug);
-        var pre = avatarPre(c.avatar); pre.setAttribute("aria-hidden", "true");
-        a.appendChild(pre);
-      });
+  // O último avatar conhecido fica no localStorage para aparecer já na abertura (sem piscar o "b"); a lista nova corrige.
+  var BAV_KEY = "bd_b_avatares";
+  function setHeader(a, slug, av) {
+    clear(a);
+    if (av && av.arte) {
+      a.className = "or-snoo or-snoo-art ascii-avatar ascii-avatar-b";
+      a.setAttribute("data-b-avatar", slug);
+      var pre = avatarPre(av); pre.setAttribute("aria-hidden", "true");
+      a.appendChild(pre);
+    } else {
+      a.className = "or-snoo";
+      a.removeAttribute("data-b-avatar");
+      a.appendChild(document.createTextNode("b"));
+    }
+  }
+  function staticHeaders() {
+    // Só cabeçalhos ainda sem marca do servidor (data-b-ssr) — as páginas do servidor já vêm certas.
+    return Array.prototype.filter.call(document.querySelectorAll(".or-header a.or-snoo[aria-label^=\"b/\"]"), function (a) { return !a.hasAttribute("data-b-ssr"); });
+  }
+  function hydrateHeaders(items, fromCache) {
+    var by = {};
+    items.forEach(function (c) { if (c && /^[a-z0-9_-]+$/.test(c.slug)) by[c.slug] = c.avatar && c.avatar.arte ? { arte: c.avatar.arte, cores: c.avatar.cores || null } : null; });
+    staticHeaders().forEach(function (a) {
+      var slug = a.getAttribute("aria-label").slice(2);
+      if (!(slug in by)) return;
+      var av = by[slug], had = a.getAttribute("data-b-arte");
+      var key = av ? av.arte + "\u0000" + (av.cores || "") : "";
+      if (had === key) return;
+      setHeader(a, slug, av);
+      a.setAttribute("data-b-arte", key);
     });
+    if (!fromCache) { try { localStorage.setItem(BAV_KEY, JSON.stringify(by)); } catch (e) {} }
+  }
+  function hydrateFromCache() {
+    var m = null;
+    try { m = JSON.parse(localStorage.getItem(BAV_KEY) || "null"); } catch (e) { m = null; }
+    if (!m || typeof m !== "object") return;
+    hydrateHeaders(Object.keys(m).map(function (k) { var v = m[k]; return { slug: k, avatar: v && typeof v.arte === "string" && v.arte.length <= 400 ? v : null }; }), true);
   }
   window.BDBAvatar = { icon: bIcon, pre: avatarPre };
 
@@ -578,6 +604,7 @@
   }
 
   function start() {
+    hydrateFromCache();
     bindCommJoin();
     bindCreate();
     bindCards();

@@ -574,3 +574,4 @@ label.bd-anon-toggle input[type="checkbox"] { margin: 0; width: 15px; height: 15
 @media (max-width: 640px) {
     .or-sub.has-icon { gap: 10px; }
 }
+.or-snoo.ascii-avatar-b, .or-b-icon { transition: border-color .15s; }

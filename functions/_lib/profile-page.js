@@ -11,7 +11,7 @@ export function profilePageHtml({ title, initialPath }) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${safeTitle}</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261204a">
+    <link rel="stylesheet" href="/account.css?v=20261204b">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>

@@ -36,6 +36,6 @@ export async function communityAvatarMap(db) {
 // Cabeçalho da b/: avatar no lugar do "b" laranja (mesmo link e rótulo). Texto sempre escapado; cor só por classe ac-1..8.
 export function communitySnooHtml(slug, href, avatar) {
   const s = escapeHtml(slug), h = escapeHtml(href);
-  if (!avatar || !avatar.arte) return `<a class="or-snoo" href="${h}" aria-label="b/${s}">b</a>`;
-  return `<a class="or-snoo or-snoo-art ascii-avatar ascii-avatar-b" href="${h}" aria-label="b/${s}" data-b-avatar="${s}"><span class="av-pre" aria-hidden="true">${coloredHtml(avatar.arte, avatar.cores, escapeHtml)}</span></a>`;
+  if (!avatar || !avatar.arte) return `<a class="or-snoo" href="${h}" aria-label="b/${s}" data-b-ssr>b</a>`;
+  return `<a class="or-snoo or-snoo-art ascii-avatar ascii-avatar-b" href="${h}" aria-label="b/${s}" data-b-avatar="${s}" data-b-ssr><span class="av-pre" aria-hidden="true">${coloredHtml(avatar.arte, avatar.cores, escapeHtml)}</span></a>`;
 }
