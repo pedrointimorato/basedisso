@@ -200,11 +200,18 @@
     else pre.textContent = av.arte;
     return pre;
   }
+  var BOX = { b: [64, 60], md: [60, 56], xs: [44, 40] };
+  // Mesma conta de functions/_lib/b-avatar.js (fitScale): a arte ocupa o quadro, pequena ou cheia.
+  function fitScale(arte, size) {
+    var bx = BOX[size] || BOX.md, lines = String(arte || "").split("\n"), cols = 1;
+    lines.forEach(function (l) { cols = Math.max(cols, Array.from(l).length); });
+    return Math.max(0.3, Math.min(1.1, (bx[0] - 6) / (cols * 6.02), (bx[1] - 6) / (Math.max(1, lines.length) * 11))).toFixed(3);
+  }
   // Ícone para listas (span, pode ficar dentro de um <a>): avatar com o quadro transparente ou o "b" laranja.
   function bIcon(slug, av, size) {
     var cls = "or-b-icon or-b-icon-" + (size || "md");
     if (!av || !av.arte) return el("span", { class: cls + " or-b-tile", "aria-hidden": "true" }, "b");
-    return el("span", { class: cls + " ascii-avatar", "aria-hidden": "true", "data-b-avatar": slug }, avatarPre(av));
+    return el("span", { class: cls + " ascii-avatar", "aria-hidden": "true", "data-b-avatar": slug, style: "--av-scale:" + fitScale(av.arte, size || "md") }, avatarPre(av));
   }
   // Cabeçalho das páginas estáticas (b/adm, b/atoa): troca o "b" pelo avatar, se houver. As outras já vêm do servidor.
   // O último avatar conhecido fica no localStorage para aparecer já na abertura (sem piscar o "b"); a lista nova corrige.
@@ -214,11 +221,13 @@
     if (av && av.arte) {
       a.className = "or-snoo or-snoo-art ascii-avatar ascii-avatar-b";
       a.setAttribute("data-b-avatar", slug);
+      a.style.setProperty("--av-scale", fitScale(av.arte, "b"));
       var pre = avatarPre(av); pre.setAttribute("aria-hidden", "true");
       a.appendChild(pre);
     } else {
       a.className = "or-snoo";
       a.removeAttribute("data-b-avatar");
+      a.style.removeProperty("--av-scale");
       a.appendChild(document.createTextNode("b"));
     }
   }
@@ -246,7 +255,7 @@
     if (!m || typeof m !== "object") return;
     hydrateHeaders(Object.keys(m).map(function (k) { var v = m[k]; return { slug: k, avatar: v && typeof v.arte === "string" && v.arte.length <= 400 ? v : null }; }), true);
   }
-  window.BDBAvatar = { icon: bIcon, pre: avatarPre };
+  window.BDBAvatar = { icon: bIcon, pre: avatarPre, fitScale: fitScale };
 
   function renderPanel(host, items) {
     clear(host);

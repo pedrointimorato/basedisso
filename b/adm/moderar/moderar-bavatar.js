@@ -30,12 +30,18 @@
   }
   function pre(av) { var p = el("span", { class: "av-pre" }); window.BDAccount.colorize(p, av.arte, av.cores || null); return p; }
   // Ícones iguais aos das páginas (b/base.js): avatar com quadro transparente ou o "b" laranja.
+  var BOX = { b: [64, 60], md: [60, 56], xs: [44, 40] };
+  function fit(arte, size) {
+    var bx = BOX[size], lines = String(arte || "").split("\n"), cols = 1;
+    lines.forEach(function (l) { cols = Math.max(cols, Array.from(l).length); });
+    return "--av-scale:" + Math.max(0.3, Math.min(1.1, (bx[0] - 6) / (cols * 6.02), (bx[1] - 6) / (Math.max(1, lines.length) * 11))).toFixed(3);
+  }
   function icon(av, size) {
     var cls = "or-b-icon or-b-icon-" + size;
-    return av && av.arte ? el("span", { class: cls + " ascii-avatar", "aria-hidden": "true" }, pre(av)) : el("span", { class: cls + " or-b-tile", "aria-hidden": "true" }, "b");
+    return av && av.arte ? el("span", { class: cls + " ascii-avatar", "aria-hidden": "true", style: fit(av.arte, size) }, pre(av)) : el("span", { class: cls + " or-b-tile", "aria-hidden": "true" }, "b");
   }
   function headIcon(av) {
-    return av && av.arte ? el("span", { class: "or-snoo or-snoo-art ascii-avatar ascii-avatar-b", "aria-hidden": "true" }, pre(av)) : el("span", { class: "or-snoo mod-bav-snoo", "aria-hidden": "true" }, "b");
+    return av && av.arte ? el("span", { class: "or-snoo or-snoo-art ascii-avatar ascii-avatar-b", "aria-hidden": "true", style: fit(av.arte, "b") }, pre(av)) : el("span", { class: "or-snoo mod-bav-snoo", "aria-hidden": "true" }, "b");
   }
   // Pré-visualização dos 3 lugares onde o avatar aparece.
   function previews(slug, av) {

@@ -33,9 +33,18 @@ export async function communityAvatarMap(db) {
   return m;
 }
 
+// Escala que faz a arte caber no quadro (desenho a 10px; ~0,602em por coluna, 1,1em por linha).
+// Artes pequenas ficam maiores (até 1,1×); um avatar cheio de 16×8 fica na mesma escala dos perfis.
+export function fitScale(arte, w, h) {
+  const lines = String(arte || "").split("\n");
+  const cols = Math.max(1, ...lines.map((l) => Array.from(l).length));
+  const sx = (w - 6) / (cols * 6.02), sy = (h - 6) / (Math.max(1, lines.length) * 11);
+  return Math.max(0.3, Math.min(1.1, sx, sy)).toFixed(3);
+}
+
 // Cabeçalho da b/: avatar no lugar do "b" laranja (mesmo link e rótulo). Texto sempre escapado; cor só por classe ac-1..8.
 export function communitySnooHtml(slug, href, avatar) {
   const s = escapeHtml(slug), h = escapeHtml(href);
   if (!avatar || !avatar.arte) return `<a class="or-snoo" href="${h}" aria-label="b/${s}" data-b-ssr>b</a>`;
-  return `<a class="or-snoo or-snoo-art ascii-avatar ascii-avatar-b" href="${h}" aria-label="b/${s}" data-b-avatar="${s}" data-b-ssr><span class="av-pre" aria-hidden="true">${coloredHtml(avatar.arte, avatar.cores, escapeHtml)}</span></a>`;
+  return `<a class="or-snoo or-snoo-art ascii-avatar ascii-avatar-b" href="${h}" aria-label="b/${s}" data-b-avatar="${s}" data-b-ssr style="--av-scale:${fitScale(avatar.arte, 64, 60)}"><span class="av-pre" aria-hidden="true">${coloredHtml(avatar.arte, avatar.cores, escapeHtml)}</span></a>`;
 }
