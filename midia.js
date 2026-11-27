@@ -3,7 +3,7 @@
 // O servidor confere tudo (tipo pelos bytes, tamanho, permissão, limite de envios).
 (function () {
   "use strict";
-  var V = "20261203a";
+  var V = "20261203b";
   var THUMB = 250;
   var IMG_MAX = 8 * 1024 * 1024, VID_MAX = 50 * 1024 * 1024;
   var TIPOS = { "image/jpeg": "image", "image/png": "image", "image/gif": "image", "image/webp": "image", "video/mp4": "video", "video/webm": "video" };
