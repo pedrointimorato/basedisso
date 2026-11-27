@@ -1,3 +1,4 @@
+import { attachVotes } from "../../../_lib/votos.js";
 import {
   BODY_MAX,
   checkPostRate,
@@ -38,8 +39,9 @@ export async function onRequestGet(context) {
   const posts = rows.map((row) => withRealAuthor(publicPost(row, { proprio: isOwn(row, viewer) }), reais));
   await attachConnections(env.DB, rows, posts, ctx, (r) => r.community);
   await attachAnonAvatar(env.DB, posts);
+  await attachVotes(env.DB, "post", posts, viewer);
   const podeFixar = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
-  return json({ sort, postagens: posts, pode_fixar: podeFixar });
+  return json({ sort, postagens: posts, pode_fixar: podeFixar, ver_votos: podeFixar });
 }
 
 export async function onRequestPost(context) {

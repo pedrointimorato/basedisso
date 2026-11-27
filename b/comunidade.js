@@ -115,13 +115,6 @@
       "article",
       { class: "or-thing" + (p.fixado ? " or-fixado" : ""), "data-post-id": p.id },
       el("div", { class: "or-rank" }, String(rank)),
-      el(
-        "div",
-        { class: "or-midcol" },
-        el("button", { type: "button", class: "or-arrow or-up", "aria-label": "voto positivo" }),
-        el("div", { class: "or-score", title: "pontuação" }, "1"),
-        el("button", { type: "button", class: "or-arrow or-down", "aria-label": "voto negativo" })
-      ),
       thumb,
       el(
         "div",
@@ -132,7 +125,8 @@
         exp,
         el(
           "ul",
-          { class: "or-buttons" },
+          { class: "or-buttons bd-post-foot" },
+          votesLi(p, podeFixar),
           el("li", null, el("a", { href: href }, commentsLabel)),
           el("li", null, el("a", { href: href }, "compartilhar")),
           el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
@@ -189,10 +183,6 @@
 
     var toggle = el("button", { type: "button", class: "bd-thread-toggle", "aria-expanded": folded ? "false" : "true",
       title: folded ? "mostrar a thread" : "encolher a thread", "aria-label": (folded ? "mostrar a thread: " : "encolher a thread: ") + (p.title || "") }, folded ? "[+]" : "[−]");
-    var votes = el("span", { class: "or-midcol bd-thread-votes" },
-      el("button", { type: "button", class: "or-arrow or-up", "aria-label": "voto positivo" }),
-      el("span", { class: "or-score", title: "pontuação" }, "1"),
-      el("button", { type: "button", class: "or-arrow or-down", "aria-label": "voto negativo" }));
     var title = el("a", { class: "bd-thread-title", href: href }, p.title || "Sem título");
     var domain = el("span", { class: "or-domain" }, "(" + (p.link ? domainOf(p.link) || "link" : "self." + p.community) + ")");
     var av = p.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(p.usuario, "xs") : null;
@@ -200,7 +190,7 @@
     var meta = el("span", { class: "bd-thread-meta" + (av ? " has-avatar" : "") }, av, authorNode(p), " ", when,
       el("span", { class: "bd-thread-rel" }, " (" + relativeTime(p.created_at) + ")"));
     var summary = el("span", { class: "bd-thread-resumo" }, " · ", el("a", { href: href }, commentsLabel));
-    var head = el("div", { class: "bd-thread-head" }, toggle, " ", votes, " ", p.fixado ? pinTag() : null, p.fixado ? " " : null,
+    var head = el("div", { class: "bd-thread-head" }, toggle, " ", p.fixado ? pinTag() : null, p.fixado ? " " : null,
       el("span", { class: "bd-thread-titleline" }, title, " ", domain), " ", meta,
       p.enquete ? el("span", { class: "or-poll-badge" + (p.enquete.encerrada ? " is-closed" : "") }, " [enquete]") : null, summary);
 
@@ -218,7 +208,8 @@
       body.appendChild(poll);
       watchPoll(poll);
     }
-    body.appendChild(el("ul", { class: "or-buttons bd-thread-actions" },
+    body.appendChild(el("ul", { class: "or-buttons bd-thread-actions bd-post-foot" },
+      votesLi(p, podeFixar),
       el("li", null, el("a", { href: href, class: "bd-thread-comments" }, commentsLabel)),
       el("li", null, el("a", { href: href }, "compartilhar")),
       el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
@@ -240,6 +231,17 @@
       setFolded(p.id, fold);
     });
     return art;
+  }
+
+  // MOR-35: votos ▲/▼ + nota ★ no rodapé (servidor manda; ver /votos.js). "quem votou" só para ADM desta b/.
+  function votesLi(p, adm) {
+    if (!window.BDVotos) return null;
+    var v = p.votos || {};
+    return el("li", { class: "bd-votos-li" }, window.BDVotos.bar({
+      tipo: "post", id: p.id, score: v.score, meu: v.meu, nota_media: v.nota_media, nota_total: v.nota_total, minha_nota: v.minha_nota,
+      proprio: Boolean(p.proprio), adm: Boolean(adm),
+      onChange: function (nv) { p.votos = nv; },
+    }));
   }
 
   function bindVotes(root) {

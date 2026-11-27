@@ -1,3 +1,4 @@
+import { attachVotes } from "../../../_lib/votos.js";
 import { escapeHtml } from "../../../_lib/shared.js";
 import { SIDEBAR, V, communityCardHtml } from "../../../_lib/page-shell.js";
 import { communityCard, getCommunityDb, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
@@ -66,7 +67,7 @@ function domainOf(link) {
   }
 }
 
-export function postPageHtml({ community, post, proprio = false, podeFixar = false, enquete = null }) {
+export function postPageHtml({ community, post, proprio = false, podeFixar = false, enquete = null, verVotos = false }) {
   const excluida = Boolean(post.excluida_pelo_autor);
   const slug = community.slug;
   const title = excluida ? "Postagem excluída pelo autor" : escapeHtml(post.title || "Postagem");
@@ -153,7 +154,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
                                 ${bodyImgHtml}
                                 ${enquete ? pollHtml(enquete) : ""}
                                 ${hasImgs ? `<p class="bd-img-toggle-row"><button type="button" class="bd-img-toggle" data-img-toggle="1">ocultar imagens</button></p>` : ""}
-                                ${proprio || podeFixar || post.conexao ? `<ul class="or-buttons or-own-actions">${post.conexao ? `<li>${banButtonHtml("postagem", post.id, post.conexao)}</li>` : ""}${proprio ? `<li><button type="button" class="or-excluir" data-excluir-post="${escapeHtml(post.id)}" data-voltar="${hrefComm}">excluir</button></li>` : ""}${podeFixar ? `<li><button type="button" class="or-fixar" data-fixar-post="${escapeHtml(post.id)}" data-fixado="${post.fixado ? "1" : "0"}">${post.fixado ? "desafixar" : "fixar"}</button></li>` : ""}</ul><p class="or-excluir-msg" role="status" hidden></p>` : ""}`}
+                                <ul class="or-buttons or-own-actions bd-post-foot"><li class="bd-votos-li"><span class="bd-votos-ph" data-votos="${escapeHtml(JSON.stringify({ tipo: "post", id: post.id, ...(post.votos || {}), proprio, adm: verVotos }))}"></span></li>${post.conexao ? `<li>${banButtonHtml("postagem", post.id, post.conexao)}</li>` : ""}${proprio ? `<li><button type="button" class="or-excluir" data-excluir-post="${escapeHtml(post.id)}" data-voltar="${hrefComm}">excluir</button></li>` : ""}${podeFixar ? `<li><button type="button" class="or-fixar" data-fixar-post="${escapeHtml(post.id)}" data-fixado="${post.fixado ? "1" : "0"}">${post.fixado ? "desafixar" : "fixar"}</button></li>` : ""}</ul><p class="or-excluir-msg" role="status" hidden></p>`}
                                 <div class="bd-comments bd-comments-reddit" id="comentarios" data-page="${escapeHtml(pageKey)}" data-title="Comentários"${excluida ? ' data-closed="true"' : ""}></div>
                             </article>
                         </div>
@@ -180,7 +181,8 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/b/base.js?v=${V}"></script>
     <script src="/b/painel.js?v=20261130a"></script>
     <script src="/account.js?v=20261129a"></script>
-    <script src="/comments.js?v=20261128c"></script>
+    <script src="/votos.js?v=20261201a"></script>
+    <script src="/comments.js?v=20261201a"></script>
 </body>
 </html>`;
 }
@@ -215,7 +217,9 @@ export async function onRequestGet(context) {
   const one = [post];
   await attachConnections(env.DB, [row], one, ctx, (r) => r.community);
   await attachAnonAvatar(env.DB, one);
-  const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete });
+  if (!row.author_deleted_at) await attachVotes(env.DB, "post", one, viewer);
+  const verVotos = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
+  const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete, verVotos });
   return new Response(html, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },

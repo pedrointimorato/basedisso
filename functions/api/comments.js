@@ -1,3 +1,4 @@
+import { attachVotes } from "../_lib/votos.js";
 import {
   BODY_MAX,
   checkPostRate,
@@ -96,6 +97,7 @@ export async function onRequestGet(context) {
   }
   await attachConnections(env.DB, results, comentarios, ctx, (r) => communityOfPage(r.page));
   await attachAnonAvatar(env.DB, comentarios);
+  await attachVotes(env.DB, "comment", comentarios, viewer);
   let fechado = false;
   const pk = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
   if (pk) {
@@ -104,7 +106,10 @@ export async function onRequestGet(context) {
   }
   // ADMs que podem fixar nesta página (site: qualquer página; /b/: a comunidade da página).
   const podeFixar = Boolean(ctx && ctx.any && canModerate(ctx, communityOfPage(page)));
-  return json({ comentarios, fechado, pode_fixar: podeFixar });
+  // Quem votou: ADM do site em qualquer página; ADM de b/ só nas páginas da própria b/.
+  const slugPage = communityOfPage(page);
+  const verVotos = Boolean(ctx && ctx.any && (slugPage ? canModerate(ctx, slugPage) : ctx.site));
+  return json({ comentarios, fechado, pode_fixar: podeFixar, ver_votos: verVotos });
 }
 
 export async function onRequestPost(context) {

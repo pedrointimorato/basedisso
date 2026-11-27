@@ -26,7 +26,7 @@ export async function getVisiblePost(db, id) {
 export const POST_SORTS = {
   links: "p.sticky DESC, p.created_at DESC",
   novos: "p.created_at DESC",
-  melhores: "comment_count DESC, p.created_at DESC",
+  melhores: "(SELECT COALESCE(SUM(v.value), 0) FROM votes v WHERE v.item_type = 'post' AND v.item_id = p.id) DESC, comment_count DESC, p.created_at DESC",
 };
 
 export function normalizeSort(raw) {

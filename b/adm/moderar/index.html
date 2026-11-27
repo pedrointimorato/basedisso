@@ -7,7 +7,7 @@
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
     <link rel="stylesheet" href="/account.css?v=20261130b">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261126h">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261201a">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -65,6 +65,7 @@
                 <a href="#mod-sec-comentarios">Comentários</a>
                 <a href="#mod-sec-posts">Postagens</a>
                 <a href="#mod-sec-conexoes">Conexões banidas</a>
+                <a href="#mod-sec-votos">Votos</a>
                 <a href="#mod-sec-res" data-site-only>Reservas</a>
                 <a href="#sec-convites" data-site-only>Códigos</a>
                 <a href="#sec-caixas" data-site-only>Caixas</a>
@@ -148,6 +149,17 @@
                 </div>
                 <div class="mod-card" id="mod-conexoes-list"></div>
             </div>
+            <div class="mod-section mod-votos" id="mod-sec-votos">
+                <h2>Votos e notas</h2>
+                <p class="mod-lead" id="mod-votos-lead">Quem votou (▲ +1 / ▼ −1) e quem deu nota de aplicabilidade ao tópico (★ 1 a 5) em postagens e comentários. Só contas votam. Visível apenas para ADMs: o ADM do site vê tudo; o ADM de uma b/ vê só a própria b/. Em itens anônimos aparece quem votou, nunca o autor.</p>
+                <div class="mod-countrow">
+                    <p class="mod-status" id="mod-votos-status" role="status"></p>
+                    <label class="mod-votos-filtro">conta <input type="search" id="mod-votos-filtro" placeholder="filtrar por conta" autocomplete="off"></label>
+                    <button type="button" class="mod-btn secondary mod-btn-sm" id="mod-votos-recarregar">Recarregar</button>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="votos" aria-controls="mod-votos-list" aria-expanded="true">Encolher</button>
+                </div>
+                <div class="mod-card" id="mod-votos-list"></div>
+            </div>
             <div class="mod-section mod-reservas" id="mod-sec-res" data-site-only>
                 <h2>Reservas de nomes primordiais</h2>
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
@@ -217,6 +229,7 @@
     <script src="/b/adm/moderar/moderar-convites.js?v=20261124d"></script>
     <script src="/b/adm/moderar/moderar-ascii.js?v=20261127c"></script>
     <script src="/b/adm/moderar/moderar-conexoes.js?v=20261128b"></script>
+    <script src="/b/adm/moderar/moderar-votos.js?v=20261201a"></script>
     <script src="/b/adm/moderar/moderar.js?v=20261128b"></script>
     <script src="/b/adm/moderar/moderar-collapse.js?v=20261124c"></script>
 </body>

@@ -1,0 +1,55 @@
+/* MOR-35 — votos ▲/▼ e nota ★ (aplicabilidade ao tópico) no rodapé de postagens e comentários. */
+.bd-votos { position: relative; display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: 12px; line-height: 1.2; vertical-align: middle; color: var(--t-text2, #555); }
+.bd-votos.is-busy { opacity: .6; }
+.bd-votos .bd-voto { width: 22px; height: 20px; padding: 0; margin: 0; border: 1px solid transparent; border-radius: 3px; background: transparent; cursor: pointer; position: relative; }
+.bd-votos .bd-voto::before { content: ""; position: absolute; left: 50%; top: 50%; width: 0; height: 0; border-style: solid; transform: translate(-50%, -50%); }
+.bd-votos .bd-voto-up::before { border-width: 0 6px 8px; border-color: transparent transparent var(--t-text3, #9a9a9a); }
+.bd-votos .bd-voto-down::before { border-width: 8px 6px 0; border-color: var(--t-text3, #9a9a9a) transparent transparent; }
+.bd-votos .bd-voto-up:not(:disabled):hover::before, .bd-votos .bd-voto-up.is-on::before { border-bottom-color: #ff6a33; }
+.bd-votos .bd-voto-down:not(:disabled):hover::before, .bd-votos .bd-voto-down.is-on::before { border-top-color: #6b6bff; }
+.bd-votos .bd-voto.is-on { background: var(--t-surface2, #f0f0f0); border-color: var(--t-border, #ddd); }
+.bd-votos .bd-voto:focus-visible, .bd-votos .bd-nota-btn:focus-visible, .bd-votos .bd-nota-star:focus-visible, .bd-votos .bd-votos-quem:focus-visible { outline: 2px solid var(--t-link, #0645ad); outline-offset: 1px; }
+.bd-votos .bd-voto:disabled { cursor: not-allowed; opacity: .45; }
+.bd-votos .bd-voto-score { min-width: 1.6em; text-align: center; font-weight: 700; color: var(--t-text, #333); font-variant-numeric: tabular-nums; }
+.bd-votos.voto-up .bd-voto-score { color: #e8501a; }
+.bd-votos.voto-down .bd-voto-score { color: #5a5aff; }
+.bd-votos .bd-nota-btn, .bd-votos .bd-votos-quem { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; min-height: 20px; border: 1px solid var(--t-border, #ddd); border-radius: 10px; background: transparent; color: inherit; font: inherit; font-size: 12px; cursor: pointer; }
+.bd-votos .bd-nota-btn:hover, .bd-votos .bd-votos-quem:hover { background: var(--t-surface2, #f0f0f0); }
+.bd-votos .bd-nota-ico { color: #d9a400; font-size: 13px; }
+.bd-votos .bd-nota-btn.is-on { border-color: #d9a400; }
+.bd-votos .bd-nota-total { color: var(--t-text3, #888); }
+.bd-votos .bd-votos-quem { border-style: dashed; color: var(--t-text3, #777); }
+.bd-votos .bd-votos-msg { flex-basis: 100%; font-size: 12px; color: var(--t-text2, #555); }
+.bd-votos .bd-votos-msg.erro { color: var(--t-red, #b00020); }
+.bd-votos .bd-votos-msg a { font-weight: 700; }
+.bd-votos .bd-nota-pop, .bd-votos .bd-votos-pop { position: absolute; z-index: 40; top: calc(100% + 4px); left: 0; min-width: 210px; max-width: min(320px, 86vw); padding: 8px 10px; background: var(--t-surface, #fff); color: var(--t-text, #222); border: 1px solid var(--t-border, #ccc); border-radius: 6px; box-shadow: 0 4px 14px rgba(0, 0, 0, .18); text-align: left; white-space: normal; }
+.bd-votos .bd-votos-pop { min-width: 260px; max-height: 320px; overflow: auto; }
+.bd-votos .bd-nota-pop-title { margin: 0 0 4px; font-weight: 700; font-size: 12px; text-transform: lowercase; color: var(--t-text2, #444); }
+.bd-votos .bd-nota-pop-info { margin: 4px 0 0; font-size: 12px; color: var(--t-text2, #555); }
+.bd-votos .bd-nota-pop-info.erro { color: var(--t-red, #b00020); }
+.bd-votos .bd-nota-stars { display: flex; gap: 2px; }
+.bd-votos .bd-nota-star { width: 32px; height: 32px; padding: 0; border: 1px solid transparent; border-radius: 4px; background: transparent; color: #d9a400; font-size: 22px; line-height: 1; cursor: pointer; }
+.bd-votos .bd-nota-star.is-hi { color: #e0a800; }
+.bd-votos .bd-nota-star.is-mine { border-color: #d9a400; background: rgba(217, 164, 0, .12); }
+.bd-votos .bd-nota-sua { font-weight: 700; }
+.bd-votos .bd-nota-remover { margin-top: 6px; padding: 0; border: 0; background: none; color: var(--t-link, #0645ad); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; }
+.bd-votos .bd-votantes { list-style: none; margin: 6px 0 0; padding: 0; }
+.bd-votos .bd-votante { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--t-border, #eee); font-size: 12px; }
+.bd-votos .bd-votante .user-mention { font-weight: 700; }
+.bd-votos .bd-votante-voto.up { color: #e8501a; }
+.bd-votos .bd-votante-voto.down { color: #5a5aff; }
+.bd-votos .bd-votante-voto.nenhum, .bd-votos .bd-votante-nota { color: var(--t-text3, #888); }
+.bd-votos .bd-votante time { color: var(--t-text3, #888); font-size: 11px; }
+/* Os botões do rodapé (.or-buttons) são 10px/sem borda: aqui a barra volta ao tamanho dela. */
+.bd-votos a { font-size: 12px; font-weight: 700; }
+.bd-votos button:hover { text-decoration: none; }
+/* Rodapés onde a barra entra */
+.or-buttons li.bd-votos-li { padding-right: 6px; }
+.bd-comment-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.bd-comment-foot > .bd-comment-actions-row { flex: 1 1 auto; min-width: 0; }
+.bd-comment-foot > .bd-comment-actions-row:has(form) { flex-basis: 100%; }
+@media (max-width: 640px) {
+  .bd-votos .bd-voto { width: 30px; height: 28px; }
+  .bd-votos .bd-nota-btn, .bd-votos .bd-votos-quem { min-height: 28px; padding: 2px 8px; }
+  .bd-votos .bd-nota-star { width: 40px; height: 40px; font-size: 26px; }
+}

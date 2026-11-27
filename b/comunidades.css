@@ -601,10 +601,6 @@
 }
 .bd-thread-toggle:hover { text-decoration: underline; }
 .bd-thread-toggle:focus-visible { outline: 2px solid var(--t-link2, #369); outline-offset: 1px; }
-.bd-thread-votes.or-midcol { display: inline-flex; flex-direction: row; align-items: center; width: auto; gap: 3px; padding: 0; flex: 0 0 auto; }
-.bd-thread-votes .or-arrow.or-up { margin: 0; border-width: 0 6px 7px; }
-.bd-thread-votes .or-arrow.or-down { margin: 0; border-width: 7px 6px 0; }
-.bd-thread-votes .or-score { font-size: 11px; }
 .bd-thread-titleline { min-width: 0; overflow-wrap: anywhere; }
 .bd-thread-title { font-size: 15px; font-weight: 700; color: var(--or-link); text-decoration: none; }
 .bd-thread-title:visited { color: var(--or-visited); }

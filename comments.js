@@ -262,15 +262,26 @@
     return b;
   }
 
+  // MOR-35: ADM que pode ver "quem votou" nesta página (vem da API: ver_votos).
+  var verVotos = false;
+
+  function voteBar(c) {
+    if (c.excluido || !c.id || !window.BDVotos) return null;
+    var v = c.votos || {};
+    return window.BDVotos.bar({ tipo: "comment", id: c.id, score: v.score, meu: v.meu, nota_media: v.nota_media, nota_total: v.nota_total,
+      minha_nota: v.minha_nota, proprio: Boolean(c.proprio), adm: verVotos, onChange: function (nv) { c.votos = nv; } });
+  }
+
   function renderComment(c, page, reload, closed) {
     var replyWrap = el("div", { class: "bd-comment-actions-row" });
+    var votos = voteBar(c);
     var avatar = c.excluido ? null : c.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(c.usuario, "sm") : null;
     var main = el("div", { class: "bd-comment-main" },
       el("p", { class: "bd-comment-meta" },
         c.fixado ? el("span", { class: "bd-comment-fixado", title: "fixado por um ADM" }, el("i", { class: "fa-solid fa-thumbtack", "aria-hidden": "true" }), " fixado") : null,
         authorNode(c), " · ", el("time", { datetime: c.created_at || "" }, relativeTime(c.created_at))),
       bodyNode(c),
-      replyWrap
+      votos ? el("div", { class: "bd-comment-foot" }, votos, replyWrap) : replyWrap
     );
     var item = el(
       "li",
@@ -396,6 +407,7 @@
             closed = true;
             if (formNode && formNode.parentNode) formNode.parentNode.replaceChild(closedNote(), formNode);
           }
+          verVotos = Boolean(out.data.ver_votos);
           renderList(listHost, out.data.comentarios || [], page, function () {
             reloadWidgets(page);
           }, closed, out.data.pode_fixar);
