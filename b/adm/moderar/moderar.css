@@ -249,3 +249,4 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mod-etq-row label > input, .mod-etq-row label > select { flex: 0 0 auto; height: auto; }
 .mod-etq-row label { margin-top: 0; }
 .mod-etq-row > .mod-btn { align-self: flex-end; }
+.mod-etq-row .mod-select, .mod-etq-row label > select { margin: 0; padding: 5px 8px; font-size: 14px; }
