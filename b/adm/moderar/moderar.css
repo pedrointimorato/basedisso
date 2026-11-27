@@ -246,3 +246,6 @@ body:not(.mod-site) [data-site-only] { display: none !important; }
 .mod-etq-h { margin: 0 0 6px; font-size: 15px; }
 .mod-etq-prev { margin: 6px 0 0; font-size: 12px; color: var(--text-secondary); }
 @media (max-width: 600px) { .mod-etq-row label, .mod-etq-desc { flex: 1 1 100%; } .mod-etq-row input[type="text"], .mod-etq-desc input[type="text"] { width: 100%; } }
+.mod-etq-row label > input, .mod-etq-row label > select { flex: 0 0 auto; height: auto; }
+.mod-etq-row label { margin-top: 0; }
+.mod-etq-row > .mod-btn { align-self: flex-end; }
