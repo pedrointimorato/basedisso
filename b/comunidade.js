@@ -200,7 +200,7 @@
     var meta = el("span", { class: "bd-thread-meta" + (av ? " has-avatar" : "") }, av, authorNode(p), " ", when,
       el("span", { class: "bd-thread-rel" }, " (" + relativeTime(p.created_at) + ")"));
     var summary = el("span", { class: "bd-thread-resumo" }, " · ", el("a", { href: href }, commentsLabel));
-    var head = el("div", { class: "bd-thread-head" }, toggle, " ", p.fixado ? pinTag() : null, p.fixado ? " " : null,
+    var head = el("div", { class: "bd-thread-head" }, toggle, " ", votes, " ", p.fixado ? pinTag() : null, p.fixado ? " " : null,
       el("span", { class: "bd-thread-titleline" }, title, " ", domain), " ", meta,
       p.enquete ? el("span", { class: "or-poll-badge" + (p.enquete.encerrada ? " is-closed" : "") }, " [enquete]") : null, summary);
 

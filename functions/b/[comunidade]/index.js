@@ -82,6 +82,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
     </div>
     <script src="/script.js?v=20261130c"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
+    <script src="/hora-local.js?v=20261126a"></script>
     <script src="/b/enquete.js?v=20261127a"></script>
     <script src="/b/comunidade.js?v=${V}"></script>
     <script src="/b/excluir-post.js?v=${V}"></script>
