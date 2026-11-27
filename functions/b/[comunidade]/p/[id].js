@@ -1,5 +1,6 @@
 import { attachTags } from "../../../_lib/etiquetas.js";
 import { attachVotes } from "../../../_lib/votos.js";
+import { attachMedia, midiaHtml } from "../../../_lib/midia.js";
 import { escapeHtml } from "../../../_lib/shared.js";
 import { SIDEBAR, V, communityCardHtml } from "../../../_lib/page-shell.js";
 import { communityCard, getCommunityDb, communityHref, postHref, publicPost, UUID_RE } from "../../../_lib/comunidades.js";
@@ -93,7 +94,8 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
   const linkImgHtml = linkImg ? `<div class="or-post-image">${imageHtml(linkImg, post.link, "bd-img-full")}</div>` : "";
   const bodyImgs = imagesInText(post.body || "");
   const bodyImgHtml = bodyImgs.length ? `<div class="bd-img-list">${bodyImgs.map((x) => imageHtml(x.src, x.href)).join("")}</div>` : "";
-  const hasImgs = Boolean(linkImg || bodyImgs.length);
+  const midia = !excluida && post.midia ? midiaHtml(post.midia, { nome: true, removivel: proprio || podeFixar }) : "";
+  const hasImgs = Boolean(linkImg || bodyImgs.length || midia);
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -160,7 +162,9 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
                                 ${tagsRowHtml(post, slug, proprio || podeEtiquetar, podeEtiquetar)}
                                 ${link ? `<p class="or-post-link"><a href="${link}" rel="noopener noreferrer">${link}</a>${domain ? ` <span class="or-domain">(${domain})</span>` : ""}</p>` : ""}
                                 ${linkImgHtml}
+                                ${midia ? `<div class="bd-midia-post">${midia}` : ""}
                                 ${body ? `<div class="or-md or-post-body">${body}</div>` : ""}
+                                ${midia ? `</div>` : ""}
                                 ${bodyImgHtml}
                                 ${enquete ? pollHtml(enquete) : ""}
                                 ${hasImgs ? `<p class="bd-img-toggle-row"><button type="button" class="bd-img-toggle" data-img-toggle="1">ocultar imagens</button></p>` : ""}
@@ -191,9 +195,10 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/b/base.js?v=${V}"></script>
     <script src="/b/painel.js?v=20261130a"></script>
     <script src="/account.js?v=20261129a"></script>
+    <script src="/midia.js?v=20261203a"></script>
     <script src="/etiquetas.js?v=20261202b"></script>
     <script src="/votos.js?v=20261201c"></script>
-    <script src="/comments.js?v=20261202a"></script>
+    <script src="/comments.js?v=20261203a"></script>
 </body>
 </html>`;
 }
@@ -230,6 +235,7 @@ export async function onRequestGet(context) {
   await attachAnonAvatar(env.DB, one);
   if (!row.author_deleted_at) await attachVotes(env.DB, "post", one, viewer);
   if (!row.author_deleted_at) await attachTags(env.DB, "post", one);
+  if (!row.author_deleted_at) await attachMedia(env.DB, "post", one);
   const verVotos = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
   const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete, verVotos, podeEtiquetar: verVotos });
   return new Response(html, {

@@ -1,5 +1,6 @@
 import { attachTags, insertTagStatements, tagsOf, validateTagIds } from "../_lib/etiquetas.js";
 import { attachVotes } from "../_lib/votos.js";
+import { attachMedia, attachStatement, mediaOf, validateMidiaRef } from "../_lib/midia.js";
 import {
   BODY_MAX,
   checkPostRate,
@@ -100,6 +101,7 @@ export async function onRequestGet(context) {
   await attachAnonAvatar(env.DB, comentarios);
   await attachVotes(env.DB, "comment", comentarios, viewer);
   await attachTags(env.DB, "comment", comentarios);
+  await attachMedia(env.DB, "comment", comentarios, (c) => c.excluido);
   let fechado = false;
   const pk = page.match(/^\/b\/([^/]+)\/p\/([0-9a-f-]{36})$/);
   if (pk) {
@@ -143,8 +145,9 @@ export async function onRequestPost(context) {
     if (post.author_deleted_at) return errorJson("Comentários fechados: a postagem foi excluída pelo autor.", 403);
   }
 
-  const body = sanitizeBody(data?.body);
-  if (!body) return errorJson("Escreva um comentário.", 400);
+  const body = sanitizeBody(data?.body || "");
+  const querMidia = data?.midia != null && data.midia !== "";
+  if (!body && !querMidia) return errorJson("Escreva um comentário.", 400);
   if (body.length > BODY_MAX) {
     return errorJson(`Comentário longo demais (máx. ${BODY_MAX} caracteres).`, 400);
   }
@@ -158,6 +161,13 @@ export async function onRequestPost(context) {
   const userId = session && !comoAnon ? session.id : null;
   const anonBy = comoAnon ? session.id : null;
   const anonBadge = comoAnon ? await anonBadgeAtPost(env.DB, session, communityOfPage(page)) : null;
+
+  // MOR-38: arquivo pendente enviado antes (só com conta).
+  let midiaIn = { id: null };
+  if (querMidia) {
+    midiaIn = await validateMidiaRef(env, data.midia, session, communityOfPage(page), session ? await getAdminContext(request, env) : null);
+    if (midiaIn.erro) return errorJson(midiaIn.erro, midiaIn.status || 400);
+  }
 
   let parentId = data?.parent_id ? String(data.parent_id).trim() : null;
   if (parentId) {
@@ -208,6 +218,7 @@ export async function onRequestPost(context) {
     .bind(id, page, parentId, name, body, createdAt, ipHash, userId, anonBy, anonBadge)
     .run();
   if (tagsIn.ids.length) await env.DB.batch(insertTagStatements(env.DB, "comment", id, tagsIn.ids, "autor", createdAt));
+  if (midiaIn.id) await attachStatement(env.DB, midiaIn.id, "comment", id, createdAt).run();
   await recordRate(env.DB, ipHash, "post");
 
   const comentario = await formatComment(env.DB, {
@@ -228,5 +239,6 @@ export async function onRequestPost(context) {
     anon_badge: anonBadge,
   }, session);
   comentario.etiquetas = (await tagsOf(env.DB, "comment", [id]))[id] || [];
+  comentario.midia = (await mediaOf(env.DB, "comment", [id]))[id] || null;
   return json({ ok: true, comentario }, 201);
 }

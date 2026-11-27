@@ -1,3 +1,4 @@
+import { sweepMedia } from "../../../_lib/midia.js";
 import { errorJson, isSameOrigin, json } from "../../../_lib/shared.js";
 import { canModerate, communityOfPage, getAdminContext } from "../../../_lib/admins.js";
 import { setCommentPin } from "../../../_lib/fixar.js";
@@ -80,5 +81,6 @@ export async function onRequestDelete(context) {
     frontier = next;
   }
   await env.DB.batch(ids.map((cid) => env.DB.prepare("DELETE FROM comments WHERE id = ?").bind(cid)));
+  context.waitUntil(sweepMedia(env)); // MOR-38: arquivos de itens apagados/excluídos saem do R2
   return json({ ok: true, apagado: true });
 }

@@ -383,6 +383,14 @@
         btn.parentNode.insertBefore(tl, btn.nextSibling);
         btn.parentNode.insertBefore(document.createTextNode(" · "), tl);
       }
+      // MOR-38: atalho para ligar/desligar o envio de imagens e vídeos nesta b/.
+      if (kind !== "panel" && slug && btn.parentNode && !card.querySelector(".bd-card-midia-link")) {
+        var tagsLink = card.querySelector(".bd-card-tags-link");
+        var ml = el("a", { class: "bd-card-tags-link bd-card-midia-link", href: "/b/adm/moderar/?b=" + encodeURIComponent(slug) + "#mod-sec-midia", title: "envio de imagens e vídeos em b/" + slug }, "arquivos");
+        var after = tagsLink || btn;
+        btn.parentNode.insertBefore(ml, after.nextSibling);
+        btn.parentNode.insertBefore(document.createTextNode(" · "), ml);
+      }
       var form = null;
       btn.addEventListener("click", function () {
         if (form) {

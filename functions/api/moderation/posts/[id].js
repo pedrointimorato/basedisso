@@ -1,3 +1,4 @@
+import { sweepMedia } from "../../../_lib/midia.js";
 import { errorJson, isSameOrigin, json } from "../../../_lib/shared.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 import { setPostPin } from "../../../_lib/fixar.js";
@@ -76,5 +77,6 @@ export async function onRequestDelete(context) {
   await deleteCommentsOnPage(env.DB, postPageKey(existing.community, id));
   await env.DB.prepare("DELETE FROM posts WHERE id = ?").bind(id).run();
   await deletePoll(env.DB, id);
+  context.waitUntil(sweepMedia(env)); // MOR-38: arquivos de itens apagados/excluídos saem do R2
   return json({ ok: true, apagado: true });
 }

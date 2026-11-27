@@ -26,6 +26,7 @@ import {
 } from "../../../_lib/comunidades.js";
 import { normalizeSort, listVisiblePosts, getVisiblePost } from "../../../_lib/posts.js";
 import { cleanPollInput, deletePoll, pollStatements } from "../../../_lib/enquete.js";
+import { attachMedia, attachStatement, mediaOf, validateMidiaRef } from "../../../_lib/midia.js";
 
 export async function onRequestGet(context) {
   const { env, params, request } = context;
@@ -50,6 +51,7 @@ export async function onRequestGet(context) {
   await attachAnonAvatar(env.DB, posts);
   await attachVotes(env.DB, "post", posts, viewer);
   await attachTags(env.DB, "post", posts);
+  await attachMedia(env.DB, "post", posts);
   const podeFixar = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
   return json({ sort, postagens: posts, pode_fixar: podeFixar, ver_votos: podeFixar, pode_etiquetar: podeFixar, etiqueta: filtro });
 }
@@ -87,8 +89,9 @@ export async function onRequestPost(context) {
   if (link === false) return errorJson("Link inválido. Use um endereço http ou https.", 400);
   const poll = cleanPollInput(data?.enquete);
   if (poll && poll.erro) return errorJson(poll.erro, 400);
-  if (!body && !link && !poll) {
-    return errorJson("Escreva um texto, informe um link ou adicione uma enquete.", 400);
+  const querMidia = data?.midia != null && data.midia !== "";
+  if (!body && !link && !poll && !querMidia) {
+    return errorJson("Escreva um texto, informe um link, anexe um arquivo ou adicione uma enquete.", 400);
   }
 
   const tagsIn = await validateTagIds(env.DB, data?.etiquetas, community.slug);
@@ -100,6 +103,13 @@ export async function onRequestPost(context) {
   const userId = session && !comoAnon ? session.id : null;
   const anonBy = comoAnon ? session.id : null;
   const anonBadge = comoAnon ? await anonBadgeAtPost(env.DB, session, community.slug) : null;
+
+  // MOR-38: arquivo enviado antes (pendente) — só com conta, no mesmo escopo, onde o envio está liberado.
+  let midiaIn = { id: null };
+  if (querMidia) {
+    midiaIn = await validateMidiaRef(env, data.midia, session, community.slug, session ? await getAdminContext(request, env) : null);
+    if (midiaIn.erro) return errorJson(midiaIn.erro, midiaIn.status || 400);
+  }
 
   const ipHash = await hashIp(request, env);
   if (!session) {
@@ -129,6 +139,7 @@ export async function onRequestPost(context) {
     }
   }
   if (tagsIn.ids.length) await env.DB.batch(insertTagStatements(env.DB, "post", id, tagsIn.ids, "autor", createdAt));
+  if (midiaIn.id) await attachStatement(env.DB, midiaIn.id, "post", id, createdAt).run();
   await recordRate(env.DB, ipHash, "post");
 
   const row = await getVisiblePost(env.DB, id);
@@ -150,5 +161,5 @@ export async function onRequestPost(context) {
     anon_by: anonBy,
     anon_badge: anonBadge,
     comment_count: 0,
-  }, { proprio: Boolean(session) }), etiquetas: (await tagsOf(env.DB, "post", [id]))[id] || [] }, 201);
+  }, { proprio: Boolean(session) }), etiquetas: (await tagsOf(env.DB, "post", [id]))[id] || [], midia: (await mediaOf(env.DB, "post", [id]))[id] || null }, 201);
 }

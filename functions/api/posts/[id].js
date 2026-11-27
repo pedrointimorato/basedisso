@@ -1,3 +1,4 @@
+import { sweepMedia } from "../../_lib/midia.js";
 import { errorJson, json } from "../../_lib/shared.js";
 import { UUID_RE, publicPost } from "../../_lib/comunidades.js";
 import { getVisiblePost } from "../../_lib/posts.js";
@@ -22,5 +23,6 @@ export async function onRequestDelete(context) {
   if (!UUID_RE.test(id)) return errorJson("Identificador inválido.", 400);
   const r = await deleteOwnPost(env.DB, g.user, id);
   if (!r.ok) return errorJson(r.erro, r.status);
+  context.waitUntil(sweepMedia(env)); // MOR-38: arquivos de itens apagados/excluídos saem do R2
   return json({ ok: true, modo: r.modo, comunidade: r.community });
 }

@@ -1,0 +1,67 @@
+/* MOR-38 — arquivos enviados (imagem/vídeo), estilo chan: miniatura à esquerda, "62 KB JPG" embaixo. */
+.bd-midia { float: left; display: block; margin: 2px 14px 6px 0; max-width: 100%; text-align: center; }
+.bd-midia-thumb { display: inline-block; position: relative; line-height: 0; max-width: 100%; cursor: zoom-in; text-decoration: none; }
+.bd-midia-mini { display: block; max-width: 250px; max-height: 250px; width: auto; height: auto; border: 1px solid var(--border-color, #dee0e1); background: var(--search-bg, #f7f7f8); }
+.bd-midia-play { position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(0, 0, 0, .62); color: #fff; font-size: 17px; line-height: 44px; text-align: center; text-indent: 3px; pointer-events: none; }
+.bd-midia-ph { display: none; line-height: 1.4; font-size: 12px; font-weight: 700; color: var(--t-link, var(--accent-blue, #1a73e8)); padding: 2px 0; }
+.bd-midia-cap { margin: 3px auto 0; max-width: 250px; font-size: 11px; line-height: 1.35; color: var(--text-secondary, #636466); text-align: center; }
+.bd-midia-nome, .bd-midia-info { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-midia-remover { background: none; border: 0; padding: 0; margin: 2px 0 0; font: inherit; font-size: 11px; color: var(--text-secondary, #636466); text-decoration: underline; cursor: pointer; }
+.bd-midia-remover:hover { color: var(--accent-red, #b92b27); }
+.bd-midia-removido { font-size: 12px; color: var(--text-secondary, #636466); font-style: italic; margin: 4px 0; }
+
+/* Aberto: tamanho original (cabe na largura disponível). Clicar de novo volta à miniatura. */
+.bd-midia.is-open { float: none; display: block; text-align: left; margin-right: 0; }
+.bd-midia.is-open .bd-midia-thumb { cursor: zoom-out; display: inline-block; }
+.bd-midia.is-open:not(.is-loading) .bd-midia-mini { display: none; }
+.bd-midia.is-loading .bd-midia-full { position: absolute; left: 0; top: 0; opacity: 0; }
+.bd-midia-full { display: block; max-width: 100%; width: auto; height: auto; }
+.bd-midia.is-open .bd-midia-cap { text-align: left; max-width: none; margin-left: 0; }
+.bd-midia-player { display: inline-block; max-width: 100%; line-height: 0; }
+.bd-midia-player video { display: block; max-width: 100%; width: auto; height: auto; max-height: 85vh; background: #000; }
+.bd-midia-bar { display: flex; justify-content: flex-end; margin: 0 0 4px; line-height: 1.2; }
+.bd-midia-fechar { font: inherit; font-size: 12px; font-weight: 700; padding: 3px 10px; border: 1px solid var(--border-color, #dee0e1); border-radius: 4px; background: var(--bg-card, #fff); color: var(--text-primary, #2e3031); cursor: pointer; }
+.bd-midia-fechar:hover, .bd-midia-fechar:focus-visible { border-color: var(--accent-red, #b92b27); color: var(--accent-red, #b92b27); }
+
+/* O texto corre ao lado da miniatura; rodapés e respostas descem abaixo dela. */
+.bd-midia-post::after, .bd-thread-body::after, .bd-comment-main::after { content: ""; display: table; clear: both; }
+.bd-thread-actions, .bd-comment-foot, .bd-comment-main > .bd-comment-actions-row, .or-own-actions, .bd-poll, .bd-thread-media { clear: both; }
+.bd-thread-text, .bd-midia-post .or-post-body, .bd-comment-body { overflow-wrap: anywhere; }
+
+/* Modo compacto: a miniatura vai no quadradinho; abrir mostra o arquivo embaixo do título. */
+.or-thumb.or-thumb-midia { position: relative; overflow: hidden; }
+.or-thumb.or-thumb-midia .bd-midia-sq { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.or-thumb.or-thumb-midia .bd-midia-sq-play { position: absolute; right: 3px; bottom: 3px; padding: 0 4px; border-radius: 3px; background: rgba(0, 0, 0, .65); color: #fff; font-size: 10px; line-height: 15px; }
+.or-midia-info { font-size: 11px; color: var(--text-secondary, #636466); }
+.or-expando .bd-midia { float: none; margin: 4px 0; }
+
+/* "ocultar imagens": some a miniatura, fica o texto [imagem]/[vídeo] (clicar ainda abre). */
+html.bd-noimg .bd-midia:not(.is-open) .bd-midia-mini, html.bd-noimg .bd-midia:not(.is-open) .bd-midia-play { display: none; }
+html.bd-noimg .bd-midia:not(.is-open) .bd-midia-ph { display: inline-block; }
+html.bd-noimg .or-thumb-midia .bd-midia-sq, html.bd-noimg .or-thumb-midia .bd-midia-sq-play { display: none; }
+
+/* Seletor no formulário */
+.bd-midia-picker { border: 1px solid var(--border-color, #dee0e1); border-radius: 4px; padding: 6px 10px 8px; margin: 8px 0; min-width: 0; }
+.bd-midia-picker legend { font-size: 12px; font-weight: 700; padding: 0 4px; color: var(--text-primary, #2e3031); }
+.bd-midia-picker legend small { font-weight: 400; color: var(--text-secondary, #636466); }
+.bd-midia-input { max-width: 100%; font-size: 13px; color: var(--text-primary, #2e3031); }
+.bd-midia-hint { margin: 4px 0 0; font-size: 11px; color: var(--text-secondary, #636466); }
+.bd-midia-sel { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 12px; color: var(--text-primary, #2e3031); min-width: 0; }
+.bd-midia-sel img { width: auto; height: auto; max-width: 64px; max-height: 64px; border: 1px solid var(--border-color, #dee0e1); flex: 0 0 auto; }
+.bd-midia-sel-txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-midia-sel button { flex: 0 0 auto; background: none; border: 0; padding: 0; font: inherit; font-size: 12px; color: var(--text-secondary, #636466); text-decoration: underline; cursor: pointer; }
+.bd-midia-status { margin: 4px 0 0; font-size: 12px; color: var(--text-secondary, #636466); }
+.bd-midia-status.erro { color: #d33; }
+.bd-midia-status.ok { color: #2e7d32; }
+html[data-theme="dark"] .bd-midia-status.ok { color: #7bd17f; }
+html[data-theme="dark"] .bd-midia-status.erro { color: #ff7b73; }
+.bd-midia-bar-prog { height: 4px; margin-top: 4px; background: var(--border-subtle, #f1f2f2); border-radius: 2px; overflow: hidden; }
+.bd-midia-bar-prog > span { display: block; height: 100%; width: 0; background: var(--accent-blue, #1a73e8); transition: width .15s; }
+
+@media (max-width: 600px) {
+    .bd-midia { margin-right: 10px; }
+    .bd-midia:not(.is-open) .bd-midia-mini { max-width: 140px; max-height: 140px; }
+    .bd-midia:not(.is-open) .bd-midia-cap { max-width: 140px; }
+    .bd-midia-fechar { font-size: 14px; padding: 6px 14px; }
+    .bd-midia-remover { font-size: 13px; padding: 4px 0; }
+}

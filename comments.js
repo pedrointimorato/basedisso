@@ -75,8 +75,12 @@
       p.appendChild(document.createTextNode(c.body || ""));
     }
     var img = window.BDAccount && window.BDAccount.img;
-    if (!img) return p;
+    // MOR-38: arquivo enviado — miniatura à esquerda, texto ao lado.
+    var fig = c.midia && window.BDMidia ? window.BDMidia.node(c.midia, { nome: true, removivel: c.proprio || pinAllowed }) : null;
+    if (fig) hasImages = true;
+    if (!img) { if (!fig) return p; var f0 = document.createDocumentFragment(); f0.appendChild(fig); f0.appendChild(p); return f0; }
     var frag = document.createDocumentFragment();
+    if (fig) frag.appendChild(fig);
     frag.appendChild(p);
     if (img.append(frag, c.body || "")) hasImages = true;
     return frag;
@@ -119,10 +123,12 @@
     // MOR-36: etiquetas opcionais (até 3) abaixo de "Comentar como" / anônimo.
     var tagPick = window.BDEtiquetas ? window.BDEtiquetas.picker({ page: page }) : null;
     if (tagPick) tagPick.node.classList.add("bd-tag-picker-comment");
+    // MOR-38: imagem/vídeo (só para quem pode enviar nesta página).
+    var midPick = window.BDMidia ? window.BDMidia.picker({ page: page }) : null;
+    if (midPick) midPick.node.classList.add("bd-midia-picker-comment");
     var bodyInput = el("textarea", {
       name: "body",
       maxlength: "2000",
-      required: "required",
       rows: opts.compact ? "3" : "5",
       placeholder: "Escreva seu comentário. Você pode mencionar com >>Nome ou @Nome.",
     });
@@ -145,6 +151,7 @@
       tagPick ? tagPick.node : null,
       nameLabel,
       el("label", null, "Comentário", bodyInput),
+      midPick ? midPick.node : null,
       hp,
       tsBox,
       el("div", { class: "bd-comments-actions" }, submit, status)
@@ -173,8 +180,14 @@
       status.textContent = "";
       status.className = "bd-comments-status";
       var body = bodyInput.value.trim();
-      if (!body) {
-        status.textContent = "Escreva um comentário.";
+      if (midPick && midPick.busy()) {
+        status.textContent = "Espere o envio do arquivo terminar.";
+        status.classList.add("erro");
+        return;
+      }
+      var midia = midPick ? midPick.value() : undefined;
+      if (!body && !midia) {
+        status.textContent = midPick && midPick.pode ? "Escreva um comentário ou anexe um arquivo." : "Escreva um comentário.";
         status.classList.add("erro");
         return;
       }
@@ -191,6 +204,7 @@
           etiquetas: tagPick ? tagPick.value() : undefined,
           turnstile: ts && !currentUser ? ts.token() : undefined,
           body: body,
+          midia: midia,
           website: hp.value,
         }),
       })
@@ -209,6 +223,7 @@
           }
           form.reset();
           if (tagPick) tagPick.reset();
+          if (midPick) midPick.reset();
           applyUser();
           setSentStatus(status, !!opts.formOnly);
           if (typeof onDone === "function") onDone();

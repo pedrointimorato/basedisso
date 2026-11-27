@@ -69,17 +69,37 @@
     var n = Number(p.comment_count || 0);
     var commentsLabel = n === 1 ? "1 comentário" : n + " comentários";
     var IMG = window.BDAccount && window.BDAccount.img;
-    var imgSrc = p.link && IMG ? IMG.url(p.link) : null;
-    var thumb = el("a", { class: "or-thumb" + (imgSrc ? " or-thumb-img" : ""), href: imgSrc ? p.link : href, "aria-hidden": "true", tabindex: "-1" });
+    var MID = p.midia && window.BDMidia ? p.midia : null;
+    var imgSrc = !MID && p.link && IMG ? IMG.url(p.link) : null;
+    var thumb = el("a", { class: "or-thumb" + (imgSrc ? " or-thumb-img" : "") + (MID ? " or-thumb-midia" : ""), href: imgSrc ? p.link : href, "aria-hidden": "true", tabindex: "-1" });
     if (imgSrc) { thumb.setAttribute("target", "_blank"); thumb.setAttribute("rel", "noopener noreferrer nofollow"); }
-    if (p.link) thumb.style.background = "var(--t-info-bg, #cee3f8)";
-    thumb.appendChild(el("i", { class: p.link ? (imgSrc ? "fa-regular fa-image" : "fa-solid fa-link") : "fa-regular fa-file-lines" }));
+    if (p.link && !MID) thumb.style.background = "var(--t-info-bg, #cee3f8)";
+    thumb.appendChild(el("i", { class: MID ? (MID.tipo === "video" ? "fa-solid fa-film" : "fa-regular fa-image") : p.link ? (imgSrc ? "fa-regular fa-image" : "fa-solid fa-link") : "fa-regular fa-file-lines" }));
+    if (MID) thumb.appendChild(window.BDMidia.square(MID));
     if (imgSrc) {
       var ti = IMG.node(imgSrc, p.link).firstChild;
       thumb.appendChild(ti);
     }
     var expando = null, expBtn = null;
-    if (imgSrc) {
+    if (MID) {
+      // MOR-38: arquivo enviado — o quadradinho e o botão abrem o arquivo embaixo do título (clicar nele de novo fecha).
+      expando = el("div", { class: "or-expando or-expando-midia", hidden: "hidden" });
+      expBtn = el("button", { type: "button", class: "or-expando-btn", "aria-expanded": "false", title: "mostrar arquivo", "aria-label": "mostrar arquivo" }, el("i", { class: MID.tipo === "video" ? "fa-solid fa-play" : "fa-solid fa-image", "aria-hidden": "true" }));
+      var setExp = function (open) {
+        if (open && !expando.firstChild) expando.appendChild(window.BDMidia.node(MID, { nome: true, removivel: p.proprio || podeFixar }));
+        var fig = expando.querySelector(".bd-midia");
+        if (!open && fig) window.BDMidia.close(fig);
+        expando.hidden = !open;
+        if (open && fig) window.BDMidia.open(fig);
+        expBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        expBtn.classList.toggle("is-open", open);
+        expBtn.setAttribute("title", open ? "ocultar arquivo" : "mostrar arquivo");
+        expBtn.setAttribute("aria-label", open ? "ocultar arquivo" : "mostrar arquivo");
+      };
+      expBtn.addEventListener("click", function () { setExp(expando.hidden); });
+      thumb.setAttribute("href", MID.url);
+      thumb.addEventListener("click", function (ev) { if (ev.button || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return; ev.preventDefault(); setExp(expando.hidden); });
+    } else if (imgSrc) {
       expando = el("div", { class: "or-expando", hidden: "hidden" });
       expBtn = el("button", { type: "button", class: "or-expando-btn", "aria-expanded": "false", title: "mostrar imagem", "aria-label": "mostrar imagem" }, el("i", { class: "fa-solid fa-image", "aria-hidden": "true" }));
       expBtn.addEventListener("click", function () {
@@ -106,6 +126,7 @@
     var tagline = el("p", { class: "or-tagline" + (av ? " has-avatar" : "") }, "enviado " + relativeTime(p.created_at) + " por ", av, authorNode(p));
     if (p.fixado) tagline.insertBefore(pinTag(), tagline.firstChild);
     if (expBtn) tagline.insertBefore(expBtn, tagline.firstChild);
+    if (MID) { tagline.appendChild(document.createTextNode(" · ")); tagline.appendChild(el("span", { class: "or-midia-info" }, "[" + window.BDMidia.info(MID) + "]")); }
     if (p.enquete) {
       var tot = Number(p.enquete.total || 0);
       tagline.appendChild(document.createTextNode(" · "));
@@ -201,6 +222,8 @@
     var body = el("div", { class: "bd-thread-body", id: "thread-" + p.id });
     if (folded) body.hidden = true;
     if (p.link) body.appendChild(el("p", { class: "or-post-link" }, el("a", { href: p.link, rel: "noopener noreferrer nofollow", target: "_blank" }, p.link)));
+    // MOR-38: arquivo enviado — miniatura à esquerda, texto ao lado (como no chan).
+    if (p.midia && window.BDMidia) body.appendChild(window.BDMidia.node(p.midia, { removivel: p.proprio || podeFixar }));
     var media = el("div", { class: "bd-thread-media" });
     if (linkImg) media.appendChild(IMG.node(linkImg, p.link, "bd-img-thread"));
     if (p.body && IMG) IMG.inText(p.body).forEach(function (x) { if (x.src !== linkImg) media.appendChild(IMG.node(x.src, IMG.url(x.href) ? x.href : x.src, "bd-img-thread")); });
@@ -333,7 +356,7 @@
     host.classList.toggle("bd-feed-threads", !compact);
     host.classList.toggle("bd-feed-compacto", compact);
     var IMG = window.BDAccount && window.BDAccount.img;
-    var hasImg = IMG && posts.some(function (p) { return (p.link && IMG.url(p.link)) || (!compact && p.body && IMG.inText(p.body).length); });
+    var hasImg = IMG && posts.some(function (p) { return p.midia || (p.link && IMG.url(p.link)) || (!compact && p.body && IMG.inText(p.body).length); });
     var fbar = tagFilterBar(data);
     if (fbar) host.appendChild(fbar);
     if (hasImg) host.appendChild(el("p", { class: "bd-img-toggle-row or-img-toggle-row" }, IMG.toggle()));
@@ -517,6 +540,15 @@
       if (after && after.parentNode) after.parentNode.insertBefore(tagPick.node, after.nextSibling);
       else form.insertBefore(tagPick.node, form.firstChild);
     }
+    // MOR-38: arquivo (imagem/vídeo) — só aparece para quem pode enviar nesta b/.
+    var midPick = null;
+    if (window.BDMidia) {
+      midPick = window.BDMidia.picker({ b: slug });
+      midPick.node.classList.add("bd-midia-picker-post");
+      var anc = bodyInput ? bodyInput.closest("label") || bodyInput : null;
+      if (anc && anc.parentNode) anc.parentNode.insertBefore(midPick.node, anc.nextSibling);
+      else form.insertBefore(midPick.node, form.firstChild);
+    }
     var tsBox = null, ts = null;
     if (submit && window.BDAccount && window.BDAccount.turnstile) {
       tsBox = el("div", { class: "bd-turnstile", hidden: "hidden" });
@@ -572,9 +604,17 @@
         }
         return;
       }
-      if (!body && !link && !enquete) {
+      if (midPick && midPick.busy()) {
         if (status) {
-          status.textContent = "Escreva um texto, informe um link ou adicione uma enquete.";
+          status.textContent = "Espere o envio do arquivo terminar.";
+          status.classList.add("erro");
+        }
+        return;
+      }
+      var midia = midPick ? midPick.value() : undefined;
+      if (!body && !link && !enquete && !midia) {
+        if (status) {
+          status.textContent = "Escreva um texto, informe um link, anexe um arquivo ou adicione uma enquete.";
           status.classList.add("erro");
         }
         return;
@@ -592,6 +632,7 @@
           name: nameInput ? nameInput.value : "",
           anonimo: Boolean(anonBox && anonBox.style.display !== "none" && anonBox._input.checked),
           etiquetas: tagPick ? tagPick.value() : undefined,
+          midia: midia,
           turnstile: ts && !loggedIn ? ts.token() : undefined,
           website: hp ? hp.value : "",
         }),
@@ -615,6 +656,7 @@
           updateLinkPreview();
           poll.reset();
           if (tagPick) tagPick.reset();
+          if (midPick) midPick.reset();
           if (window.BDAccount && window.BDAccount.me) window.BDAccount.me().then(applyUser);
           else applyUser(null);
           if (status) {
