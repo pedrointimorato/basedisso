@@ -298,7 +298,27 @@
     return parts;
   }
 
+  // MOR-40: greentext (estilo chan). Uma linha que começa com ">" (espaços/tab antes também contam) fica verde,
+  // menos ">>Nome" / ">>123" (menções e citações: ">>" seguido de letra, número ou _). Feito na hora de mostrar:
+  // o texto guardado não muda, e tudo continua sendo nó de texto (sem HTML).
+  var GREEN_RE = /^[ \t]*>(?!>[A-Za-z0-9_])/;
+  function isGreenLine(line) { return GREEN_RE.test(String(line || "")); }
+  function appendGreen(node, text, each) {
+    String(text == null ? "" : text).split(/\r?\n/).forEach(function (line, i) {
+      if (i) node.appendChild(document.createTextNode("\n"));
+      if (!line) return;
+      var target = node;
+      if (isGreenLine(line)) { target = document.createElement("span"); target.className = "bd-green"; node.appendChild(target); }
+      if (each) each(target, line); else target.appendChild(document.createTextNode(line));
+    });
+    return node;
+  }
+
   function appendBodyWithMentions(node, text, mencoes) {
+    return appendGreen(node, text, function (target, line) { appendMentionsOnly(target, line, mencoes); });
+  }
+
+  function appendMentionsOnly(node, text, mencoes) {
     var map = mencoes || {};
     tokenizeMentions(text).forEach(function (part) {
       if (part.type !== "mention") {
@@ -555,6 +575,8 @@
     displayName: displayName,
     profileHref: profileHref,
     appendBodyWithMentions: appendBodyWithMentions,
+    appendGreen: appendGreen,
+    isGreenLine: isGreenLine,
     tokenizeMentions: tokenizeMentions,
     fillNav: fillNav,
     fillSidebarAccount: fillSidebarAccount,

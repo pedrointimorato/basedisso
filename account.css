@@ -575,3 +575,9 @@ label.bd-anon-toggle input[type="checkbox"] { margin: 0; width: 15px; height: 15
     .or-sub.has-icon { gap: 10px; }
 }
 .or-snoo.ascii-avatar-b, .or-b-icon { transition: border-color .15s; }
+
+/* ---------- MOR-40: greentext (linha que começa com ">") ---------- */
+/* Tom do 4chan (#789922), um pouco mais escuro para ler bem no branco; mais claro no escuro, mais escuro no papel. */
+.bd-green { color: #5f7d14; }
+[data-theme="dark"] .bd-green { color: #9cbd45; }
+[data-theme="papel"] .bd-green { color: #566f10; }

@@ -1,6 +1,19 @@
 (function () {
   "use strict";
 
+  // MOR-40: greentext — mesmas regras de account.js (BDAccount.appendGreen); cópia local caso account.js ainda não tenha carregado.
+  var GREEN_RE = /^[ \t]*>(?!>[A-Za-z0-9_])/;
+  function greenText(node, text) {
+    if (window.BDAccount && window.BDAccount.appendGreen) return window.BDAccount.appendGreen(node, text);
+    String(text == null ? "" : text).split(/\r?\n/).forEach(function (line, i) {
+      if (i) node.appendChild(document.createTextNode("\n"));
+      if (!line) return;
+      if (GREEN_RE.test(line)) { var sp = document.createElement("span"); sp.className = "bd-green"; sp.textContent = line; node.appendChild(sp); }
+      else node.appendChild(document.createTextNode(line));
+    });
+    return node;
+  }
+
   function el(tag, attrs) {
     var node = document.createElement(tag);
     var key, val, i, child;
@@ -133,7 +146,7 @@
       tagline.appendChild(el("span", { class: "or-poll-badge" + (p.enquete.encerrada ? " is-closed" : "") }, "[enquete]"));
       tagline.appendChild(document.createTextNode(" " + (tot === 1 ? "1 voto" : tot + " votos") + (p.enquete.encerrada ? " · encerrada" : "")));
     }
-    var exp = p.body ? el("p", { class: "or-exp" }, p.body.length > 220 ? p.body.slice(0, 220) + "…" : p.body) : null;
+    var exp = p.body ? greenText(el("p", { class: "or-exp" }), p.body.length > 220 ? p.body.slice(0, 220) + "…" : p.body) : null;
     return el(
       "article",
       { class: "or-thing" + (p.fixado ? " or-fixado" : ""), "data-post-id": p.id },
@@ -228,7 +241,7 @@
     if (linkImg) media.appendChild(IMG.node(linkImg, p.link, "bd-img-thread"));
     if (p.body && IMG) IMG.inText(p.body).forEach(function (x) { if (x.src !== linkImg) media.appendChild(IMG.node(x.src, IMG.url(x.href) ? x.href : x.src, "bd-img-thread")); });
     if (media.firstChild) body.appendChild(media);
-    if (p.body) body.appendChild(el("div", { class: "or-md or-post-body bd-thread-text" }, p.body));
+    if (p.body) body.appendChild(greenText(el("div", { class: "or-md or-post-body bd-thread-text" }), p.body));
     if (p.enquete) {
       var poll = el("section", { class: "bd-poll", "data-enquete": p.id, "aria-label": "Enquete" },
         el("p", { class: "bd-poll-head" }, el("span", { class: "bd-poll-tag" }, "[enquete]"), " carregando…"));

@@ -14,6 +14,7 @@ import { pollHtml } from "../../../_lib/enquete-html.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 import { attachAnonAvatar, isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
 import { attachConnections } from "../../../_lib/conexoes.js";
+import { greenHtml } from "../../../_lib/greentext.js";
 import { communitySnooHtml, readCommunityAvatar } from "../../../_lib/b-avatar.js";
 
 function badgeHtml(u) {
@@ -87,7 +88,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
   const hrefComm = communityHref(slug);
   const hrefPost = postHref(slug, post.id);
   const pageKey = `/b/${slug}/p/${post.id}`;
-  const body = escapeHtml(post.body || "");
+  const body = greenHtml(post.body || "", escapeHtml);
   const link = post.link ? escapeHtml(post.link) : "";
   const domain = post.link ? escapeHtml(domainOf(post.link)) : "";
   const when = localTimeHtml(post.created_at);
@@ -106,7 +107,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261204b">
+    <link rel="stylesheet" href="/account.css?v=20261205a">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -195,7 +196,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
     <script src="/b/painel.js?v=20261204a"></script>
-    <script src="/account.js?v=20261129a"></script>
+    <script src="/account.js?v=20261205a"></script>
     <script src="/midia.js?v=20261203b"></script>
     <script src="/etiquetas.js?v=20261202b"></script>
     <script src="/votos.js?v=20261201c"></script>
