@@ -10,6 +10,7 @@ import {
 } from "../../_lib/comunidades.js";
 import { denyUnlessSite, getAdminContext, listCommunityAdmins } from "../../_lib/admins.js";
 import { getSessionUser } from "../../_lib/auth.js";
+import { communityAvatarMap } from "../../_lib/b-avatar.js";
 
 export async function onRequestGet(context) {
   const { env, request } = context;
@@ -69,6 +70,7 @@ export async function onRequestGet(context) {
     /* tabela ausente em ambiente local */
   }
 
+  const avatars = await communityAvatarMap(env.DB);
   const comunidades = catalog.map((c) => {
     const posts = bySlug[c.slug] || { n: 0, last_at: null };
     let last = posts.last_at;
@@ -90,6 +92,7 @@ export async function onRequestGet(context) {
       created_at: c.created_at || null,
       total_membros: memberCounts[c.slug] || 0,
       membro: mine.has(c.slug),
+      avatar: avatars[c.slug] || null,
       adms: (adms[c.slug] || []).map((a) => ({
         username: a.username,
         is_primordial: a.is_primordial,

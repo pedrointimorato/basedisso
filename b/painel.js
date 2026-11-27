@@ -69,11 +69,16 @@
       el("h3", { class: "or-painel-h", id: "or-painel-comms-h" }, "comunidades"));
     var ul = el("ul", { class: "or-painel-list" });
     comms.forEach(function (c) {
-      ul.appendChild(el("li", { class: "or-painel-comm" + (c.slug === atual ? " is-atual" : ""), "data-slug": c.slug },
+      // MOR-39: avatar ASCII da b/ (ou o "b" laranja) à esquerda, levando à b/.
+      var icon = window.BDBAvatar ? window.BDBAvatar.icon(c.slug, c.avatar, "xs") : null;
+      var iconLink = icon ? el("a", { class: "or-painel-comm-icon", href: c.href, tabindex: "-1", "aria-hidden": "true" }, icon) : null;
+      ul.appendChild(el("li", { class: "or-painel-comm" + (c.slug === atual ? " is-atual" : "") + (icon ? " has-icon" : ""), "data-slug": c.slug },
+        iconLink,
+        el("div", { class: "or-painel-comm-text" },
         el("a", { class: "or-painel-comm-nome", href: c.href, "aria-current": c.slug === atual ? "page" : null }, "b/" + c.slug),
         c.nome && c.nome !== c.slug ? el("span", { class: "or-painel-comm-alt" }, " " + c.nome) : null,
         el("p", { class: "or-painel-meta" }, plural(c.postagens, "postagem", "postagens"), " · ", plural(c.membros, "membro", "membros"),
-          " · ", c.ultima_atividade ? el("span", null, "ativa ", timeNode(c.ultima_atividade)) : "sem atividade recente")));
+          " · ", c.ultima_atividade ? el("span", null, "ativa ", timeNode(c.ultima_atividade)) : "sem atividade recente"))));
     });
     boxC.appendChild(ul);
     boxC.appendChild(el("p", { class: "or-painel-mais" }, el("a", { href: "/b/" }, (d.total_comunidades > comms.length ? "todas as " + d.total_comunidades + " comunidades" : "todas as comunidades") + " »")));

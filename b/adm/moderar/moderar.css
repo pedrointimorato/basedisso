@@ -263,3 +263,19 @@ html[data-theme="dark"] .mod-midia-estado.is-on { color: #7bd17f; border-color: 
 .mod-midia-msg.ok { color: #2e7d32; } .mod-midia-msg.erro { color: #d33; }
 html[data-theme="dark"] .mod-midia-msg.ok { color: #7bd17f; }
 .mod-midia-note { padding: 10px 0 2px; font-size: 13px; color: var(--text-secondary); }
+
+/* MOR-39 — aba Avatar das b/ */
+.mod-bav-atual { margin: 0 0 10px; }
+.mod-bav-previews { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
+.mod-bav-previews .avatar-preview-item > span { font-size: 11px; color: var(--text-light, var(--t-text3, #8f9092)); }
+.mod-bav-head { display: flex; align-items: flex-end; gap: 10px; padding: 6px 14px 4px 8px; min-width: 150px; background: #cee3f8; border-bottom: 1px solid #5f99cf; }
+[data-theme="dark"] .mod-bav-head { background: #1d2a3a; border-bottom-color: #34506e; }
+[data-theme="papel"] .mod-bav-head { background: #e6d8b8; border-bottom-color: #b99d6a; }
+.mod-bav-head .or-snoo { margin-bottom: 4px; }
+.mod-bav-snoo { width: 48px; height: 48px; border-radius: 8px; background: #ff4500; color: #fff; font: italic 700 28px Palatino, "Times New Roman", serif; display: flex; align-items: center; justify-content: center; }
+.mod-bav-head-name { font-size: 20px; padding-bottom: 6px; }
+.mod-bav-sub, .mod-bav-painel { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border-subtle, #e0e0e0); min-width: 140px; }
+.mod-bav-sub strong { font-size: 15px; color: var(--t-link, #0000ff); }
+.mod-bav-painel { gap: 8px; padding: 4px 8px; }
+.mod-bav-painel strong { font-size: 13px; }
+.mod-bav-tools[hidden] { display: none; }

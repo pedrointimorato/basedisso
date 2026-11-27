@@ -14,6 +14,7 @@ import { pollHtml } from "../../../_lib/enquete-html.js";
 import { canModerate, getAdminContext } from "../../../_lib/admins.js";
 import { attachAnonAvatar, isOwn, realAuthors, withRealAuthor } from "../../../_lib/anonimo.js";
 import { attachConnections } from "../../../_lib/conexoes.js";
+import { communitySnooHtml, readCommunityAvatar } from "../../../_lib/b-avatar.js";
 
 function badgeHtml(u) {
   if (!u) return "";
@@ -78,7 +79,7 @@ function domainOf(link) {
   }
 }
 
-export function postPageHtml({ community, post, proprio = false, podeFixar = false, enquete = null, verVotos = false, podeEtiquetar = false }) {
+export function postPageHtml({ community, post, proprio = false, podeFixar = false, enquete = null, verVotos = false, podeEtiquetar = false, bAvatar = null }) {
   const excluida = Boolean(post.excluida_pelo_autor);
   const slug = community.slug;
   const title = excluida ? "Postagem excluída pelo autor" : escapeHtml(post.title || "Postagem");
@@ -105,7 +106,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} — b/${escapeHtml(slug)} — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261130b">
+    <link rel="stylesheet" href="/account.css?v=20261204a">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -135,7 +136,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
                     <header class="or-header">
                         <div class="or-sr-bar">basedisso &nbsp;·&nbsp; <a href="/b/">comunidades</a> &nbsp;·&nbsp; <a href="${hrefComm}">b/${escapeHtml(slug)}</a></div>
                         <div class="or-header-main">
-                            <a class="or-snoo" href="${hrefComm}" aria-label="b/${escapeHtml(slug)}">b</a>
+                            ${communitySnooHtml(slug, hrefComm, bAvatar)}
                             <h1 class="or-pagename"><a href="${hrefComm}">${commName}</a></h1>
                             <div class="or-head-actions" data-comm-join="${escapeHtml(slug)}">
                                 <a class="or-members-link" href="/b/membros/?b=${escapeHtml(slug)}" title="Membros e ADMs de b/${escapeHtml(slug)}">&gt;&gt;&gt;</a>
@@ -193,7 +194,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/script.js?v=20261130c"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/b/painel.js?v=20261130a"></script>
+    <script src="/b/painel.js?v=20261204a"></script>
     <script src="/account.js?v=20261129a"></script>
     <script src="/midia.js?v=20261203b"></script>
     <script src="/etiquetas.js?v=20261202b"></script>
@@ -237,7 +238,7 @@ export async function onRequestGet(context) {
   if (!row.author_deleted_at) await attachTags(env.DB, "post", one);
   if (!row.author_deleted_at) await attachMedia(env.DB, "post", one);
   const verVotos = Boolean(ctx && ctx.any && canModerate(ctx, community.slug));
-  const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete, verVotos, podeEtiquetar: verVotos });
+  const html = postPageHtml({ community, post: one[0], proprio, podeFixar, enquete, verVotos, podeEtiquetar: verVotos, bAvatar: await readCommunityAvatar(env.DB, community.slug) });
   return new Response(html, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },

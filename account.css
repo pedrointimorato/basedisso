@@ -554,3 +554,23 @@ label.bd-anon-toggle input[type="checkbox"] { margin: 0; width: 15px; height: 15
 .ascii-layer-view { margin-top: 8px; }
 .ascii-dim { opacity: 0.28; }
 .avatar-preview-camadas pre.ascii-art { margin: 0; font-size: 13px; line-height: 1.15; }
+
+/* ---------- MOR-39: avatar ASCII das b/ (mesmo quadro transparente dos avatares de perfil) ---------- */
+/* Cabeçalho da b/: no lugar do "b" laranja. */
+.or-snoo.ascii-avatar-b { display: inline-block; width: 64px; height: 60px; --av-scale: 0.6; padding: 0; margin-bottom: 4px; border-radius: 6px; background: transparent; color: var(--t-text, var(--text-primary, #2e3031)); font: inherit; }
+.or-snoo.ascii-avatar-b:hover { border-color: var(--accent-red, var(--t-red, #b92b27)); }
+/* Listas (comunidades, painel lateral): avatar ou o "b" laranja de sempre. */
+.or-b-icon { flex: 0 0 auto; vertical-align: middle; }
+.or-b-icon.ascii-avatar.or-b-icon-md { width: 60px; height: 56px; --av-scale: 0.56; }
+.or-b-icon.ascii-avatar.or-b-icon-xs { width: 44px; height: 40px; --av-scale: 0.4; }
+.or-b-tile { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; background: #ff4500; color: #fff; border-radius: 6px; font: italic 700 28px Palatino, "Times New Roman", serif; line-height: 1; text-decoration: none; }
+.or-b-tile.or-b-icon-md { width: 56px; height: 56px; margin: 0 2px; }
+.or-b-tile.or-b-icon-xs { width: 36px; height: 36px; margin: 2px 4px; font-size: 20px; border-radius: 5px; }
+.or-sub.has-icon { display: flex; align-items: flex-start; gap: 12px; }
+.or-sub-text { flex: 1 1 auto; min-width: 0; }
+.or-painel-comm.has-icon { display: flex; align-items: center; gap: 8px; }
+.or-painel-comm-icon { flex: 0 0 auto; line-height: 0; text-decoration: none !important; }
+.or-painel-comm-text { flex: 1 1 auto; min-width: 0; }
+@media (max-width: 640px) {
+    .or-sub.has-icon { gap: 10px; }
+}

@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderação — basedisso</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261130b">
-    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261203a">
+    <link rel="stylesheet" href="/account.css?v=20261204a">
+    <link rel="stylesheet" href="/b/adm/moderar/moderar.css?v=20261204a">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -67,6 +67,7 @@
                 <a href="#mod-sec-votos">Votos</a>
                 <a href="#mod-sec-etiquetas">Etiquetas</a>
                 <a href="#mod-sec-midia">Arquivos</a>
+                <a href="#mod-sec-bavatar">Avatar</a>
                 <a href="#mod-sec-res" data-site-only>Reservas</a>
                 <a href="#sec-convites" data-site-only>Códigos</a>
                 <a href="#sec-caixas" data-site-only>Caixas</a>
@@ -195,6 +196,21 @@
                     <ul class="mod-midia-list" id="mod-midia-list"></ul>
                 </div>
             </div>
+            <div class="mod-section mod-bavatar" id="mod-sec-bavatar">
+                <h2>Avatar das b/</h2>
+                <p class="mod-lead">Desenho em texto que aparece no <strong>cabeçalho da b/</strong>, na <strong>lista de comunidades</strong> e no <strong>painel lateral</strong>. Mesmo editor do avatar de perfil: até 8 linhas × 16 colunas, cores e até 4 camadas; emojis não. Sem avatar, fica o “b” laranja de sempre. Só <strong>ADMs do site</strong> e <strong>ADMs da própria b/</strong> mudam.</p>
+                <div class="mod-countrow">
+                    <label class="mod-etq-escopo-label">b/ <select id="mod-bav-escopo" class="mod-select"></select></label>
+                    <p class="mod-status" id="mod-bav-status" role="status"></p>
+                    <button type="button" class="mod-btn secondary mod-btn-sm mod-collapse-btn" data-collapse="bavatar" aria-controls="mod-bav-box" aria-expanded="true">Encolher</button>
+                </div>
+                <div class="mod-card" id="mod-bav-box">
+                    <div class="mod-bav-atual" id="mod-bav-atual"></div>
+                    <div class="mod-actions mod-bav-tools" id="mod-bav-tools"></div>
+                    <p class="ascii-status" id="mod-bav-msg" role="status"></p>
+                    <div class="ascii-editor-host" id="mod-bav-editor"></div>
+                </div>
+            </div>
             <div class="mod-section mod-reservas" id="mod-sec-res" data-site-only>
                 <h2>Reservas de nomes primordiais</h2>
                 <p class="mod-lead">Pagamentos da série Usuários primordiais (R$ 5). Você pode marcar uma reserva como paga se o webhook falhar.</p>
@@ -268,6 +284,8 @@
     <script src="/etiquetas.js?v=20261202b"></script>
     <script src="/b/adm/moderar/moderar-etiquetas.js?v=20261202b"></script>
     <script src="/b/adm/moderar/moderar-midia.js?v=20261203b"></script>
+    <script src="/ascii-editor.js?v=20261129b"></script>
+    <script src="/b/adm/moderar/moderar-bavatar.js?v=20261204a"></script>
     <script src="/b/adm/moderar/moderar.js?v=20261128b"></script>
     <script src="/b/adm/moderar/moderar-collapse.js?v=20261124c"></script>
 </body>

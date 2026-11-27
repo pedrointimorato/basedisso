@@ -1,8 +1,9 @@
 import { escapeHtml } from "../../_lib/shared.js";
 import { NAV, SIDEBAR, V, communityCardHtml, headHtml, htmlResponse, notFoundHtml } from "../../_lib/page-shell.js";
+import { communitySnooHtml, readCommunityAvatar } from "../../_lib/b-avatar.js";
 import { communityCard, communityHref, getCommunityDb, NEW_SLUG_RE, RESERVED_SLUGS, STATIC_B_DIRS } from "../../_lib/comunidades.js";
 
-export function communityPageHtml(community) {
+export function communityPageHtml(community, avatar = null) {
   const slug = escapeHtml(community.slug);
   const name = escapeHtml(community.name || community.slug);
   const href = escapeHtml(communityHref(community.slug));
@@ -19,7 +20,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
                     <header class="or-header">
                         <div class="or-sr-bar">basedisso &nbsp;·&nbsp; <a href="/b/">comunidades</a> &nbsp;·&nbsp; <a href="${href}">b/${slug}</a></div>
                         <div class="or-header-main">
-                            <a class="or-snoo" href="${href}" aria-label="b/${slug}">b</a>
+                            ${communitySnooHtml(community.slug, communityHref(community.slug), avatar)}
                             <h1 class="or-pagename"><a href="${href}">${slug}</a></h1>
                             <div class="or-head-actions" data-comm-join="${slug}">
                                 <a class="or-members-link" href="/b/membros/?b=${slug}" title="Membros e ADMs de b/${slug}">&gt;&gt;&gt;</a>
@@ -87,7 +88,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
     <script src="/b/comunidade.js?v=${V}"></script>
     <script src="/b/excluir-post.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/b/painel.js?v=20261130a"></script>
+    <script src="/b/painel.js?v=20261204a"></script>
     <script src="/account.js?v=20261129a"></script>
     <script src="/midia.js?v=20261203b"></script>
     <script src="/etiquetas.js?v=20261202b"></script>
@@ -111,5 +112,5 @@ export async function onRequestGet(context) {
   if (raw !== slug || !url.pathname.endsWith("/")) {
     return Response.redirect(new URL(communityHref(slug), url.origin).toString(), 301);
   }
-  return htmlResponse(communityPageHtml(community));
+  return htmlResponse(communityPageHtml(community, await readCommunityAvatar(env.DB, slug)));
 }

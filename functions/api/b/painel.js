@@ -4,6 +4,7 @@
 import { json } from "../../_lib/shared.js";
 import { communityHref, listCommunitiesDb, publicPost } from "../../_lib/comunidades.js";
 import { postsSelectSql } from "../../_lib/posts.js";
+import { communityAvatarMap } from "../../_lib/b-avatar.js";
 
 const POSTS_MAX = 12;
 const COMMS_MAX = 12;
@@ -53,8 +54,10 @@ export async function buildPanel(db) {
     const { results: mc } = await db.prepare("SELECT community_slug, COUNT(*) AS n FROM community_members GROUP BY community_slug").all();
     for (const r of mc || []) members[r.community_slug] = Number(r.n || 0);
   } catch { /* tabela ausente em ambiente local */ }
+  const avatars = await communityAvatarMap(db);
   const comunidades = catalog.map((c) => ({
     slug: c.slug,
+    avatar: avatars[c.slug] || null,
     nome: c.name || c.slug,
     href: communityHref(c.slug),
     // b/adm tem um aviso fixo na página (fora do D1), contado como em /api/comunidades.

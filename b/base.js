@@ -193,13 +193,44 @@
     return commsPromise;
   }
 
+  /* ---------- MOR-39: avatar ASCII da b/ (sem avatar: o "b" laranja) ---------- */
+  function avatarPre(av) {
+    var pre = el("span", { class: "av-pre" });
+    if (window.BDAccount && window.BDAccount.colorize) window.BDAccount.colorize(pre, av.arte, av.cores || null);
+    else pre.textContent = av.arte;
+    return pre;
+  }
+  // Ícone para listas (span, pode ficar dentro de um <a>): avatar com o quadro transparente ou o "b" laranja.
+  function bIcon(slug, av, size) {
+    var cls = "or-b-icon or-b-icon-" + (size || "md");
+    if (!av || !av.arte) return el("span", { class: cls + " or-b-tile", "aria-hidden": "true" }, "b");
+    return el("span", { class: cls + " ascii-avatar", "aria-hidden": "true", "data-b-avatar": slug }, avatarPre(av));
+  }
+  // Cabeçalho das páginas estáticas (b/adm, b/atoa): troca o "b" pelo avatar, se houver. As outras já vêm do servidor.
+  function hydrateHeaders(items) {
+    items.forEach(function (c) {
+      if (!c.avatar || !c.avatar.arte || !/^[a-z0-9_-]+$/.test(c.slug)) return;
+      Array.prototype.forEach.call(document.querySelectorAll('.or-header a.or-snoo[aria-label="b/' + c.slug + '"]'), function (a) {
+        if (a.hasAttribute("data-b-avatar")) return;
+        clear(a);
+        a.className = "or-snoo or-snoo-art ascii-avatar ascii-avatar-b";
+        a.setAttribute("data-b-avatar", c.slug);
+        var pre = avatarPre(c.avatar); pre.setAttribute("aria-hidden", "true");
+        a.appendChild(pre);
+      });
+    });
+  }
+  window.BDBAvatar = { icon: bIcon, pre: avatarPre };
+
   function renderPanel(host, items) {
     clear(host);
     items.forEach(function (c) {
       var n = Number(c.post_count || 0);
       var title = "b/" + c.slug + (c.name && c.name !== c.slug ? " — " + c.name : "");
       host.appendChild(
-        el("a", { class: "or-sub", href: c.href || "/b/" + c.slug + "/", "data-slug": c.slug },
+        el("a", { class: "or-sub has-icon", href: c.href || "/b/" + c.slug + "/", "data-slug": c.slug },
+          bIcon(c.slug, c.avatar, "md"),
+          el("div", { class: "or-sub-text" },
           el("h2", { class: "or-sub-name" }, title),
           c.description ? el("p", { class: "or-sub-desc" }, c.description) : null,
           el("p", { class: "or-sub-meta" },
@@ -209,7 +240,7 @@
             " · ",
             el("span", { "data-activity": "" }, c.last_activity ? "atividade " + relativeTime(c.last_activity) : "sem atividade recente"),
             c.adms && c.adms.length ? " · moderação: " + c.adms.map(function (a) { return ">>" + a.username; }).join(", ") : null
-          )
+          ))
         )
       );
     });
@@ -254,6 +285,7 @@
       var tabs = document.querySelector("[data-comm-tabs]");
       if (tabs && items.length) renderTabs(tabs, items);
       fillAdmBoxes(items);
+      hydrateHeaders(items);
       return items;
     });
   }
@@ -390,6 +422,13 @@
         var after = tagsLink || btn;
         btn.parentNode.insertBefore(ml, after.nextSibling);
         btn.parentNode.insertBefore(document.createTextNode(" · "), ml);
+      }
+      // MOR-39: atalho para o avatar ASCII desta b/.
+      if (kind !== "panel" && slug && btn.parentNode && !card.querySelector(".bd-card-avatar-link")) {
+        var prev = card.querySelector(".bd-card-midia-link") || card.querySelector(".bd-card-tags-link") || btn;
+        var al = el("a", { class: "bd-card-tags-link bd-card-avatar-link", href: "/b/adm/moderar/?b=" + encodeURIComponent(slug) + "#mod-sec-bavatar", title: "avatar ASCII de b/" + slug }, "avatar");
+        btn.parentNode.insertBefore(al, prev.nextSibling);
+        btn.parentNode.insertBefore(document.createTextNode(" · "), al);
       }
       var form = null;
       btn.addEventListener("click", function () {

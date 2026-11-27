@@ -485,3 +485,14 @@ CREATE INDEX IF NOT EXISTS idx_media_uploader ON media (uploader_id, created_at)
 CREATE INDEX IF NOT EXISTS idx_media_item ON media (item_type, item_id);
 -- Aplicado uma vez (verificando PRAGMA table_info(communities) antes):
 -- ALTER TABLE communities ADD COLUMN media_enabled INTEGER NOT NULL DEFAULT 0;
+
+-- Avatar ASCII das b/ (MOR-39): ver migrate-b-avatar.sql (aplicado).
+CREATE TABLE IF NOT EXISTS community_avatar (
+  slug TEXT PRIMARY KEY,
+  art TEXT NOT NULL,
+  colors TEXT,
+  layers TEXT,
+  updated_by TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
