@@ -1,6 +1,6 @@
-// MOR-38: /m/o/<id>.<ext> (original) e /m/t/<id>.jpg (miniatura), lidos do R2 (binding MEDIA).
+// MOR-38: /m/o/<id> (original) e /m/t/<id> (miniatura), lidos do R2 (binding MEDIA). Sem extensão na URL de propósito (ver PATH_RE).
 // Só sai se o item estiver visível (ocultado/excluído → 404). Suporta Range (vídeo), ETag/304 e HEAD.
-import { KEY_RE, TIPOS, mediaForKey } from "../_lib/midia.js";
+import { PATH_RE, TIPOS, mediaForId } from "../_lib/midia.js";
 
 function notFound() {
   return new Response("Arquivo não encontrado.", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
@@ -13,7 +13,7 @@ function baseHeaders(row, key, obj) {
   h.set("Content-Type", type);
   h.set("ETag", obj.httpEtag);
   h.set("Accept-Ranges", "bytes");
-  h.set("Cache-Control", "public, max-age=3600");
+  h.set("Cache-Control", "private, max-age=1800");
   h.set("X-Content-Type-Options", "nosniff");
   h.set("Content-Security-Policy", "default-src 'none'; sandbox");
   h.set("Cross-Origin-Resource-Policy", "same-origin");
@@ -23,10 +23,12 @@ function baseHeaders(row, key, obj) {
 
 async function serve(context, head) {
   const { request, env, params } = context;
-  const key = Array.isArray(params.path) ? params.path.join("/") : String(params.path || "");
-  if (!KEY_RE.test(key) || !env.DB || !env.MEDIA) return notFound();
-  const row = await mediaForKey(env.DB, key).catch(() => null);
+  const path = Array.isArray(params.path) ? params.path.join("/") : String(params.path || "");
+  const pm = path.toLowerCase().match(PATH_RE);
+  if (!pm || !env.DB || !env.MEDIA) return notFound();
+  const row = await mediaForId(env.DB, pm[2]).catch(() => null);
   if (!row || !row.visivel) return notFound();
+  const key = pm[1] === "o" ? row.r2_key : row.thumb_key;
 
   if (head) {
     const obj = await env.MEDIA.head(key);

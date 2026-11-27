@@ -23,7 +23,8 @@ export const TIPOS = {
   "video/webm": { ext: "webm", kind: "video", max: VID_MAX },
 };
 const EXT_MIME = { jpg: "image/jpeg", png: "image/png", gif: "image/gif", webp: "image/webp", mp4: "video/mp4", webm: "video/webm" };
-export const KEY_RE = /^(o|t)\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|png|gif|webp|mp4|webm)$/;
+// URL pública sem extensão (/m/o/<id>, /m/t/<id>): a borda do Cloudflare não guarda cópia, então ocultar/remover vale na hora.
+export const PATH_RE = /^(o|t)\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/;
 export const ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 function ascii(b, off, str) {
@@ -116,8 +117,8 @@ export function publicMidia(r) {
   const { tw, th } = thumbDims(r.width, r.height);
   return {
     id: r.id,
-    url: "/m/" + r.r2_key,
-    miniatura: "/m/" + r.thumb_key,
+    url: "/m/o/" + r.id,
+    miniatura: "/m/t/" + r.id,
     tipo: t.kind,
     mime: r.mime,
     ext: t.ext.toUpperCase(),
@@ -224,7 +225,7 @@ export async function sweepMedia(env, limit = 25) {
 }
 
 // Para servir /m/<chave>: o arquivo só sai se o item estiver visível.
-export async function mediaForKey(db, key) {
+export async function mediaForId(db, id) {
   return db.prepare(
     `SELECT m.id, m.r2_key, m.thumb_key, m.mime, m.original_name, m.item_type, m.item_id,
        CASE m.item_type
@@ -232,8 +233,8 @@ export async function mediaForKey(db, key) {
          WHEN 'comment' THEN (SELECT 1 FROM comments c WHERE c.id = m.item_id AND c.hidden = 0 AND c.author_deleted_at IS NULL
            AND NOT EXISTS (SELECT 1 FROM posts p WHERE c.page = '/b/' || p.community || '/p/' || p.id AND (p.hidden = 1 OR p.author_deleted_at IS NOT NULL)))
        END AS visivel
-     FROM media m WHERE m.r2_key = ?1 OR m.thumb_key = ?1`
-  ).bind(key).first();
+     FROM media m WHERE m.id = ?1 AND m.item_id IS NOT NULL`
+  ).bind(id).first();
 }
 
 export function mimeOfKey(key) {
