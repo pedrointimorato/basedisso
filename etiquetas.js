@@ -2,7 +2,7 @@
 // O servidor valida tudo (/api/etiquetas, /api/etiquetas/item). Máximo 3 por item.
 (function () {
   "use strict";
-  var V = "20261202a";
+  var V = "20261202b";
   var MAX = 3;
   if (!document.querySelector("link[data-etiquetas-css]")) {
     var lk = document.createElement("link");
@@ -135,7 +135,7 @@
           closeEd();
         }).catch(function () { save.disabled = false; msg.textContent = "Falha de rede."; msg.className = "bd-tag-ed-msg erro"; });
       });
-      var anchor = btn.closest("li") || btn.parentNode;
+      var anchor = btn.closest(".bd-tag-anchor") || btn.parentNode;
       anchor.classList.add("bd-tag-anchor");
       anchor.appendChild(node);
       btn.setAttribute("aria-expanded", "true");

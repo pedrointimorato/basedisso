@@ -1,8 +1,8 @@
 /* MOR-36 — chips de etiqueta (cores da paleta do site, --ac-N, que já mudam por tema). */
 .bd-tags { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: middle; }
 .bd-tags[hidden] { display: none !important; }
-.bd-tag { --tg: var(--t-text2, #555); display: inline-flex; align-items: center; max-width: 100%; padding: 0 7px; min-height: 18px; border: 1px solid color-mix(in srgb, var(--tg) 55%, transparent); border-radius: 9px;
-  background: color-mix(in srgb, var(--tg) 12%, transparent); color: var(--tg); font-family: inherit; font-size: 11px; font-weight: 700; line-height: 16px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bd-tag { --tg: var(--t-text2, #555); --tgt: var(--tg); display: inline-flex; align-items: center; max-width: 100%; padding: 0 7px; min-height: 18px; border: 1px solid color-mix(in srgb, var(--tg) 55%, transparent); border-radius: 9px;
+  background: color-mix(in srgb, var(--tg) 9%, transparent); color: var(--tgt); font-family: inherit; font-size: 11px; font-weight: 700; line-height: 16px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 a.bd-tag:hover, a.bd-tag:focus-visible { text-decoration: underline; background: color-mix(in srgb, var(--tg) 22%, transparent); }
 .bd-tag:focus-visible { outline: 2px solid var(--t-link, #0645ad); outline-offset: 1px; }
 .bd-tag.is-adm { border-style: dashed; }
@@ -49,6 +49,10 @@ button.bd-tag-edit:hover { text-decoration: underline; }
   button.bd-tag-edit { font-size: 12px; min-height: 24px; }
 }
 /* dentro do rodapé (.or-buttons zera bordas/cores de botões) */
-.bd-tag-editor button.bd-tag, .or-buttons a.bd-tag { border: 1px solid color-mix(in srgb, var(--tg) 55%, transparent); color: var(--tg); font-weight: 700; }
+.bd-tag-editor button.bd-tag, .or-buttons a.bd-tag { border: 1px solid color-mix(in srgb, var(--tg) 55%, transparent); font-weight: 700; }
 .bd-tag-editor button.bd-tag.is-on { border-color: var(--tg); }
 .bd-tag-editor .bd-tag-ed-actions button:hover { text-decoration: none; filter: brightness(.97); }
+/* Texto do chip: nos temas claro e papel escurece um pouco a cor para passar de 4,5:1 sobre o fundo tingido. */
+html:not([data-theme="dark"]) .bd-tag { --tgt: color-mix(in srgb, var(--tg) 78%, #000); }
+/* Links de título (.or-title a, .or-buttons a…) não podem pintar o chip. */
+.bd-tags .bd-tag, .bd-tags .bd-tag:visited, .bd-tags a.bd-tag:hover, .bd-tag-filtro .bd-tag, .bd-tag-picker .bd-tag, .bd-tag-editor button.bd-tag, .or-buttons a.bd-tag { color: var(--tgt); }
