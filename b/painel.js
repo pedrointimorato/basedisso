@@ -6,7 +6,8 @@
   var side = document.querySelector(".oldreddit .or-side");
   if (!side || !window.fetch) return;
   var m = location.pathname.match(/^\/b\/([a-z0-9][a-z0-9_-]{0,23})\//);
-  var atual = m && m[1] !== "membros" ? m[1] : null;
+  var naTodas = Boolean(m && m[1] === "todas"); // MOR-41: no feed geral, só a lista de comunidades
+  var atual = m && m[1] !== "membros" && !naTodas ? m[1] : null;
   var feito = false;
 
   function el(tag, attrs) {
@@ -64,6 +65,8 @@
     } else boxP.appendChild(el("p", { class: "or-painel-vazio" }, "Nenhuma postagem nas bases ainda. ",
       el("a", { href: atual ? "#bd-post-form" : "/b/atoa/" }, atual ? "Seja o primeiro a postar." : "Poste em b/atoa.")));
 
+    if (lista.length) boxP.appendChild(el("p", { class: "or-painel-mais" }, el("a", { href: "/b/todas/" }, "todas as postagens »")));
+
     var comms = d.comunidades || [];
     var boxC = el("section", { class: "or-painel-box or-painel-comms", id: "or-painel-comms", "aria-labelledby": "or-painel-comms-h" },
       el("h3", { class: "or-painel-h", id: "or-painel-comms-h" }, "comunidades"));
@@ -83,7 +86,7 @@
     boxC.appendChild(ul);
     boxC.appendChild(el("p", { class: "or-painel-mais" }, el("a", { href: "/b/" }, (d.total_comunidades > comms.length ? "todas as " + d.total_comunidades + " comunidades" : "todas as comunidades") + " »")));
 
-    var wrap = el("div", { class: "or-painel", id: "or-painel" }, boxP, boxC);
+    var wrap = el("div", { class: "or-painel", id: "or-painel" }, naTodas ? null : boxP, boxC);
     side.appendChild(wrap);
   }
 

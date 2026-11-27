@@ -8,7 +8,7 @@ export const RESERVED_SLUGS = new Set([
   "cadastro", "entrar", "s", "f", "assets",
 ]);
 // Pastas estáticas dentro de /b/ (servidas pelos arquivos, não pela Function dinâmica).
-export const STATIC_B_DIRS = new Set(["adm", "atoa", "membros"]);
+export const STATIC_B_DIRS = new Set(["adm", "atoa", "membros", "todas"]);
 
 export const COMMUNITIES = {
   adm: {

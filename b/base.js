@@ -200,7 +200,7 @@
     else pre.textContent = av.arte;
     return pre;
   }
-  var BOX = { b: [64, 60], md: [60, 56], xs: [44, 40] };
+  var BOX = { b: [64, 60], md: [60, 56], xs: [44, 40], mini: [34, 30] };
   // Mesma conta de functions/_lib/b-avatar.js (fitScale): a arte ocupa o quadro, pequena ou cheia.
   function fitScale(arte, size) {
     var bx = BOX[size] || BOX.md, lines = String(arte || "").split("\n"), cols = 1;

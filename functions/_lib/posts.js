@@ -56,3 +56,33 @@ export async function listVisiblePosts(db, slug, limit = 100, sort = "links", ta
 }
 
 export { postPageKey };
+
+// MOR-41: feed geral (/b/todas/) — postagens de todas as b/ que existem, misturadas.
+// Mesmas regras de visibilidade do feed de cada b/ (oculta pela moderação ou excluída pelo autor não aparece);
+// fixar é coisa de cada b/, então aqui não muda a ordem. "links" (o padrão das b/) vira "novos".
+export const ALL_SORTS = { novos: POST_SORTS.novos, melhores: POST_SORTS.melhores };
+export function normalizeAllSort(raw) {
+  const s = String(raw || "").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(ALL_SORTS, s) ? s : "novos";
+}
+export async function listAllVisiblePosts(db, slugs, limit = 100, sort = "novos", tagSlug = null) {
+  const list = Array.from(new Set(slugs || [])).filter(Boolean);
+  if (!db || !list.length) return [];
+  const cap = Math.min(200, Math.max(1, Number(limit) || 100));
+  const order = ALL_SORTS[normalizeAllSort(sort)];
+  const tagSql = tagSlug
+    ? ` AND p.id IN (SELECT it.item_id FROM item_tags it JOIN tags t ON t.id = it.tag_id
+         WHERE it.item_type = 'post' AND t.active = 1 AND t.slug = ? AND (t.scope = 'site' OR t.scope = p.community))`
+    : "";
+  const binds = [...list, ...(tagSlug ? [tagSlug] : []), cap];
+  const { results } = await db
+    .prepare(
+      `${postsSelectSql()}
+       WHERE p.community IN (${list.map(() => "?").join(",")}) AND p.hidden = 0 AND p.author_deleted_at IS NULL${tagSql}
+       ORDER BY ${order}
+       LIMIT ?`
+    )
+    .bind(...binds)
+    .all();
+  return results || [];
+}

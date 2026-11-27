@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script>try{var t=localStorage.getItem("tema");if(t==="dark"||t==="papel")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todas as postagens — basedisso</title>
+    <link rel="stylesheet" href="/style.css?v=20261127d">
+    <link rel="stylesheet" href="/account.css?v=20261206a">
+    <link rel="stylesheet" href="/b/comunidades.css?v=20261202a">
+    <link rel="stylesheet" href="/comments.css?v=20261127b">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <form class="nav-search-box" action="/busca" method="get" role="search">
+                        <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="search" name="q" class="nav-search-input" placeholder="buscar" autocomplete="off" enterkeyhint="search">
+                    </form>
+                    <div class="nav-icons">
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/b/" class="nav-icon-link active" title="Comunidades" aria-label="Comunidades"><i class="fa-solid fa-users"></i></a>
+                    </div>
+                    <div class="nav-right">
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content adm-main">
+                <div class="oldreddit">
+                    <header class="or-header">
+                        <div class="or-sr-bar">basedisso &nbsp;·&nbsp; <a href="/b/">comunidades</a> &nbsp;·&nbsp; <a href="/b/todas/">todas</a></div>
+                        <div class="or-header-main">
+                            <a class="or-snoo" href="/b/todas/" aria-label="todas as postagens">b</a>
+                            <h1 class="or-pagename"><a href="/b/todas/">todas</a></h1>
+                            <ul class="or-tabmenu">
+                                <li class="selected"><a href="/b/todas/" data-sort="novos">novos</a></li>
+                                <li><a href="/b/todas/?sort=melhores" data-sort="melhores">melhores</a></li>
+                            </ul>
+                        </div>
+                    </header>
+
+                    <div class="or-wrap">
+                        <div class="or-listing" id="or-listing">
+                        <p class="bd-todas-nota">Postagens de todas as b/, mais novas primeiro. Para postar, entre numa <a href="/b/">comunidade</a>.</p>
+                        <div id="bd-posts" data-feed="todas"></div>
+                        </div>
+
+                        <aside class="or-side">
+                            <div class="or-titlebox">
+                                <div class="or-card-head"><h2 class="or-side-name">todas</h2></div>
+                                <p class="or-side-meta">feed geral das b/</p>
+                                <div class="or-md">
+                                    <p>Tudo o que é postado nas comunidades, misturado, como threads abertas. Com a Navegação Compacta ligada (em Ajustes), vira uma lista de uma linha por postagem.</p>
+                                    <p class="or-card-links"><a href="/b/">todas as comunidades</a> · <a href="/b/atoa/">b/atoa</a> · <a href="/b/adm/">b/adm</a></p>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block tema-block">
+                        <h3>Tema</h3>
+                        <div class="tema-options" role="group" aria-label="Tema">
+                            <label class="tema-item"><span>Escuro</span><input type="checkbox" role="switch" data-tema="dark"><span class="tema-pill" aria-hidden="true"></span></label>
+                            <label class="tema-item"><span>Papel</span><input type="checkbox" role="switch" data-tema="papel"><span class="tema-pill" aria-hidden="true"></span></label>
+                        </div>
+                    </div>
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox" role="switch" data-pref="compacta">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                        <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="/script.js?v=20261130c"></script>
+    <script src="/b/comunidades-ui.js?v=20261202a"></script>
+    <script src="/hora-local.js?v=20261126a"></script>
+    <script src="/b/enquete.js?v=20261127a"></script>
+    <script src="/b/comunidade.js?v=20261206a"></script>
+    <script src="/b/excluir-post.js?v=20261126d"></script>
+    <script src="/b/base.js?v=20261206a"></script>
+    <script src="/b/painel.js?v=20261206a"></script>
+    <script src="/account.js?v=20261205a"></script>
+    <script src="/midia.js?v=20261203b"></script>
+    <script src="/etiquetas.js?v=20261202b"></script>
+    <script src="/votos.js?v=20261201c"></script>
+    <script src="/comments.js?v=20261203a"></script>
+</body>
+</html>

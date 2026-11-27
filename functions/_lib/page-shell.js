@@ -1,6 +1,6 @@
 import { escapeHtml } from "./shared.js";
 
-export const V = "20261205a";
+export const V = "20261206a";
 
 export const SIDEBAR = `<aside class="right-sidebar">
             <div class="sidebar-header">
@@ -89,7 +89,7 @@ export function headHtml(title) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${escapeHtml(title)}</title>
     <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261205a">
+    <link rel="stylesheet" href="/account.css?v=20261206a">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

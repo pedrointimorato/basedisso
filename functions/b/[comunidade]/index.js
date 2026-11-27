@@ -88,7 +88,7 @@ ${headHtml(`b/${community.slug} — ${community.name || community.slug} — base
     <script src="/b/comunidade.js?v=${V}"></script>
     <script src="/b/excluir-post.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
-    <script src="/b/painel.js?v=20261204a"></script>
+    <script src="/b/painel.js?v=20261206a"></script>
     <script src="/account.js?v=20261205a"></script>
     <script src="/midia.js?v=20261203b"></script>
     <script src="/etiquetas.js?v=20261202b"></script>

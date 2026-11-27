@@ -77,6 +77,15 @@
     return el("span", { class: "or-sticky-tag or-fixado-tag", title: "fixado por um ADM" }, el("i", { class: "fa-solid fa-thumbtack", "aria-hidden": "true" }), " fixado");
   }
 
+  // MOR-41: feed geral (/b/todas/) — selo de origem: avatar ASCII da b/ (ou o "b" laranja) + "b/nome" com link.
+  var TODAS = null; // { bases: { slug: { avatar } } } quando o feed é o geral
+  function originBadge(p) {
+    if (!TODAS) return null;
+    var b = TODAS.bases && TODAS.bases[p.community];
+    var icon = window.BDBAvatar ? window.BDBAvatar.icon(p.community, b && b.avatar, "mini") : null;
+    return el("a", { class: "bd-origem", href: "/b/" + p.community + "/", title: "postado em b/" + p.community }, icon, el("span", { class: "bd-origem-nome" }, "b/" + p.community));
+  }
+
   function renderPost(p, rank, podeFixar) {
     var href = p.url || "/b/" + p.community + "/p/" + p.id;
     var n = Number(p.comment_count || 0);
@@ -125,7 +134,7 @@
         expBtn.setAttribute("aria-label", open ? "ocultar imagem" : "mostrar imagem");
       });
     }
-    var title = el("p", { class: "or-title" }, el("a", { href: href }, p.title || "Sem título"));
+    var title = el("p", { class: "or-title" }, originBadge(p), TODAS ? " " : null, el("a", { href: href }, p.title || "Sem título"));
     if (p.link) {
       title.appendChild(document.createTextNode(" "));
       title.appendChild(el("span", { class: "or-domain" }, "(" + (domainOf(p.link) || "link") + ")"));
@@ -168,7 +177,7 @@
           el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
           tg.li,
           p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null,
-          podeFixar
+          podeFixar && !TODAS
             ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar"))
             : null,
           p.conexao && window.BDAccount && window.BDAccount.banButton ? el("li", null, window.BDAccount.banButton("postagem", p.id, p.conexao)) : null
@@ -255,12 +264,14 @@
       el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
       tgt.li,
       p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null,
-      podeFixar ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar")) : null,
+      podeFixar && !TODAS ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar")) : null,
       p.conexao && window.BDAccount && window.BDAccount.banButton ? el("li", null, window.BDAccount.banButton("postagem", p.id, p.conexao)) : null));
     if (p.proprio || podeFixar) body.appendChild(el("p", { class: "or-excluir-msg", role: "status", hidden: "hidden" }));
     toggle.setAttribute("aria-controls", body.id);
 
-    var art = el("article", { class: "or-thing bd-thread" + (p.fixado ? " or-fixado" : "") + (folded ? " is-collapsed" : ""), "data-post-id": p.id }, head, body);
+    var origem = originBadge(p);
+    var art = el("article", { class: "or-thing bd-thread" + (p.fixado ? " or-fixado" : "") + (folded ? " is-collapsed" : "") + (origem ? " has-origem" : ""), "data-post-id": p.id },
+      origem ? el("div", { class: "bd-origem-row" }, origem) : null, head, body);
     toggle.addEventListener("click", function () {
       var fold = !art.classList.contains("is-collapsed");
       art.classList.toggle("is-collapsed", fold);
@@ -303,6 +314,7 @@
   var loadSeq = 0;
 
   var SORTS = { links: 1, novos: 1, melhores: 1 };
+  var DEFAULT_SORT = "links";
   var currentSort = "links";
   var currentTag = "";
   function tagFromUrl() {
@@ -310,7 +322,7 @@
   }
   function feedQuery(sort, tag) {
     var q = [];
-    if (sort && sort !== "links") q.push("sort=" + encodeURIComponent(sort));
+    if (sort && sort !== DEFAULT_SORT) q.push("sort=" + encodeURIComponent(sort));
     if (tag) q.push("etiqueta=" + encodeURIComponent(tag));
     return q.length ? "?" + q.join("&") : "";
   }
@@ -331,7 +343,7 @@
     } catch (e) {
       s = "";
     }
-    return SORTS[s] ? s : "links";
+    return SORTS[s] ? s : DEFAULT_SORT;
   }
 
   function markSortTab(sort) {
@@ -351,7 +363,7 @@
         if (ev.button || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
         ev.preventDefault();
         var sort = a.getAttribute("data-sort");
-        currentSort = SORTS[sort] ? sort : "links";
+        currentSort = SORTS[sort] ? sort : DEFAULT_SORT;
         markSortTab(currentSort);
         if (window.history && history.replaceState) {
           history.replaceState(null, "", location.pathname + feedQuery(currentSort, currentTag));
@@ -374,7 +386,8 @@
     if (fbar) host.appendChild(fbar);
     if (hasImg) host.appendChild(el("p", { class: "bd-img-toggle-row or-img-toggle-row" }, IMG.toggle()));
     posts.forEach(function (p, i) {
-      host.appendChild(compact ? renderPost(p, i + 1, Boolean(data.pode_fixar)) : renderThread(p, Boolean(data.pode_fixar)));
+      var adm = data.todas ? Boolean(p.pode_moderar) : Boolean(data.pode_fixar);
+      host.appendChild(compact ? renderPost(p, i + 1, adm) : renderThread(p, adm));
     });
     bindVotes(host);
     if (IMG && IMG.scanBroken) IMG.scanBroken();
@@ -386,7 +399,8 @@
   function loadPosts(slug, host, emptyText) {
     var seq = ++loadSeq;
     var qs = feedQuery(currentSort, currentTag);
-    return fetch("/api/comunidades/" + encodeURIComponent(slug) + "/posts" + qs, {
+    var api = TODAS ? "/api/b/todas" : "/api/comunidades/" + encodeURIComponent(slug) + "/posts";
+    return fetch(api + qs, {
       credentials: "same-origin",
       headers: { Accept: "application/json" },
     })
@@ -411,6 +425,7 @@
           host.appendChild(el("p", { class: "or-empty" }, currentTag ? "Nenhuma postagem com esta etiqueta." : (emptyText || "Nenhuma postagem ainda. Seja o primeiro.")));
           return;
         }
+        if (TODAS) TODAS.bases = out.data.bases || {};
         lastFeed = { host: host, data: out.data };
         renderFeed(host, out.data);
       })
@@ -823,6 +838,14 @@
     var host = document.getElementById("bd-posts");
     var form = document.getElementById("bd-post-form");
     var slug = (host && host.getAttribute("data-community")) || (form && form.getAttribute("data-community"));
+    if (host && host.getAttribute("data-feed") === "todas") {
+      // MOR-41: feed geral — sem formulário de postagem (posta-se dentro de uma b/); ordens novos/melhores.
+      TODAS = { bases: {} };
+      SORTS = { novos: 1, melhores: 1 };
+      DEFAULT_SORT = "novos";
+      slug = "todas";
+      form = null;
+    }
     if (slug && host) {
       currentSort = sortFromUrl();
       currentTag = tagFromUrl();
