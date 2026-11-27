@@ -1,6 +1,6 @@
 import { escapeHtml } from "./shared.js";
 
-export const V = "20261130a";
+export const V = "20261130c";
 
 export const SIDEBAR = `<aside class="right-sidebar">
             <div class="sidebar-header">
@@ -33,7 +33,7 @@ export const SIDEBAR = `<aside class="right-sidebar">
                             </label>
                             <label class="config-item">
                                 <span>Navegação Compacta</span>
-                                <input type="checkbox">
+                                <input type="checkbox" role="switch" data-pref="compacta">
                             </label>
                         </div>
                     </div>
@@ -105,7 +105,7 @@ export function htmlResponse(html, status = 200) {
 }
 
 export function notFoundHtml(msg = "Página não encontrada.") {
-  return htmlResponse(`<!DOCTYPE html><html lang="pt-BR">${headHtml("Não encontrado — basedisso")}<body><div class="site-container layout-default" id="siteContainer"><div class="left-area">${NAV}<main class="main-content adm-main"><div class="oldreddit"><div class="or-wrap"><div class="or-listing"><p>${escapeHtml(msg)}</p><p><a href="/b/">voltar ao painel de comunidades</a></p></div></div></div></main></div>${SIDEBAR}</div><script src="/script.js?v=20261126g"></script><script src="/account.js?v=20261129a"></script><script src="/comments.js?v=20261128c"></script></body></html>`, 404);
+  return htmlResponse(`<!DOCTYPE html><html lang="pt-BR">${headHtml("Não encontrado — basedisso")}<body><div class="site-container layout-default" id="siteContainer"><div class="left-area">${NAV}<main class="main-content adm-main"><div class="oldreddit"><div class="or-wrap"><div class="or-listing"><p>${escapeHtml(msg)}</p><p><a href="/b/">voltar ao painel de comunidades</a></p></div></div></div></main></div>${SIDEBAR}</div><script src="/script.js?v=20261130c"></script><script src="/account.js?v=20261129a"></script><script src="/comments.js?v=20261128c"></script></body></html>`, 404);
 }
 
 // Texto de cartão: parágrafos separados por linha em branco, quebras simples como <br>.

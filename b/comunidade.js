@@ -147,6 +147,101 @@
     );
   }
 
+  // ---------- Thread aberta (estilo chan) — padrão; "Navegação Compacta" volta à lista acima ----------
+  var FOLD_KEY = "bd-threads-encolhidas", FOLD_MAX = 500;
+  function foldedList() {
+    try { var a = JSON.parse(localStorage.getItem(FOLD_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+  }
+  function isFolded(id) { return foldedList().indexOf(id) >= 0; }
+  function setFolded(id, on) {
+    var a = foldedList().filter(function (x) { return x !== id; });
+    if (on) a.push(id);
+    if (a.length > FOLD_MAX) a = a.slice(a.length - FOLD_MAX);
+    try { if (a.length) localStorage.setItem(FOLD_KEY, JSON.stringify(a)); else localStorage.removeItem(FOLD_KEY); } catch (e) {}
+  }
+  function isCompact() {
+    return document.documentElement.classList.contains("nav-compacta") || Boolean(window.BDCompacta && window.BDCompacta.get());
+  }
+
+  var pollObserver = null;
+  function watchPoll(box) {
+    if (!window.BDEnquete) return;
+    if (!("IntersectionObserver" in window)) { window.BDEnquete.load(box); return; }
+    if (!pollObserver) {
+      pollObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          pollObserver.unobserve(en.target);
+          window.BDEnquete.load(en.target);
+        });
+      }, { rootMargin: "300px 0px" });
+    }
+    pollObserver.observe(box);
+  }
+
+  function renderThread(p, podeFixar) {
+    var href = p.url || "/b/" + p.community + "/p/" + p.id;
+    var n = Number(p.comment_count || 0);
+    var commentsLabel = n === 1 ? "1 comentário" : n + " comentários";
+    var IMG = window.BDAccount && window.BDAccount.img;
+    var linkImg = p.link && IMG ? IMG.url(p.link) : null;
+    var folded = isFolded(p.id);
+
+    var toggle = el("button", { type: "button", class: "bd-thread-toggle", "aria-expanded": folded ? "false" : "true",
+      title: folded ? "mostrar a thread" : "encolher a thread", "aria-label": (folded ? "mostrar a thread: " : "encolher a thread: ") + (p.title || "") }, folded ? "[+]" : "[−]");
+    var votes = el("span", { class: "or-midcol bd-thread-votes" },
+      el("button", { type: "button", class: "or-arrow or-up", "aria-label": "voto positivo" }),
+      el("span", { class: "or-score", title: "pontuação" }, "1"),
+      el("button", { type: "button", class: "or-arrow or-down", "aria-label": "voto negativo" }));
+    var title = el("a", { class: "bd-thread-title", href: href }, p.title || "Sem título");
+    var domain = el("span", { class: "or-domain" }, "(" + (p.link ? domainOf(p.link) || "link" : "self." + p.community) + ")");
+    var av = p.usuario && window.BDAccount && window.BDAccount.avatarNode ? window.BDAccount.avatarNode(p.usuario, "xs") : null;
+    var when = window.BDAccount && window.BDAccount.localTimeNode ? window.BDAccount.localTimeNode(p.created_at) : document.createTextNode(p.created_at || "");
+    var meta = el("span", { class: "bd-thread-meta" + (av ? " has-avatar" : "") }, av, authorNode(p), " ", when,
+      el("span", { class: "bd-thread-rel" }, " (" + relativeTime(p.created_at) + ")"));
+    var summary = el("span", { class: "bd-thread-resumo" }, " · ", el("a", { href: href }, commentsLabel));
+    var head = el("div", { class: "bd-thread-head" }, toggle, " ", p.fixado ? pinTag() : null, p.fixado ? " " : null,
+      el("span", { class: "bd-thread-titleline" }, title, " ", domain), " ", meta,
+      p.enquete ? el("span", { class: "or-poll-badge" + (p.enquete.encerrada ? " is-closed" : "") }, " [enquete]") : null, summary);
+
+    var body = el("div", { class: "bd-thread-body", id: "thread-" + p.id });
+    if (folded) body.hidden = true;
+    if (p.link) body.appendChild(el("p", { class: "or-post-link" }, el("a", { href: p.link, rel: "noopener noreferrer nofollow", target: "_blank" }, p.link)));
+    var media = el("div", { class: "bd-thread-media" });
+    if (linkImg) media.appendChild(IMG.node(linkImg, p.link, "bd-img-thread"));
+    if (p.body && IMG) IMG.inText(p.body).forEach(function (x) { if (x.src !== linkImg) media.appendChild(IMG.node(x.src, IMG.url(x.href) ? x.href : x.src, "bd-img-thread")); });
+    if (media.firstChild) body.appendChild(media);
+    if (p.body) body.appendChild(el("div", { class: "or-md or-post-body bd-thread-text" }, p.body));
+    if (p.enquete) {
+      var poll = el("section", { class: "bd-poll", "data-enquete": p.id, "aria-label": "Enquete" },
+        el("p", { class: "bd-poll-head" }, el("span", { class: "bd-poll-tag" }, "[enquete]"), " carregando…"));
+      body.appendChild(poll);
+      watchPoll(poll);
+    }
+    body.appendChild(el("ul", { class: "or-buttons bd-thread-actions" },
+      el("li", null, el("a", { href: href, class: "bd-thread-comments" }, commentsLabel)),
+      el("li", null, el("a", { href: href }, "compartilhar")),
+      el("li", null, el("button", { type: "button", class: "or-save" }, "salvar")),
+      p.proprio ? el("li", null, el("button", { type: "button", class: "or-excluir", "data-excluir-post": p.id }, "excluir")) : null,
+      podeFixar ? el("li", null, el("button", { type: "button", class: "or-fixar", "data-fixar-post": p.id, "data-fixado": p.fixado ? "1" : "0" }, p.fixado ? "desafixar" : "fixar")) : null,
+      p.conexao && window.BDAccount && window.BDAccount.banButton ? el("li", null, window.BDAccount.banButton("postagem", p.id, p.conexao)) : null));
+    if (p.proprio || podeFixar) body.appendChild(el("p", { class: "or-excluir-msg", role: "status", hidden: "hidden" }));
+    toggle.setAttribute("aria-controls", body.id);
+
+    var art = el("article", { class: "or-thing bd-thread" + (p.fixado ? " or-fixado" : "") + (folded ? " is-collapsed" : ""), "data-post-id": p.id }, head, body);
+    toggle.addEventListener("click", function () {
+      var fold = !art.classList.contains("is-collapsed");
+      art.classList.toggle("is-collapsed", fold);
+      body.hidden = fold;
+      toggle.textContent = fold ? "[+]" : "[−]";
+      toggle.setAttribute("aria-expanded", fold ? "false" : "true");
+      toggle.setAttribute("title", fold ? "mostrar a thread" : "encolher a thread");
+      toggle.setAttribute("aria-label", (fold ? "mostrar a thread: " : "encolher a thread: ") + (p.title || ""));
+      setFolded(p.id, fold);
+    });
+    return art;
+  }
+
   function bindVotes(root) {
     if (window.BDComunidadesUI && typeof window.BDComunidadesUI.bind === "function") {
       window.BDComunidadesUI.bind(root);
@@ -196,6 +291,26 @@
     });
   }
 
+  var lastFeed = null;
+  function renderFeed(host, data) {
+    var posts = data.postagens || [];
+    while (host.firstChild) host.removeChild(host.firstChild);
+    var compact = isCompact();
+    host.classList.toggle("bd-feed-threads", !compact);
+    host.classList.toggle("bd-feed-compacto", compact);
+    var IMG = window.BDAccount && window.BDAccount.img;
+    var hasImg = IMG && posts.some(function (p) { return (p.link && IMG.url(p.link)) || (!compact && p.body && IMG.inText(p.body).length); });
+    if (hasImg) host.appendChild(el("p", { class: "bd-img-toggle-row or-img-toggle-row" }, IMG.toggle()));
+    posts.forEach(function (p, i) {
+      host.appendChild(compact ? renderPost(p, i + 1, Boolean(data.pode_fixar)) : renderThread(p, Boolean(data.pode_fixar)));
+    });
+    bindVotes(host);
+    if (IMG && IMG.scanBroken) IMG.scanBroken();
+  }
+  document.addEventListener("bd:compacta", function () {
+    if (lastFeed && lastFeed.host && (lastFeed.data.postagens || []).length) renderFeed(lastFeed.host, lastFeed.data);
+  });
+
   function loadPosts(slug, host, emptyText) {
     var seq = ++loadSeq;
     var qs = currentSort === "links" ? "" : "?sort=" + encodeURIComponent(currentSort);
@@ -222,14 +337,8 @@
           host.appendChild(el("p", { class: "or-empty" }, emptyText || "Nenhuma postagem ainda. Seja o primeiro."));
           return;
         }
-        var IMG = window.BDAccount && window.BDAccount.img;
-        if (IMG && posts.some(function (p) { return p.link && IMG.url(p.link); })) {
-          host.appendChild(el("p", { class: "bd-img-toggle-row or-img-toggle-row" }, IMG.toggle()));
-        }
-        posts.forEach(function (p, i) {
-          host.appendChild(renderPost(p, i + 1, Boolean(out.data.pode_fixar)));
-        });
-        bindVotes(host);
+        lastFeed = { host: host, data: out.data };
+        renderFeed(host, out.data);
       })
       .catch(function () {
         if (seq !== loadSeq) return;

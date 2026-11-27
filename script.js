@@ -58,6 +58,28 @@ function mudarAbaSidebar(idAba, tituloCabecalho, event) {
     window.addEventListener("storage", function (ev) { if (ev.key === "tema") aplicarTema(lerTema()); });
 })();
 
+// --- NAVEGAÇÃO COMPACTA (Ajustes): nas b/, o feed volta à lista compacta (sem abrir as threads) ---
+(function () {
+    var KEY = "navegacao-compacta";
+    function ler() { try { return localStorage.getItem(KEY) === "1"; } catch (e) { return false; } }
+    function aplicar(on, avisar) {
+        document.documentElement.classList.toggle("nav-compacta", on);
+        var chaves = document.querySelectorAll("input[data-pref='compacta']");
+        for (var i = 0; i < chaves.length; i++) { chaves[i].checked = on; chaves[i].setAttribute("aria-checked", on ? "true" : "false"); }
+        if (avisar) { try { document.dispatchEvent(new CustomEvent("bd:compacta", { detail: { on: on } })); } catch (e) {} }
+    }
+    function salvar(on) { try { if (on) localStorage.setItem(KEY, "1"); else localStorage.removeItem(KEY); } catch (e) {} aplicar(on, true); }
+    window.BDCompacta = { get: ler, set: salvar };
+    aplicar(ler(), false);
+    document.addEventListener("change", function (ev) {
+        var el = ev.target;
+        if (!el || !el.matches || !el.matches("input[data-pref='compacta']")) return;
+        salvar(el.checked);
+    });
+    document.addEventListener("DOMContentLoaded", function () { aplicar(ler(), false); });
+    window.addEventListener("storage", function (ev) { if (ev.key === KEY) aplicar(ler(), true); });
+})();
+
 function toggleSidebarMobile() {
     // Seleciona a barra lateral pela classe
     const sidebar = document.querySelector('.right-sidebar');

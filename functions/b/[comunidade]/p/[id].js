@@ -175,7 +175,7 @@ export function postPageHtml({ community, post, proprio = false, podeFixar = fal
     <script src="/hora-local.js?v=20261126a"></script>
     <script src="/b/enquete.js?v=20261127a"></script>
     <script src="/b/excluir-post.js?v=20261126d"></script>
-    <script src="/script.js?v=20261126g"></script>
+    <script src="/script.js?v=20261130c"></script>
     <script src="/b/comunidades-ui.js?v=${V}"></script>
     <script src="/b/base.js?v=${V}"></script>
     <script src="/b/painel.js?v=20261130a"></script>
