@@ -8,11 +8,30 @@ export const PERFIL_PAGE_MAX = 50;
 export const EXCERPT_MAX = 160;
 export const EXCERPT_FEED_MAX = 420;
 
+// Linhas que não são texto (indicador de áudio/voz colado no corpo, etc.) saem do trecho; o texto guardado não muda.
+const ZW_RE = /[\u200B-\u200D\uFEFF\uFE0E\uFE0F]/g;
+const WAVE_RE = /[၊။|│┃┆┊丨❚❙❘]/g;
+const PLAY_RE = /[▶►▸▷◁◀◼■⬛⏹⏯♪♫♩🔊🎤]/;
+const DURATION_RE = /\b\d{1,2}:\d{2}\b/;
+
+export function isMediaIndicatorLine(line) {
+  const s = String(line || "").replace(ZW_RE, "").trim();
+  if (!s) return false;
+  const waves = (s.match(WAVE_RE) || []).length;
+  const hasPlay = PLAY_RE.test(s);
+  const hasDur = DURATION_RE.test(s);
+  return (hasPlay && hasDur) || (waves >= 4 && (hasDur || hasPlay)) || waves >= 6;
+}
+
 export function excerptOf(body, n = EXCERPT_MAX) {
   const t = String(body || "")
     .replace(/\r\n/g, "\n")
     .replace(/[ \t]+/g, " ")
     .replace(/ *\n */g, "\n")
+    .split("\n")
+    .filter((line) => !isMediaIndicatorLine(line))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
   if (!t) return "";
   if (t.length <= n) return t;

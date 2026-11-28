@@ -99,11 +99,97 @@
     return card;
   }
 
+  function lineBoxes(node) {
+    var range = document.createRange(), out = [], i, r;
+    try { range.selectNodeContents(node); } catch (e) { return out; }
+    var list = range.getClientRects();
+    for (i = 0; i < list.length; i++) {
+      r = list[i];
+      if (r.width > 0 && r.height > 0) out.push(r);
+    }
+    return out;
+  }
+
+  function copyLineBottoms(box) {
+    var nodes = box.querySelectorAll(".card-title, .card-text"), all = [], i;
+    for (i = 0; i < nodes.length; i++) all = all.concat(lineBoxes(nodes[i]));
+    all.sort(function (a, b) { return a.top - b.top || a.bottom - b.bottom; });
+    return all;
+  }
+
+  function clampBudget(box) {
+    var text = box.querySelector(".card-text");
+    var lineH = parseFloat(text ? getComputedStyle(text).lineHeight : getComputedStyle(box).lineHeight) || 21;
+    var mobile = window.matchMedia("(max-width: 640px)").matches;
+    var thumb = box.querySelector(".inicio-b-thumb");
+    var boxTop = box.getBoundingClientRect().top;
+    if (thumb) {
+      return (thumb.getBoundingClientRect().bottom - boxTop) + 6 + lineH * (mobile ? 4 : 5);
+    }
+    var title = box.querySelector(".card-title");
+    var titleH = title ? title.getBoundingClientRect().height : lineH;
+    return titleH + 4 + lineH * (mobile ? 6 : 7);
+  }
+
+  var clampLock = false;
   function markClamped(root) {
+    if (clampLock) return;
+    clampLock = true;
+    try { markClampedApply(root); }
+    finally {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { clampLock = false; });
+      });
+    }
+  }
+  function markClampedApply(root) {
     (root || document).querySelectorAll(".inicio-b-copy").forEach(function (box) {
-      if (box.scrollHeight > box.clientHeight + 1) box.classList.add("is-clamped");
-      else box.classList.remove("is-clamped");
+      box.style.maxHeight = "";
+      box.classList.remove("is-clamped");
+      var budget = clampBudget(box);
+      var natural = box.scrollHeight;
+      if (natural <= budget + 0.5) return;
+      var boxRect = box.getBoundingClientRect();
+      var rects = copyLineBottoms(box);
+      if (!rects.length) return;
+      var last = null, i, relBottom;
+      for (i = 0; i < rects.length; i++) {
+        relBottom = rects[i].bottom - boxRect.top;
+        if (relBottom <= budget + 0.6) last = i;
+      }
+      if (last == null) last = 0;
+      if (last === rects.length - 1 && (rects[last].bottom - boxRect.top) <= natural + 0.5 && natural <= budget + 1) {
+        return;
+      }
+      var topRel = rects[last].bottom - boxRect.top;
+      var next = rects[last + 1];
+      var maxH;
+      if (next) {
+        var nextTop = next.top - boxRect.top;
+        maxH = Math.min((topRel + nextTop) / 2, nextTop - 0.5);
+        maxH = Math.max(maxH, topRel);
+      } else {
+        maxH = topRel;
+      }
+      maxH = Math.round(maxH * 100) / 100;
+      if (maxH < 1) return;
+      box.style.maxHeight = maxH + "px";
+      box.classList.add("is-clamped");
     });
+  }
+
+  function watchClamps(host) {
+    markClamped(host);
+    requestAnimationFrame(function () { markClamped(host); });
+    if (host._inicioRO) try { host._inicioRO.disconnect(); } catch (e) {}
+    if (typeof ResizeObserver !== "undefined") {
+      var ro = new ResizeObserver(function () { markClamped(host); });
+      host.querySelectorAll(".inicio-b-copy").forEach(function (box) { ro.observe(box); });
+      host._inicioRO = ro;
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { markClamped(host); }).catch(function () {});
+    }
   }
 
   function perfilCard(p) {
@@ -162,8 +248,7 @@
     if (!lit.length && !grade.length && !perfil.length) {
       host.insertBefore(el("p", { class: "inicio-vazio" }, "O feed ainda está vazio."), host.firstChild);
     }
-    markClamped(host);
-    requestAnimationFrame(function () { markClamped(host); });
+    watchClamps(host);
   }
 
   function start() {
