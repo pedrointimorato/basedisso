@@ -79,7 +79,7 @@
   function bCard(p) {
     var href = p.url || ("/b/" + p.community + "/p/" + p.id);
     var mid = p.midia;
-    var card = el("a", { class: "feed-card inicio-b-card", href: href, "data-post-id": p.id });
+    var card = el("a", { class: "feed-card inicio-b-card" + (mid && mid.miniatura ? " has-midia" : ""), href: href, "data-post-id": p.id });
     card.appendChild(el("div", { class: "inicio-b-head" },
       el("span", { class: "inicio-b-av" }, bIcon(p.community, p.avatar)),
       el("span", { class: "inicio-b-nome" }, p.community || "")));
@@ -100,9 +100,9 @@
   }
 
   function markClamped(root) {
-    (root || document).querySelectorAll(".inicio-b-card .card-text").forEach(function (p) {
-      if (p.scrollHeight > p.clientHeight + 1) p.classList.add("is-clamped");
-      else p.classList.remove("is-clamped");
+    (root || document).querySelectorAll(".inicio-b-copy").forEach(function (box) {
+      if (box.scrollHeight > box.clientHeight + 1) box.classList.add("is-clamped");
+      else box.classList.remove("is-clamped");
     });
   }
 

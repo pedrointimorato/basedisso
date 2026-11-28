@@ -1056,13 +1056,16 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
 .inicio-b-av .or-b-icon-mini { display: block; }
 .inicio-b-nome { font-size: 13px; font-weight: 600; color: var(--accent-red); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .inicio-b-main { display: flex; flex-direction: column; padding: 0 14px 12px; flex: 1; min-width: 0; }
-.inicio-b-copy { overflow: hidden; }
+/* overflow no recorte (não no parágrafo): o texto pode envolver a miniatura flutuante, como num post da b/. */
+.inicio-b-copy { overflow: hidden; position: relative; font-size: 14px; }
+.inicio-b-card.has-midia .inicio-b-copy { max-height: calc(70px + 6px + 1.5em * 5); }
+.inicio-b-card:not(.has-midia) .inicio-b-copy { max-height: calc(1.3em * 2 + 4px + 1.5em * 7); }
+.inicio-b-copy.is-clamped::after { content: "…"; position: absolute; right: 0; bottom: 0; padding-left: 1.6em; background: linear-gradient(to right, transparent, var(--bg-card) 35%); color: var(--text-secondary); pointer-events: none; }
 .inicio-b-thumb { float: left; position: relative; width: 70px; height: 70px; margin: 0 10px 6px 0; border: 1px solid var(--border-color, #ccc); border-radius: 2px; background: var(--search-bg); overflow: hidden; }
 .inicio-b-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .inicio-b-play { position: absolute; right: 3px; bottom: 3px; padding: 0 4px; border-radius: 3px; background: rgba(0, 0, 0, .65); color: #fff; font-size: 10px; line-height: 15px; }
 .inicio-b-card .card-title { font-size: 15px; margin: 0 0 4px; }
-.inicio-b-card .card-text { margin: 0; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5; max-height: calc(1.5em * 7); overflow: hidden; position: relative; }
-.inicio-b-card .card-text.is-clamped::after { content: "…"; position: absolute; right: 0; bottom: 0; padding-left: 1.6em; background: linear-gradient(to right, transparent, var(--bg-card) 35%); color: var(--text-secondary); }
+.inicio-b-card .card-text { margin: 0; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5; }
 .inicio-b-foot { clear: both; margin-top: auto; padding-top: 8px; font-size: 12px; color: var(--text-light); }
 
 .inicio-perfil { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
@@ -1077,5 +1080,6 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
     .inicio-b-grid, .inicio-perfil, .inicio-lit { grid-template-columns: 1fr; }
     .inicio-lit-cover { max-height: 180px; }
     .inicio-b-thumb { width: 56px; height: 56px; }
-    .inicio-b-card .card-text { max-height: calc(1.5em * 6); }
+    .inicio-b-card.has-midia .inicio-b-copy { max-height: calc(56px + 6px + 1.5em * 4); }
+    .inicio-b-card:not(.has-midia) .inicio-b-copy { max-height: calc(1.3em * 2 + 4px + 1.5em * 6); }
 }
