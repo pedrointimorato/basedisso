@@ -1047,21 +1047,22 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
 .inicio-lit-cover { width: 100%; aspect-ratio: 3 / 4; max-height: 220px; object-fit: cover; object-position: center top; display: block; background: #e3b210; }
 .inicio-lit .card-title { margin-top: 10px; }
 
-.inicio-b-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.inicio-b-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 .inicio-b-card { margin: 0; display: flex; flex-direction: column; text-decoration: none; color: inherit; position: relative; overflow: hidden; }
 .inicio-b-card:hover { border-color: var(--accent-red); }
-.inicio-b-thumb { position: relative; aspect-ratio: 16 / 10; background: var(--search-bg); overflow: hidden; }
-.inicio-b-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.inicio-b-thumb.is-empty { display: none; }
-.inicio-b-play { position: absolute; right: 8px; bottom: 8px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-red); color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; }
-.inicio-b-av { position: absolute; top: 8px; left: 8px; z-index: 1; line-height: 0; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.18); background: var(--bg-card); }
+/* Cabeçalho: avatar da b/ + nome da comunidade (sem o prefixo b/). Miniatura no canto, no tamanho do feed das b/ (70px / 56px), um pouco abaixo do avatar. */
+.inicio-b-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px 6px; min-width: 0; }
+.inicio-b-av { flex: 0 0 auto; line-height: 0; }
 .inicio-b-av .or-b-icon-mini { display: block; }
-.inicio-b-card .card-body { padding: 12px 14px 12px; flex: 1; display: flex; flex-direction: column; }
-.inicio-b-card .card-title { font-size: 15px; margin: 0 0 6px; }
+.inicio-b-nome { font-size: 13px; font-weight: 600; color: var(--accent-red); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inicio-b-main { display: flex; align-items: flex-start; gap: 10px; padding: 0 14px 12px; flex: 1; min-width: 0; }
+.inicio-b-thumb { position: relative; width: 70px; height: 70px; flex: 0 0 70px; border: 1px solid var(--border-color, #ccc); border-radius: 2px; background: var(--search-bg); overflow: hidden; }
+.inicio-b-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.inicio-b-play { position: absolute; right: 3px; bottom: 3px; padding: 0 4px; border-radius: 3px; background: rgba(0, 0, 0, .65); color: #fff; font-size: 10px; line-height: 15px; }
+.inicio-b-text { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+.inicio-b-card .card-title { font-size: 15px; margin: 0 0 4px; }
 .inicio-b-card .card-text { flex: 1; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.inicio-b-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px; font-size: 12px; color: var(--text-light); }
-.inicio-b-foot .inicio-b-nome { color: var(--accent-red); font-weight: 600; text-decoration: none; }
-.inicio-b-foot .inicio-b-nome:hover { text-decoration: underline; }
+.inicio-b-foot { margin-top: 8px; font-size: 12px; color: var(--text-light); }
 
 .inicio-perfil { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 .inicio-perfil .feed-card { margin: 0; display: flex; flex-direction: column; }
@@ -1074,4 +1075,5 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
 @media (max-width: 640px) {
     .inicio-b-grid, .inicio-perfil, .inicio-lit { grid-template-columns: 1fr; }
     .inicio-lit-cover { max-height: 180px; }
+    .inicio-b-thumb { width: 56px; height: 56px; flex-basis: 56px; }
 }

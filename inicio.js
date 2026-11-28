@@ -79,25 +79,22 @@
   function bCard(p) {
     var href = p.url || ("/b/" + p.community + "/p/" + p.id);
     var mid = p.midia;
-    var thumb = el("div", { class: "inicio-b-thumb" + (mid && mid.miniatura ? "" : " is-empty") });
+    var card = el("a", { class: "feed-card inicio-b-card", href: href, "data-post-id": p.id });
+    card.appendChild(el("div", { class: "inicio-b-head" },
+      el("span", { class: "inicio-b-av" }, bIcon(p.community, p.avatar)),
+      el("span", { class: "inicio-b-nome" }, p.community || "")));
+    var main = el("div", { class: "inicio-b-main" });
     if (mid && mid.miniatura) {
+      var thumb = el("div", { class: "inicio-b-thumb" });
       thumb.appendChild(el("img", { src: mid.miniatura, alt: "", loading: "lazy", decoding: "async" }));
       if (mid.tipo === "video") thumb.appendChild(el("span", { class: "inicio-b-play", "aria-hidden": "true" }, "▶"));
+      main.appendChild(thumb);
     }
-    var avWrap = el("span", { class: "inicio-b-av" }, bIcon(p.community, p.avatar));
-    var card = el("a", { class: "feed-card inicio-b-card", href: href, "data-post-id": p.id });
-    if (mid && mid.miniatura) {
-      thumb.appendChild(avWrap);
-      card.appendChild(thumb);
-    } else {
-      card.appendChild(el("div", { class: "inicio-b-av-row", style: "padding:10px 14px 0" }, avWrap));
-    }
-    card.appendChild(el("div", { class: "card-body" },
+    main.appendChild(el("div", { class: "inicio-b-text" },
       el("h3", { class: "card-title" }, p.title || "Sem título"),
       p.excerpt ? el("p", { class: "card-text" }, p.excerpt) : null,
-      el("div", { class: "inicio-b-foot" },
-        el("span", { class: "inicio-b-nome" }, "b/" + p.community),
-        el("span", null, commentsLabel(p.comment_count)))));
+      el("div", { class: "inicio-b-foot" }, commentsLabel(p.comment_count))));
+    card.appendChild(main);
     return card;
   }
 
