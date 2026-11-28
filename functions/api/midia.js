@@ -8,14 +8,15 @@ import {
   publicMidia, rateMidia, recordMidia, sniff, sweepMedia,
 } from "../_lib/midia.js";
 
-async function scopeOf(env, b, page) {
+async function scopeOf(env, b, page, perfil) {
+  if (perfil === "1" || perfil === "true" || perfil === true) return { slug: null, perfil: true };
   if (b != null && b !== "") {
     const c = await getCommunityDb(env.DB, String(b));
     if (!c) return { erro: "Comunidade não encontrada.", status: 404 };
     return { slug: c.slug };
   }
   const p = normalizePage(page || "");
-  if (!p) return { erro: "Informe a comunidade ou a página.", status: 400 };
+  if (!p) return { erro: "Informe a comunidade, a página ou o perfil.", status: 400 };
   return { slug: communityOfPage(p) };
 }
 
@@ -23,7 +24,7 @@ export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   if (!env.DB) return json({ pode: false });
-  const sc = await scopeOf(env, url.searchParams.get("b"), url.searchParams.get("page"));
+  const sc = await scopeOf(env, url.searchParams.get("b"), url.searchParams.get("page"), url.searchParams.get("perfil"));
   if (sc.erro) return errorJson(sc.erro, sc.status);
   const ctx = await getAdminContext(request, env);
   const pode = Boolean(env.MEDIA) && (await canUpload(env, ctx, sc.slug));
@@ -48,7 +49,7 @@ export async function onRequestPost(context) {
 
   let form;
   try { form = await request.formData(); } catch { return errorJson("Pedido inválido.", 400); }
-  const sc = await scopeOf(env, form.get("b"), form.get("page"));
+  const sc = await scopeOf(env, form.get("b"), form.get("page"), form.get("perfil"));
   if (sc.erro) return errorJson(sc.erro, sc.status);
   if (!(await canUpload(env, ctx, sc.slug))) {
     return errorJson(sc.slug ? `O envio de arquivos não está liberado em b/${sc.slug}.` : "Aqui só ADMs do site podem enviar arquivos.", 403);

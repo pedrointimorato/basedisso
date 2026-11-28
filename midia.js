@@ -3,7 +3,7 @@
 // O servidor confere tudo (tipo pelos bytes, tamanho, permissão, limite de envios).
 (function () {
   "use strict";
-  var V = "20261203b";
+  var V = "20261208a";
   var THUMB = 250;
   var IMG_MAX = 8 * 1024 * 1024, VID_MAX = 50 * 1024 * 1024;
   var TIPOS = { "image/jpeg": "image", "image/png": "image", "image/gif": "image", "image/webp": "image", "video/mp4": "video", "video/webm": "video" };
@@ -148,7 +148,7 @@
   // ---------- envio ----------
   var permCache = {};
   function perm(o) {
-    var q = o.b ? "b=" + encodeURIComponent(o.b) : "page=" + encodeURIComponent(o.page || "");
+    var q = o.perfil ? "perfil=1" : o.b ? "b=" + encodeURIComponent(o.b) : "page=" + encodeURIComponent(o.page || "");
     if (!permCache[q]) {
       permCache[q] = fetch("/api/midia?" + q, { credentials: "same-origin", headers: { Accept: "application/json" } })
         .then(function (r) { return r.ok ? r.json() : { pode: false }; })
@@ -247,7 +247,7 @@
         var fd = new FormData();
         fd.append("arquivo", file, file.name || "arquivo");
         fd.append("miniatura", th.blob, "miniatura.jpg");
-        if (o.b) fd.append("b", o.b); else fd.append("page", o.page || "");
+        if (o.perfil) fd.append("perfil", "1"); else if (o.b) fd.append("b", o.b); else fd.append("page", o.page || "");
         if (th.w) fd.append("largura", String(th.w));
         if (th.h) fd.append("altura", String(th.h));
         if (th.dur) fd.append("duracao", String(th.dur));

@@ -466,7 +466,7 @@ CREATE INDEX IF NOT EXISTS idx_item_tags_tag ON item_tags(tag_id, item_type);
 -- Quem enviou (uploader_id) nunca sai em API pública.
 CREATE TABLE IF NOT EXISTS media (
   id TEXT PRIMARY KEY,
-  item_type TEXT CHECK (item_type IS NULL OR item_type IN ('post', 'comment')),
+  item_type TEXT CHECK (item_type IS NULL OR item_type IN ('post', 'comment', 'perfil')),
   item_id TEXT,
   scope TEXT,
   r2_key TEXT NOT NULL UNIQUE,
@@ -487,6 +487,20 @@ CREATE INDEX IF NOT EXISTS idx_media_uploader ON media (uploader_id, created_at)
 CREATE INDEX IF NOT EXISTS idx_media_item ON media (item_type, item_id);
 -- Aplicado uma vez (verificando PRAGMA table_info(communities) antes):
 -- ALTER TABLE communities ADD COLUMN media_enabled INTEGER NOT NULL DEFAULT 0;
+
+
+-- MOR-43: postagens no perfil (texto; mídia só para ADMs do site). Ver migrate-profile-posts.sql.
+CREATE TABLE IF NOT EXISTS profile_posts (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  hidden INTEGER NOT NULL DEFAULT 0,
+  author_deleted_at TEXT,
+  ip_hash TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_profile_posts_user ON profile_posts (user_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_profile_posts_feed ON profile_posts (created_at);
 
 -- Avatar ASCII das b/ (MOR-39): ver migrate-b-avatar.sql (aplicado).
 CREATE TABLE IF NOT EXISTS community_avatar (

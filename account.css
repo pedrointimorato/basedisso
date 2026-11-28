@@ -591,3 +591,14 @@ label.bd-anon-toggle input[type="checkbox"] { margin: 0; width: 15px; height: 15
 .or-b-tile.or-b-icon-mini { width: 22px; height: 22px; margin: 0 1px; font-size: 14px; border-radius: 4px; }
 .or-title .bd-origem { margin-right: 2px; }
 .bd-todas-nota { font-size: 12px; color: var(--t-text3, #888); margin: 0 0 10px; }
+
+/* ---------- MOR-43: postagens no perfil ---------- */
+.profile-posts { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.profile-post { background: var(--bg-card, #fff); border: 1px solid var(--border-color, #e6e6e6); border-radius: 10px; padding: 12px 14px; }
+.profile-post-meta { font-size: 12px; color: var(--text-light, #8f9092); margin: 0 0 8px; }
+.profile-post-body { margin: 0; font-size: 14px; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5; }
+.profile-post-del { margin-top: 8px; }
+.profile-composer { margin: 0 0 20px; padding: 14px; border: 1px solid var(--border-color, #e6e6e6); border-radius: 10px; background: var(--bg-card, #fff); }
+.profile-composer h2 { font-size: 15px; margin: 0 0 10px; }
+.profile-composer textarea { width: 100%; box-sizing: border-box; min-height: 90px; padding: 8px 10px; border: 1px solid var(--border-color, #ddd); border-radius: 6px; background: var(--search-bg, #fafafa); color: var(--text-primary, #222); font: inherit; resize: vertical; }
+.profile-composer .bd-comments-actions { margin-top: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

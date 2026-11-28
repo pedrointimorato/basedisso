@@ -189,6 +189,67 @@
     node.className = "ascii-status" + (kind ? " " + kind : "");
   }
 
+
+  function relTime(iso) {
+    if (!iso) return "";
+    try { return new Date(iso).toLocaleString("pt-BR"); } catch (e) { return iso; }
+  }
+
+  function renderProfilePost(p, opts) {
+    opts = opts || {};
+    var body = el("p", { class: "profile-post-body" });
+    if (window.BDAccount && window.BDAccount.appendGreen) window.BDAccount.appendGreen(body, p.body || "");
+    else body.textContent = p.body || "";
+    var media = null;
+    if (p.midia && window.BDMidia) media = window.BDMidia.node(p.midia, { removivel: false });
+    var del = null;
+    if (p.id && (p.proprio || p.pode_moderar)) {
+      del = el("button", { type: "button", class: "bd-comment-del-btn profile-post-del", "data-excluir-perfil-post": p.id }, "excluir");
+      del.addEventListener("click", function () {
+        if (!confirm("Excluir esta postagem? Isso não pode ser desfeito.")) return;
+        del.disabled = true;
+        api("DELETE", "/api/perfil/posts/" + encodeURIComponent(p.id)).then(function (out) {
+          if (out.res.ok) { if (opts.onDelete) opts.onDelete(); }
+          else { del.disabled = false; alert((out.data && out.data.erro) || "Não foi possível excluir."); }
+        }).catch(function () { del.disabled = false; alert("Falha de rede."); });
+      });
+    }
+    return el("li", { class: "profile-post", id: "pp-" + p.id, "data-pp-id": p.id },
+      el("p", { class: "profile-post-meta" }, relTime(p.created_at)),
+      body, media, del);
+  }
+
+  function renderComposer(root, reload) {
+    var ta = el("textarea", { name: "body", maxlength: "2000", rows: "4", placeholder: "Escreva no seu perfil. Aparece aqui e na página inicial." });
+    var status = el("p", { class: "bd-comments-status", role: "status" });
+    var btn = el("button", { type: "submit" }, "Publicar");
+    var midPick = window.BDMidia ? window.BDMidia.picker({ perfil: true }) : null;
+    var form = el("form", { class: "profile-composer", id: "profile-composer" },
+      el("h2", null, "Nova postagem"),
+      el("label", null, "Texto", ta),
+      midPick ? midPick.node : null,
+      el("div", { class: "bd-comments-actions" }, btn, status));
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var body = ta.value.trim();
+      if (!body) { status.textContent = "Escreva um texto."; return; }
+      if (midPick && midPick.busy && midPick.busy()) { status.textContent = "Espere o arquivo terminar de enviar."; return; }
+      btn.disabled = true; status.textContent = "Publicando…";
+      api("POST", "/api/perfil/posts", { body: body, midia: midPick && midPick.value ? midPick.value() : undefined }).then(function (out) {
+        btn.disabled = false;
+        if (out.res.ok) {
+          ta.value = "";
+          if (midPick && midPick.reset) midPick.reset();
+          status.textContent = "";
+          reload("");
+        } else {
+          status.textContent = (out.data && out.data.erro) || "Não foi possível publicar.";
+        }
+      }).catch(function () { btn.disabled = false; status.textContent = "Falha de rede."; });
+    });
+    root.appendChild(form);
+  }
+
   function render(root, data, reload, flash) {
     while (root.firstChild) root.removeChild(root.firstChild);
     var u = data.usuario;
@@ -224,6 +285,14 @@
       root.appendChild(asciiSec);
       if (flash) setSt(asciiSec.querySelector(".ascii-status"), flash, "ok");
       if (!autoOpened && /^#editar-(ascii|avatar)$/.test(location.hash) && asciiSec._openEditor && data.pode_editar_ascii) { autoOpened = true; asciiSec._openEditor(location.hash === "#editar-avatar" ? "avatar" : "arte"); }
+    }
+    if (data.pode_editar_ascii) renderComposer(root, reload);
+    var posts = data.postagens || [];
+    root.appendChild(el("h2", { class: "bd-comments-title", id: "profile-posts-title" }, posts.length ? "Postagens" : "Ainda sem postagens no perfil."));
+    if (posts.length) {
+      var plist = el("ul", { class: "profile-posts" });
+      posts.forEach(function (p) { plist.appendChild(renderProfilePost(p, { onDelete: function () { reload(""); } })); });
+      root.appendChild(plist);
     }
     var comments = data.comentarios || [];
     root.appendChild(el("h2", { class: "bd-comments-title" }, comments.length ? "Comentários" : "Ainda sem comentários."));
@@ -347,6 +416,11 @@
         render(root, out.data, load, flash);
         if (out.data.usuario && out.data.usuario.username) {
           document.title = ">>" + out.data.usuario.username + " — basedisso";
+        }
+        var hash = location.hash || "";
+        if (/^#pp-[0-9a-f-]+$/i.test(hash)) {
+          var alvo = document.getElementById(hash.slice(1));
+          if (alvo) { alvo.classList.add("busca-target"); try { alvo.scrollIntoView({ block: "center" }); } catch (e) { alvo.scrollIntoView(); } }
         }
       })
       .catch(function () {

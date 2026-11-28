@@ -218,6 +218,7 @@ export async function sweepMedia(env, limit = 25) {
        WHERE (m.item_id IS NULL AND m.created_at < ?1)
           OR (m.item_type = 'post' AND NOT EXISTS (SELECT 1 FROM posts p WHERE p.id = m.item_id AND p.author_deleted_at IS NULL))
           OR (m.item_type = 'comment' AND NOT EXISTS (SELECT 1 FROM comments c WHERE c.id = m.item_id AND c.author_deleted_at IS NULL))
+          OR (m.item_type = 'perfil' AND NOT EXISTS (SELECT 1 FROM profile_posts p WHERE p.id = m.item_id AND p.author_deleted_at IS NULL))
        LIMIT ?2`
     ).bind(old, limit).all();
     return await removeMediaRows(env, results || []);
@@ -232,6 +233,7 @@ export async function mediaForId(db, id) {
          WHEN 'post' THEN (SELECT 1 FROM posts p WHERE p.id = m.item_id AND p.hidden = 0 AND p.author_deleted_at IS NULL)
          WHEN 'comment' THEN (SELECT 1 FROM comments c WHERE c.id = m.item_id AND c.hidden = 0 AND c.author_deleted_at IS NULL
            AND NOT EXISTS (SELECT 1 FROM posts p WHERE c.page = '/b/' || p.community || '/p/' || p.id AND (p.hidden = 1 OR p.author_deleted_at IS NOT NULL)))
+         WHEN 'perfil' THEN (SELECT 1 FROM profile_posts pp WHERE pp.id = m.item_id AND pp.hidden = 0 AND pp.author_deleted_at IS NULL)
        END AS visivel
      FROM media m WHERE m.id = ?1 AND m.item_id IS NOT NULL`
   ).bind(id).first();

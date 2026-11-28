@@ -5,6 +5,8 @@ import { readAnonEditLog } from "../../_lib/perfil-alvo.js";
 import { ASCII_MAX_COLS, ASCII_MAX_LINES, AVATAR_MAX_COLS, AVATAR_MAX_LINES, LAYERS_MAX, readAscii, readAvatar, readLayers } from "../../_lib/ascii.js";
 import { errorJson, json } from "../../_lib/shared.js";
 import { lookupMentions } from "../../_lib/mentions.js";
+import { listProfilePosts, publicProfilePost, PERFIL_PAGE_MAX } from "../../_lib/perfil-posts.js";
+import { attachMedia } from "../../_lib/midia.js";
 
 export async function onRequestGet(context) {
   const { env, params } = context;
@@ -71,10 +73,21 @@ export async function onRequestGet(context) {
       podeRemover = false;
     }
   }
+  const ctx = viewer ? await getAdminContext(context.request, env) : null;
+  const siteAdm = Boolean(ctx && ctx.site);
+  const prow = await listProfilePosts(env.DB, { userId: row.id, limit: PERFIL_PAGE_MAX, includeHidden: siteAdm || podeEditar });
+  const postagens = prow.map((r) => publicProfilePost(r, {
+    proprio: Boolean(viewer && viewer.id === r.user_id),
+    pode_moderar: siteAdm,
+  }));
+  await attachMedia(env.DB, "perfil", postagens);
+
   return json({
     reservado: false,
     usuario: { ...publicUser(row), avatar: avatar ? avatar.arte : null, avatar_cores: avatar ? avatar.cores : null },
     adm_de: await communitiesModeratedBy(env.DB, row),
+    postagens,
+    pode_moderar_perfil: siteAdm,
     comentarios,
     ascii,
     avatar,

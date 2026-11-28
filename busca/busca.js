@@ -150,6 +150,7 @@
     if (tipo === "comentario") return "Comentário";
     if (tipo === "comunidade") return "Comunidade";
     if (tipo === "postagem") return "Postagem";
+    if (tipo === "perfil") return "Perfil";
     return "Resultado";
   }
 

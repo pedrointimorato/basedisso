@@ -140,6 +140,39 @@ function matchesAll(row, terms) {
   return terms.every((t) => hay.includes(t));
 }
 
+
+async function searchProfilePosts(db, q, terms) {
+  const foldedCols = [sqlFold("p.body"), sqlFold("u.username")];
+  const termClause = terms.map(() => `(${foldedCols.map((c) => `${c} LIKE ?`).join(" OR ")})`).join(" AND ");
+  const binds = [];
+  for (const term of terms) {
+    const safe = sanitizeLike(term);
+    if (safe.length < Q_MIN) continue;
+    const pat = `%${safe}%`;
+    binds.push(pat, pat);
+  }
+  if (!binds.length) return [];
+  let results = [];
+  try {
+    const out = await db.prepare(
+      `SELECT p.id, p.body, p.created_at, u.username
+       FROM profile_posts p JOIN users u ON u.id = p.user_id
+       WHERE p.hidden = 0 AND p.author_deleted_at IS NULL AND (${termClause})
+       ORDER BY p.created_at DESC LIMIT 40`
+    ).bind(...binds).all();
+    results = out.results || [];
+  } catch { return []; }
+  return results.map((row) => ({
+    id: row.id,
+    tipo: "perfil",
+    title: (row.body || "").split(/\r?\n/)[0].slice(0, 80) || "postagem no perfil",
+    author: row.username ? ">>" + row.username : "",
+    url: row.username ? `/@${row.username}#pp-${row.id}` : "/",
+    body: row.body || "",
+    created_at: row.created_at,
+  }));
+}
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
@@ -222,6 +255,7 @@ export async function onRequestGet(context) {
   let postagens = [];
   try {
     postagens = await searchPosts(env.DB, q, terms);
+    try { postagens = postagens.concat(await searchProfilePosts(env.DB, q, terms)); } catch { /* tabela ausente */ }
   } catch {
     postagens = [];
   }

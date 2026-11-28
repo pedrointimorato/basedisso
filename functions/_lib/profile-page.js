@@ -10,8 +10,8 @@ export function profilePageHtml({ title, initialPath }) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${safeTitle}</title>
-    <link rel="stylesheet" href="/style.css?v=20261127d">
-    <link rel="stylesheet" href="/account.css?v=20261206a">
+    <link rel="stylesheet" href="/style.css?v=20261208a">
+    <link rel="stylesheet" href="/account.css?v=20261208a">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -105,12 +105,12 @@ export function profilePageHtml({ title, initialPath }) {
     </div>
     <script src="/script.js?v=20261130c"></script>
     <script src="/account.js?v=20261205a"></script>
-    <script src="/midia.js?v=20261203b"></script>
+    <script src="/midia.js?v=20261208a"></script>
     <script src="/etiquetas.js?v=20261202b"></script>
     <script src="/votos.js?v=20261201c"></script>
     <script src="/comments.js?v=20261203a"></script>
     <script src="/ascii-editor.js?v=20261129b"></script>
-    <script src="/perfil.js?v=20261207a"></script>
+    <script src="/perfil.js?v=20261208a"></script>
 </body>
 </html>`;
 }
