@@ -1080,3 +1080,6 @@ a.sidebar-btn-cadastro:hover { background-color: var(--bg-global); color: var(--
     .inicio-lit-cover { max-height: 180px; }
     .inicio-b-thumb { width: 56px; height: 56px; }
 }
+
+/* Link da wiki na aba ADM da barra lateral */
+.adm-wiki-link { margin: 10px 0 0; text-align: center; }

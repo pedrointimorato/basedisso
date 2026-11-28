@@ -151,6 +151,7 @@
     if (tipo === "comunidade") return "Comunidade";
     if (tipo === "postagem") return "Postagem";
     if (tipo === "perfil") return "Perfil";
+    if (tipo === "wiki") return "Wiki";
     return "Resultado";
   }
 

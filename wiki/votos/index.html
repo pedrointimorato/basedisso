@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script>try{var t=localStorage.getItem("tema");if(t==="dark"||t==="papel")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votos, notas e etiquetas — Wiki — basedisso</title>
+    <meta name="description" content="Como funcionam os votos, a nota de relevância e coerência, as etiquetas e as enquetes.">
+    <link rel="stylesheet" href="/style.css?v=20261209a">
+    <link rel="stylesheet" href="/account.css?v=20261208a">
+    <link rel="stylesheet" href="/comments.css?v=20261127b">
+    <link rel="stylesheet" href="/wiki/wiki.css?v=20261209a">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <form class="nav-search-box" action="/busca" method="get" role="search">
+                        <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="search" name="q" class="nav-search-input" placeholder="buscar" autocomplete="off" enterkeyhint="search">
+                    </form>
+
+                    <div class="nav-icons">
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/b/" class="nav-icon-link" title="Comunidades" aria-label="Comunidades"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content wiki-page">
+                <div class="wiki-layout">
+                    <nav class="wiki-nav" aria-label="Índice da wiki">
+                        <details open>
+                            <summary>Índice da wiki</summary>
+                            <div class="wiki-nav-lista">
+<div class="wiki-nav-grupo"><h2>Visão geral</h2><ul><li><a href="/wiki/">Início da wiki</a></li><li><a href="/wiki/sobre/">Sobre o basedisso</a></li><li><a href="/wiki/regras/">Regras gerais</a></li></ul></div>
+<div class="wiki-nav-grupo"><h2>Como funciona</h2><ul><li><a href="/wiki/comunidades/">Comunidades (b/)</a></li><li><a href="/wiki/feed-inicial/">Feed inicial e busca</a></li><li><a href="/wiki/literatura/">Literatura (/l)</a></li><li><a href="/wiki/perfis/">Perfis e arte ASCII</a></li><li><a href="/wiki/formatacao/">Formatação</a></li><li><a href="/wiki/votos/" aria-current="page">Votos, notas e etiquetas</a></li><li><a href="/wiki/arquivos/">Imagens e vídeos</a></li></ul></div>
+<div class="wiki-nav-grupo"><h2>Conta e site</h2><ul><li><a href="/wiki/moderacao/">Moderação e denúncias</a></li><li><a href="/wiki/contas/">Contas e privacidade</a></li><li><a href="/wiki/apoiar/">Apoiar</a></li><li><a href="/wiki/faq/">Perguntas frequentes</a></li></ul></div>
+                            </div>
+                        </details>
+                    </nav>
+                    <article class="wiki-doc">
+<p class="wiki-crumb"><a href="/wiki/">Wiki</a> › Votos, notas e etiquetas</p>
+<h1>Votos, notas e etiquetas</h1>
+<p class="wiki-resumo">Como funcionam os votos, a nota de relevância e coerência, as etiquetas e as enquetes.</p>
+<div class="wiki-toc"><p>Nesta página</p><ul><li><a href="#votos-e">Votos (▲ e ▼)</a></li><li><a href="#notas-1-a-5">Notas (★ 1 a 5)</a></li><li><a href="#quem-ve-quem-votou">Quem vê quem votou</a></li><li><a href="#etiquetas">Etiquetas</a></li><li><a href="#enquetes">Enquetes</a></li></ul></div>
+<h2 id="votos-e">Votos (▲ e ▼)</h2>
+<p>Em postagens e comentários, <strong>quem tem conta</strong> pode dar <strong>▲ +1</strong> ou <strong>▼ −1</strong>. A soma aparece no item e define a ordem <strong>melhores</strong> nas b/. Regras:</p>
+<ul>
+<li>só contas votam: quem está sem conta lê, mas não vota;</li>
+<li><strong>você não pode votar na sua própria</strong> postagem ou comentário;</li>
+<li>cada conta tem um voto por item, e pode <strong>trocar ou tirar</strong> o voto;</li>
+<li>há um limite de votos por minuto e por hora, contra abuso.</li>
+</ul>
+<p>Os votos individuais <strong>não são públicos</strong>: ninguém vê quem votou em quê, exceto os ADMs (veja abaixo).</p>
+<h2 id="notas-1-a-5">Notas (★ 1 a 5)</h2>
+<p>Além do voto, quem tem conta pode dar uma <strong>nota de 1 a 5 estrelas</strong> para a <strong>relevância e coerência</strong> de uma postagem ou comentário. O item mostra a <strong>média</strong> e quantas notas recebeu. A nota é separada do voto: ela serve para dizer se o texto é pertinente e faz sentido, não se você concorda. As mesmas regras valem: só contas, nunca no próprio item, dá para mudar ou retirar.</p>
+<h2 id="quem-ve-quem-votou">Quem vê quem votou</h2>
+<p>Os <strong>ADMs</strong> podem ver quem votou e quem deu nota: o ADM do site vê tudo, e o ADM de uma b/ vê só o que é da b/ dele. Em itens anônimos aparece <strong>quem votou</strong>, nunca quem escreveu. Fora isso, os votos e notas de uma pessoa não aparecem para os outros usuários.</p>
+<h2 id="etiquetas">Etiquetas</h2>
+<p><strong>Etiquetas</strong> são rótulos curtos, até <strong>3 por item</strong>, que aparecem como chips perto do título. Clicar numa etiqueta filtra o feed da b/ só com os itens que a têm.</p>
+<ul>
+<li>Existem etiquetas <strong>do site</strong> (valem em qualquer lugar e só os ADMs do site criam) e etiquetas <strong>de cada b/</strong> (criadas pelos ADMs dela).</li>
+<li>Ao criar uma postagem ou comentário você pode escolher até 3 das etiquetas disponíveis. Depois, <strong>o autor com conta ou um ADM</strong> pode mudá-las, e ADMs podem acrescentar outras (o total continua em 3).</li>
+<li>O nome de uma etiqueta tem até 24 caracteres, e a descrição, até 120. Os ADMs podem <strong>desativar</strong> uma etiqueta: ela some dos itens e dos seletores, e volta se for reativada.</li>
+</ul>
+<h2 id="enquetes">Enquetes</h2>
+<p>Uma postagem pode ter uma <strong>enquete</strong>, marcada com <code>[enquete]</code> na lista.</p>
+<ul>
+<li>De <strong>2 a 6 opções</strong>, de até 80 caracteres cada, e um prazo de <strong>1 hora, 24 horas, 3 dias ou 7 dias</strong>.</li>
+<li><strong>Só vota quem tem conta com pelo menos 3 dias</strong>. Primordiais e ADMs não precisam esperar. Cada conta tem <strong>1 voto</strong>, que <strong>não pode ser trocado</strong>.</li>
+<li>O resultado aparece para quem <strong>já votou</strong>, para todos <strong>depois que a enquete encerra</strong>, e como prévia para o autor da postagem e para ADMs.</li>
+<li>Os votos individuais não são públicos. <strong>Ninguém, nem ADMs, altera votos.</strong></li>
+<li>Se a postagem for ocultada pela moderação, a enquete some junto. Se o autor excluir a postagem, a enquete é apagada.</li>
+</ul>
+<div class="wiki-pager"><a href="/wiki/formatacao/"><small>Anterior</small>Formatação</a><a class="prox" href="/wiki/arquivos/"><small>Próxima</small>Imagens e vídeos</a></div>
+<p class="wiki-rodape">Wiki do basedisso · atualizada em 27/11/2026. Achou algo errado ou faltando? Avise pela aba ADM ou em <a href="/b/adm/">b/adm</a>.</p>
+                    </article>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="/wiki/" class="sidebar-icon-link sidebar-help-link" aria-current="page" title="Ajuda e regras (wiki)" aria-label="Ajuda e regras (wiki)"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block tema-block">
+                        <h3>Tema</h3>
+                        <div class="tema-options" role="group" aria-label="Tema">
+                            <label class="tema-item"><span>Escuro</span><input type="checkbox" role="switch" data-tema="dark"><span class="tema-pill" aria-hidden="true"></span></label>
+                            <label class="tema-item"><span>Papel</span><input type="checkbox" role="switch" data-tema="papel"><span class="tema-pill" aria-hidden="true"></span></label>
+                        </div>
+                    </div>
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox" role="switch" data-pref="compacta">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                        <p class="adm-wiki-link"><a class="sidebar-link-sutil" href="/wiki/">regras e ajuda (wiki)</a></p>
+                        <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="/script.js?v=20261130c"></script>
+    <script src="/account.js?v=20261205a"></script>
+    <script src="/midia.js?v=20261208a"></script>
+    <script src="/etiquetas.js?v=20261202b"></script>
+    <script src="/votos.js?v=20261201c"></script>
+    <script src="/comments.js?v=20261203a"></script>
+    <script src="/wiki/wiki.js?v=20261209a"></script>
+</body>
+</html>

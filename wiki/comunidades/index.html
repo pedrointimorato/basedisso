@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script>try{var t=localStorage.getItem("tema");if(t==="dark"||t==="papel")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidades (b/) — Wiki — basedisso</title>
+    <meta name="description" content="Como ler, postar e comentar nas b/, como entrar em uma, quem modera e como uma nova b/ nasce. Inclui o feed geral /b/todas.">
+    <link rel="stylesheet" href="/style.css?v=20261209a">
+    <link rel="stylesheet" href="/account.css?v=20261208a">
+    <link rel="stylesheet" href="/comments.css?v=20261127b">
+    <link rel="stylesheet" href="/wiki/wiki.css?v=20261209a">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <form class="nav-search-box" action="/busca" method="get" role="search">
+                        <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="search" name="q" class="nav-search-input" placeholder="buscar" autocomplete="off" enterkeyhint="search">
+                    </form>
+
+                    <div class="nav-icons">
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/b/" class="nav-icon-link" title="Comunidades" aria-label="Comunidades"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content wiki-page">
+                <div class="wiki-layout">
+                    <nav class="wiki-nav" aria-label="Índice da wiki">
+                        <details open>
+                            <summary>Índice da wiki</summary>
+                            <div class="wiki-nav-lista">
+<div class="wiki-nav-grupo"><h2>Visão geral</h2><ul><li><a href="/wiki/">Início da wiki</a></li><li><a href="/wiki/sobre/">Sobre o basedisso</a></li><li><a href="/wiki/regras/">Regras gerais</a></li></ul></div>
+<div class="wiki-nav-grupo"><h2>Como funciona</h2><ul><li><a href="/wiki/comunidades/" aria-current="page">Comunidades (b/)</a></li><li><a href="/wiki/feed-inicial/">Feed inicial e busca</a></li><li><a href="/wiki/literatura/">Literatura (/l)</a></li><li><a href="/wiki/perfis/">Perfis e arte ASCII</a></li><li><a href="/wiki/formatacao/">Formatação</a></li><li><a href="/wiki/votos/">Votos, notas e etiquetas</a></li><li><a href="/wiki/arquivos/">Imagens e vídeos</a></li></ul></div>
+<div class="wiki-nav-grupo"><h2>Conta e site</h2><ul><li><a href="/wiki/moderacao/">Moderação e denúncias</a></li><li><a href="/wiki/contas/">Contas e privacidade</a></li><li><a href="/wiki/apoiar/">Apoiar</a></li><li><a href="/wiki/faq/">Perguntas frequentes</a></li></ul></div>
+                            </div>
+                        </details>
+                    </nav>
+                    <article class="wiki-doc">
+<p class="wiki-crumb"><a href="/wiki/">Wiki</a> › Comunidades (b/)</p>
+<h1>Comunidades (b/)</h1>
+<p class="wiki-resumo">Como ler, postar e comentar nas b/, como entrar em uma, quem modera e como uma nova b/ nasce. Inclui o feed geral /b/todas.</p>
+<div class="wiki-toc"><p>Nesta página</p><ul><li><a href="#o-que-e-uma-b">O que é uma b/</a></li><li><a href="#lendo-as-postagens">Lendo as postagens</a></li><li><a href="#postando">Postando</a></li><li><a href="#comentando">Comentando</a></li><li><a href="#excluindo-o-que-voce-escreveu">Excluindo o que você escreveu</a></li><li><a href="#entrando-em-uma-b">Entrando em uma b/</a></li><li><a href="#quem-modera">Quem modera</a></li><li><a href="#criando-uma-nova-b">Criando uma nova b/</a></li><li><a href="#avatar-ascii-da-b">Avatar ASCII da b/</a></li><li><a href="#todas-as-postagens-btodas">Todas as postagens: /b/todas</a></li></ul></div>
+<h2 id="o-que-e-uma-b">O que é uma b/</h2>
+<p>Uma <strong>b/</strong> é uma comunidade do site, com endereço próprio: <code>basedisso.com/b/&lt;endereço&gt;</code>. A lista de todas está em <a href="/b/">/b/</a>. Duas b/ fazem parte do site desde o começo: <strong>b/adm</strong>, para solicitações, queixas, elogios, sugestões e ofertas à administração, e <strong>b/atoa</strong>, uma comunidade livre, sem assunto definido.</p>
+<p>Em cada b/ existem a lista de postagens, um <strong>cartão lateral</strong> (descrição e regras próprias daquela b/), o quadro de <strong>moderação</strong> (quem são os ADMs) e o link <code>&gt;&gt;&gt;</code> para a lista de membros.</p>
+<h2 id="lendo-as-postagens">Lendo as postagens</h2>
+<p>No topo da b/ há três abas de ordenação:</p>
+<ul>
+<li><strong>links</strong>: a ordem padrão. Postagens fixadas ficam no topo, e depois vêm as mais recentes.</li>
+<li><strong>novos</strong>: da mais recente para a mais antiga.</li>
+<li><strong>melhores</strong>: pela soma dos votos; empates são resolvidos pelo número de comentários e, depois, pela data.</li>
+</ul>
+<p>Clicar numa <strong>etiqueta</strong> filtra a lista só com as postagens que a têm. Postagens ocultas pela moderação ou excluídas pelo autor não aparecem. A <strong>Navegação Compacta</strong> (aba Ajustes) deixa a lista mais densa.</p>
+<h2 id="postando">Postando</h2>
+<p>Clique em <strong>[+] postar</strong>. O formulário tem:</p>
+<div class="wiki-tabela"><table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Regra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nome</td>
+<td>Opcional, até 80 caracteres. Em branco, a postagem sai como "anônimo".</td>
+</tr>
+<tr>
+<td>Título</td>
+<td>Obrigatório, até 200 caracteres.</td>
+</tr>
+<tr>
+<td>Texto</td>
+<td>Até 2.000 caracteres.</td>
+</tr>
+<tr>
+<td>Link</td>
+<td>Opcional, começando com <code>http://</code> ou <code>https://</code>, até 500 caracteres.</td>
+</tr>
+<tr>
+<td>Etiquetas</td>
+<td>Opcional, até 3, escolhidas entre as que existem para o site e para a b/.</td>
+</tr>
+<tr>
+<td>Arquivo</td>
+<td>Uma imagem ou vídeo, nas b/ em que o envio está liberado. Veja <a href="/wiki/arquivos/">Imagens e vídeos</a>.</td>
+</tr>
+<tr>
+<td>Enquete</td>
+<td>Opcional. Veja <a href="/wiki/votos/">Votos, notas e etiquetas</a>.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Além do título, é preciso ter pelo menos um entre texto, link, arquivo ou enquete.</p>
+<p><strong>Sem conta</strong>, você posta direto, com nome opcional. Pode aparecer uma verificação anti-robô. <strong>Com conta</strong>, a postagem sai como <code>&gt;&gt;seunome</code>, ou como <code>&gt;&gt;anônimo</code> se você marcar a caixinha. Cuidado: ser <code>&gt;&gt;anônimo</code> esconde seu nome dos outros usuários, mas os ADMs conseguem ver qual conta fez a postagem (veja <a href="/wiki/contas/">Contas e privacidade</a>).</p>
+<p>O formato do texto está em <a href="/wiki/formatacao/">Formatação</a>.</p>
+<h2 id="comentando">Comentando</h2>
+<p>Cada postagem tem uma área de comentários logo abaixo. Dá para responder a um comentário, formando uma conversa em árvore de até <strong>20 níveis</strong>. Comentários têm até 2.000 caracteres, nome opcional, etiquetas e um arquivo, nas mesmas condições das postagens. Quem tem conta também pode votar e dar nota a postagens e comentários.</p>
+<h2 id="excluindo-o-que-voce-escreveu">Excluindo o que você escreveu</h2>
+<p>Quem tem conta pode excluir as próprias postagens e comentários (inclusive os que saíram como <code>&gt;&gt;anônimo</code>):</p>
+<ul>
+<li><strong>Sem respostas</strong>, o item é apagado de verdade, e a enquete vai junto.</li>
+<li><strong>Com respostas</strong>, o texto é apagado e o item fica marcado como "excluído pelo autor", para a conversa continuar fazendo sentido. Seu nome deixa de aparecer nele. Se depois todas as respostas sumirem, a "casca" também é apagada.</li>
+<li>Se a <strong>postagem</strong> foi excluída pelo autor, os comentários dela ficam fechados.</li>
+</ul>
+<p><strong>Quem postou sem conta não consegue excluir</strong>, porque não há como provar a autoria. Peça a um ADM.</p>
+<h2 id="entrando-em-uma-b">Entrando em uma b/</h2>
+<p>Quem tem conta pode clicar em <strong>unir-se</strong> no topo da b/ para virar <strong>membro</strong>. A lista de membros e de ADMs de cada b/ é pública e fica em <a href="/b/membros/">/b/membros/</a>. Para postar e comentar nas b/ abertas, não é preciso ser membro.</p>
+<h2 id="quem-modera">Quem modera</h2>
+<ul>
+<li><strong>ADMs do site</strong> moderam todas as b/.</li>
+<li><strong>ADMs de uma b/</strong> moderam só aquela b/. Eles aparecem no quadro "moderação" da própria b/ e com o selo <code>[b]</code> ao lado do nome; ADMs do site têm o selo <code>[M]</code>.</li>
+</ul>
+<p>Os ADMs de uma b/ podem: ocultar ou apagar postagens e comentários; fixar até 3 postagens na b/ e até 3 comentários por postagem; criar e gerir as etiquetas da b/; bloquear conexões sem conta só naquela b/; liberar o envio de imagens e vídeos para as contas; editar o cartão lateral (título, subtítulo e texto de até 2.000 caracteres); e definir o avatar ASCII da b/. Quem nomeia ou remove ADMs de b/ são os ADMs do site. Veja <a href="/wiki/moderacao/">Moderação e denúncias</a>.</p>
+<h2 id="criando-uma-nova-b">Criando uma nova b/</h2>
+<p>Hoje <strong>só ADMs do site criam comunidades</strong>. Quem cria vira ADM da nova b/. O endereço leva de 2 a 24 caracteres (letras minúsculas, números, <code>-</code> ou <code>_</code>, começando com letra ou número); o nome, de 2 a 60; e a descrição, até 300. Alguns endereços são reservados e não podem ser usados (por exemplo <code>wiki</code>, <code>adm</code>, <code>membros</code>, <code>todas</code>, <code>api</code>). Quer propor uma b/? Escreva em <a href="/b/adm/">b/adm</a>.</p>
+<h2 id="avatar-ascii-da-b">Avatar ASCII da b/</h2>
+<p>Cada b/ pode ter um desenho em texto que aparece no cabeçalho dela, na lista de comunidades e no painel lateral: até <strong>8 linhas por 16 colunas</strong>, com cores e até 4 camadas, sem emojis. Sem avatar, aparece o "b" laranja padrão. É o mesmo editor da <a href="/f/arte.html">arte ASCII</a>.</p>
+<h2 id="todas-as-postagens-btodas">Todas as postagens: /b/todas</h2>
+<p>A página <a href="/b/todas/">/b/todas/</a> é o <strong>feed geral</strong>: junta as postagens de todas as b/ numa lista só, cada uma com o selo da b/ de origem.</p>
+<ul>
+<li>Só há as ordens <strong>novos</strong> (padrão) e <strong>melhores</strong>.</li>
+<li>Não há formulário de postagem: para postar, entre numa b/.</li>
+<li>Fixar uma postagem vale dentro da própria b/ e <strong>não muda a ordem</strong> no feed geral.</li>
+<li>As mesmas regras de visibilidade das b/ valem aqui: o que está oculto ou foi excluído pelo autor não aparece.</li>
+</ul>
+<div class="wiki-pager"><a href="/wiki/regras/"><small>Anterior</small>Regras gerais</a><a class="prox" href="/wiki/feed-inicial/"><small>Próxima</small>Feed inicial e busca</a></div>
+<p class="wiki-rodape">Wiki do basedisso · atualizada em 27/11/2026. Achou algo errado ou faltando? Avise pela aba ADM ou em <a href="/b/adm/">b/adm</a>.</p>
+                    </article>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="/wiki/" class="sidebar-icon-link sidebar-help-link" aria-current="page" title="Ajuda e regras (wiki)" aria-label="Ajuda e regras (wiki)"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block tema-block">
+                        <h3>Tema</h3>
+                        <div class="tema-options" role="group" aria-label="Tema">
+                            <label class="tema-item"><span>Escuro</span><input type="checkbox" role="switch" data-tema="dark"><span class="tema-pill" aria-hidden="true"></span></label>
+                            <label class="tema-item"><span>Papel</span><input type="checkbox" role="switch" data-tema="papel"><span class="tema-pill" aria-hidden="true"></span></label>
+                        </div>
+                    </div>
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox" role="switch" data-pref="compacta">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                        <p class="adm-wiki-link"><a class="sidebar-link-sutil" href="/wiki/">regras e ajuda (wiki)</a></p>
+                        <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="/script.js?v=20261130c"></script>
+    <script src="/account.js?v=20261205a"></script>
+    <script src="/midia.js?v=20261208a"></script>
+    <script src="/etiquetas.js?v=20261202b"></script>
+    <script src="/votos.js?v=20261201c"></script>
+    <script src="/comments.js?v=20261203a"></script>
+    <script src="/wiki/wiki.js?v=20261209a"></script>
+</body>
+</html>

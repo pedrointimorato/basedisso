@@ -24,6 +24,7 @@ const RESERVED = new Set(
     "s",
     "l",
     "f",
+    "wiki",
     "entrar",
     "cadastro",
     "sair",

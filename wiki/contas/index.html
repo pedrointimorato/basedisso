@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script>try{var t=localStorage.getItem("tema");if(t==="dark"||t==="papel")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contas e privacidade — Wiki — basedisso</title>
+    <meta name="description" content="Como se cria uma conta, o que ela permite, que dados o site guarda e por quê, e o que fazer para sair ou tirar uma dúvida.">
+    <link rel="stylesheet" href="/style.css?v=20261209a">
+    <link rel="stylesheet" href="/account.css?v=20261208a">
+    <link rel="stylesheet" href="/comments.css?v=20261127b">
+    <link rel="stylesheet" href="/wiki/wiki.css?v=20261209a">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="site-container layout-default" id="siteContainer">
+        
+        <div class="left-area">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <form class="nav-search-box" action="/busca" method="get" role="search">
+                        <button type="submit" class="nav-search-submit" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <input type="search" name="q" class="nav-search-input" placeholder="buscar" autocomplete="off" enterkeyhint="search">
+                    </form>
+
+                    <div class="nav-icons">
+                        <a href="/" class="nav-icon-link"><i class="fa-solid fa-house"></i></a>
+                        <a href="/f/" class="nav-icon-link"><span class="icon-gear-wrench"><i class="fa-solid fa-gear"></i><i class="fa-solid fa-wrench"></i></span></a>
+                        <a href="/b/" class="nav-icon-link" title="Comunidades" aria-label="Comunidades"><i class="fa-solid fa-users"></i></a>
+                    </div>
+
+                    <div class="nav-right">
+                        <button class="btn-toggle-sidebar" id="sidebar-toggle" onclick="toggleSidebarMobile()">
+        <i class="fa-solid fa-sliders"></i></button>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content wiki-page">
+                <div class="wiki-layout">
+                    <nav class="wiki-nav" aria-label="Índice da wiki">
+                        <details open>
+                            <summary>Índice da wiki</summary>
+                            <div class="wiki-nav-lista">
+<div class="wiki-nav-grupo"><h2>Visão geral</h2><ul><li><a href="/wiki/">Início da wiki</a></li><li><a href="/wiki/sobre/">Sobre o basedisso</a></li><li><a href="/wiki/regras/">Regras gerais</a></li></ul></div>
+<div class="wiki-nav-grupo"><h2>Como funciona</h2><ul><li><a href="/wiki/comunidades/">Comunidades (b/)</a></li><li><a href="/wiki/feed-inicial/">Feed inicial e busca</a></li><li><a href="/wiki/literatura/">Literatura (/l)</a></li><li><a href="/wiki/perfis/">Perfis e arte ASCII</a></li><li><a href="/wiki/formatacao/">Formatação</a></li><li><a href="/wiki/votos/">Votos, notas e etiquetas</a></li><li><a href="/wiki/arquivos/">Imagens e vídeos</a></li></ul></div>
+<div class="wiki-nav-grupo"><h2>Conta e site</h2><ul><li><a href="/wiki/moderacao/">Moderação e denúncias</a></li><li><a href="/wiki/contas/" aria-current="page">Contas e privacidade</a></li><li><a href="/wiki/apoiar/">Apoiar</a></li><li><a href="/wiki/faq/">Perguntas frequentes</a></li></ul></div>
+                            </div>
+                        </details>
+                    </nav>
+                    <article class="wiki-doc">
+<p class="wiki-crumb"><a href="/wiki/">Wiki</a> › Contas e privacidade</p>
+<h1>Contas e privacidade</h1>
+<p class="wiki-resumo">Como se cria uma conta, o que ela permite, que dados o site guarda e por quê, e o que fazer para sair ou tirar uma dúvida.</p>
+<div class="wiki-toc"><p>Nesta página</p><ul><li><a href="#sem-conta-e-com-conta">Sem conta e com conta</a></li><li><a href="#como-criar-uma-conta">Como criar uma conta</a></li><li><a href="#entrar-sair-e-senha">Entrar, sair e senha</a></li><li><a href="#excluir-a-conta">Excluir a conta</a></li><li><a href="#anonimato">Anonimato</a></li><li><a href="#que-dados-o-site-guarda">Que dados o site guarda</a></li><li><a href="#quem-mais-recebe-dados">Quem mais recebe dados</a></li><li><a href="#seus-direitos">Seus direitos</a></li></ul></div>
+<h2 id="sem-conta-e-com-conta">Sem conta e com conta</h2>
+<p>Você <strong>não precisa de conta</strong> para ler o site, nem para postar e comentar nas b/ abertas. Uma conta libera:</p>
+<ul>
+<li><strong>votar</strong> e dar <strong>nota</strong> em postagens e comentários, e <strong>votar em enquetes</strong>;</li>
+<li>postar com o <strong>seu nome</strong> (<code>&gt;&gt;seunome</code>) ou, se preferir, como <code>&gt;&gt;anônimo</code>;</li>
+<li><strong>excluir</strong> o que você escreveu;</li>
+<li>ter <strong>perfil</strong>, com arte e avatar ASCII, e publicar nele;</li>
+<li><strong>unir-se</strong> a b/ e enviar arquivos onde o envio estiver liberado;</li>
+<li>gerar <a href="/convites/">códigos de convite</a>, se for primordial pagante.</li>
+</ul>
+<h2 id="como-criar-uma-conta">Como criar uma conta</h2>
+<p>O cadastro livre está fechado por enquanto. A página <a href="/cadastro">/cadastro</a> oferece a <strong>série primordial</strong>, e hoje há estas formas de entrar:</p>
+<ol>
+<li><strong>Inscrição individual paga</strong>: você escolhe o nome, informa um e-mail e paga <strong>R$ 5,00, uma vez só</strong>, por <strong>Pix ou cartão</strong> (via Mercado Pago). Veja <a href="/wiki/apoiar/">Apoiar</a>.</li>
+<li><strong>Código de convite ou de acesso</strong>: um código de 6 caracteres, que pode vir de um primordial pagante, de um ADM do site ou de uma caixa de acesso coletivo que bateu a meta. Cada código só pode ser usado uma vez <strong>por rede (conexão de internet)</strong>. Com código, o e-mail é opcional.</li>
+</ol>
+<p>Regras da conta:</p>
+<ul>
+<li><strong>Nome</strong>: de 3 a 20 caracteres (letras, números ou <code>_</code>). <strong>Não pode ser trocado</strong> depois. Alguns nomes são reservados (como os do sistema e variações de "anônimo").</li>
+<li><strong>Senha</strong>: de 8 a 128 caracteres.</li>
+<li><strong>Número primordial</strong> (<code>#N</code>): quem entra pela série, com pagamento ou código, recebe um número na ordem de entrada. É mostrado como selo no nome. Você não escolhe o número.</li>
+<li><strong>Convites</strong>: só primordiais que <strong>pagaram</strong> a inscrição geram códigos: um a cada 72 horas, válido por 24 horas.</li>
+</ul>
+<p>Depois do pagamento confirmado, a página de retorno deixa você <strong>definir a senha</strong> e ativar a conta. <strong>Guarde o link</strong> dessa página: ele serve para definir a senha da reserva, inclusive em outro aparelho. O nome fica reservado por <strong>30 minutos</strong> a partir do início do pagamento; se o pagamento não for confirmado nesse tempo, o nome volta a ficar livre.</p>
+<h2 id="entrar-sair-e-senha">Entrar, sair e senha</h2>
+<p>Entre em <a href="/entrar">/entrar</a>. A sessão dura <strong>30 dias</strong> neste navegador, ou até você clicar em <strong>Sair</strong>. Se errar a senha várias vezes seguidas, o site pede para esperar um pouco.</p>
+<p><strong>Não existe recuperação automática de senha.</strong> Guarde a sua senha. Se tiver problema com o acesso, fale com a administração pela aba <strong>ADM</strong>.</p>
+<h2 id="excluir-a-conta">Excluir a conta</h2>
+<p>Não existe um botão para excluir a conta inteira. Para pedir a exclusão, fale com a administração pela aba <strong>ADM</strong> ou por <a href="/b/adm/">b/adm</a>. Você pode <strong>excluir sozinho</strong> as suas postagens e comentários, e remover a sua arte e o seu avatar ASCII.</p>
+<h2 id="anonimato">Anonimato</h2>
+<p>Postar <strong>sem conta</strong> ou como <code>&gt;&gt;anônimo</code> esconde a sua identidade dos <strong>outros usuários</strong>, mas não do site:</p>
+<ul>
+<li><strong>Sem conta</strong>: o site guarda um código derivado do seu endereço de rede (uma impressão criptográfica com sal, <strong>não</strong> o endereço em si) para limitar spam e abuso. Os ADMs enxergam só um rótulo da conexão, diferente em cada b/.</li>
+<li><strong>Com conta, como <code>&gt;&gt;anônimo</code></strong>: o site guarda qual conta fez o item. Os <strong>ADMs</strong> conseguem ver essa conta (ADMs do site, em tudo; ADMs de uma b/, na b/ deles). Os outros usuários, não.</li>
+<li>Itens de quem postou <strong>sem conta</strong> <strong>não podem ser excluídos</strong> pelo autor. Peça a um ADM.</li>
+<li>O site responde a <strong>ordens judiciais</strong>, nos termos do Marco Civil da Internet.</li>
+</ul>
+<h2 id="que-dados-o-site-guarda">Que dados o site guarda</h2>
+<div class="wiki-tabela"><table>
+<thead>
+<tr>
+<th>Dado</th>
+<th>Quando</th>
+<th>Para quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nome, data de criação, número primordial, selos</td>
+<td>conta</td>
+<td>funcionamento do site; é público no seu perfil</td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>obrigatório para pagar e nas caixas; opcional com código</td>
+<td>pagamento, contato sobre a compra</td>
+</tr>
+<tr>
+<td>Senha</td>
+<td>conta</td>
+<td>guardada só como <em>hash</em> (PBKDF2 com sal); o site não sabe a sua senha</td>
+</tr>
+<tr>
+<td>Sessão (cookie <code>bd_sess</code>, 30 dias)</td>
+<td>ao entrar</td>
+<td>manter você conectado</td>
+</tr>
+<tr>
+<td>Cookie de reserva (<code>bd_reserva</code>, 30 dias)</td>
+<td>ao iniciar um pagamento</td>
+<td>ligar o pagamento à sua reserva</td>
+</tr>
+<tr>
+<td>Cookie de moderação (<code>bd_mod</code>)</td>
+<td>só ADMs</td>
+<td>acesso à moderação</td>
+</tr>
+<tr>
+<td>Impressão do endereço de rede (<em>hash</em> com sal)</td>
+<td>ao postar, comentar, cadastrar, pagar e usar códigos</td>
+<td>limitar spam e abuso; aplicar "um código por rede"</td>
+</tr>
+<tr>
+<td>Postagens, comentários, enquetes, votos, notas, arte e avatar, b/ de que você é membro</td>
+<td>uso</td>
+<td>o próprio serviço. Votos individuais não são públicos; a lista de membros das b/ é pública</td>
+</tr>
+<tr>
+<td>Dados do pagamento (ID no Mercado Pago, valor, status)</td>
+<td>pagamento</td>
+<td>comprovar e conciliar pagamentos</td>
+</tr>
+<tr>
+<td>Preferências no navegador (tema, modo compacto, imagens ligadas ou não, histórico das ferramentas, painéis recolhidos)</td>
+<td>uso</td>
+<td>ficam <strong>só no seu aparelho</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>O site <strong>não usa</strong> cookies de publicidade nem ferramentas de rastreamento de terceiros.</p>
+<h2 id="quem-mais-recebe-dados">Quem mais recebe dados</h2>
+<ul>
+<li><strong>Cloudflare</strong>: hospeda o site, o banco de dados e os arquivos enviados, e vê o seu endereço de rede ao entregar as páginas. Também fornece a verificação anti-robô mostrada a quem posta sem conta.</li>
+<li><strong>Mercado Pago</strong>: processa os pagamentos e recebe o seu e-mail e os dados da compra, conforme a política dele. O basedisso <strong>não recebe nem guarda os dados do seu cartão</strong>.</li>
+<li><strong>Sites de imagens por link</strong> e o serviço que entrega os ícones (cdnjs/Font Awesome): recebem uma requisição do seu navegador.</li>
+</ul>
+<h2 id="seus-direitos">Seus direitos</h2>
+<p>Pela LGPD você pode pedir para <strong>confirmar, acessar, corrigir ou excluir</strong> os seus dados, entre outros direitos. Faça o pedido à administração pela aba <strong>ADM</strong> ou por <a href="/b/adm/">b/adm</a>.</p>
+<div class="wiki-pager"><a href="/wiki/moderacao/"><small>Anterior</small>Moderação e denúncias</a><a class="prox" href="/wiki/apoiar/"><small>Próxima</small>Apoiar</a></div>
+<p class="wiki-rodape">Wiki do basedisso · atualizada em 27/11/2026. Achou algo errado ou faltando? Avise pela aba ADM ou em <a href="/b/adm/">b/adm</a>.</p>
+                    </article>
+                </div>
+            </main>
+        </div>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebar-tab-title"><a href="/" class="nav-logo">basedisso</a></h2>
+                <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
+                <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
+                <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
+                <a href="/wiki/" class="sidebar-icon-link sidebar-help-link" aria-current="page" title="Ajuda e regras (wiki)" aria-label="Ajuda e regras (wiki)"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+            </div>
+            <div class="sidebar-body">
+                <div class="sidebar-tab-content active" id="tab-meu">
+                    <div class="sidebar-block sidebar-account-block">
+                        <div class="sidebar-account" data-sidebar-account></div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-configuracoes">
+                    <div class="sidebar-block tema-block">
+                        <h3>Tema</h3>
+                        <div class="tema-options" role="group" aria-label="Tema">
+                            <label class="tema-item"><span>Escuro</span><input type="checkbox" role="switch" data-tema="dark"><span class="tema-pill" aria-hidden="true"></span></label>
+                            <label class="tema-item"><span>Papel</span><input type="checkbox" role="switch" data-tema="papel"><span class="tema-pill" aria-hidden="true"></span></label>
+                        </div>
+                    </div>
+                    <div class="sidebar-block">
+                        <h3>Preferências do Sistema</h3>
+                        <div class="config-options">
+                            <label class="config-item">
+                                <span>Notificações por Email</span>
+                                <input type="checkbox" checked>
+                            </label>
+                            <label class="config-item">
+                                <span>Navegação Compacta</span>
+                                <input type="checkbox" role="switch" data-pref="compacta">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-tab-content" id="tab-ofertas">
+                    <div class="sidebar-block adm-box">
+                        <h3>ADM</h3>
+                        <p>Alguma queixa, elogio, sugestão ou oferta?<br>
+                        Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
+                        <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                        <p class="adm-wiki-link"><a class="sidebar-link-sutil" href="/wiki/">regras e ajuda (wiki)</a></p>
+                        <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sidebar-footer">
+                <button class="footer-tab-btn active" onclick="mudarAbaSidebar('meu', 'Meu', event)">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Meu</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('configuracoes', 'Configurações', event)">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Ajustes</span>
+                </button>
+                <button class="footer-tab-btn" onclick="mudarAbaSidebar('ofertas', 'ADM', event)">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>ADM</span>
+                </button>
+            </footer>
+        </aside>
+
+    </div>
+
+    <script src="/script.js?v=20261130c"></script>
+    <script src="/account.js?v=20261205a"></script>
+    <script src="/midia.js?v=20261208a"></script>
+    <script src="/etiquetas.js?v=20261202b"></script>
+    <script src="/votos.js?v=20261201c"></script>
+    <script src="/comments.js?v=20261203a"></script>
+    <script src="/wiki/wiki.js?v=20261209a"></script>
+</body>
+</html>

@@ -8,7 +8,7 @@ export const SIDEBAR = `<aside class="right-sidebar">
                 <button type="button" class="btn-add-question sidebar-btn-apoiar">Apoiar</button>
                 <a href="#" class="sidebar-icon-link"><h1><i class="fa-solid fa-plus"></i></h1></a>
                 <button class="btn-close-sidebar" onclick="toggleSidebarMobile()">&times;</button>
-                <a href="#" class="sidebar-icon-link sidebar-help-link"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
+                <a href="/wiki/" class="sidebar-icon-link sidebar-help-link" title="Ajuda e regras (wiki)" aria-label="Ajuda e regras (wiki)"><h1><i class="fa-regular fa-circle-question"></i></h1></a>
             </div>
             <div class="sidebar-body">
                 <div class="sidebar-tab-content active" id="tab-meu">
@@ -44,6 +44,7 @@ export const SIDEBAR = `<aside class="right-sidebar">
                         <p>Alguma queixa, elogio, sugestão ou oferta?<br>
                         Deixe um comentário abaixo ou me envie um e-mail: <a href="mailto:Intimorato@mail.ru">Intimorato@mail.ru</a></p>
                         <a class="btn-adm-page" href="/b/adm/">abrir página do adm</a>
+                        <p class="adm-wiki-link"><a class="sidebar-link-sutil" href="/wiki/">regras e ajuda (wiki)</a></p>
                         <div class="bd-comments bd-comments-sidebar" data-page="/b/adm" data-form-only="true"></div>
                     </div>
                 </div>
@@ -88,7 +89,7 @@ export function headHtml(title) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${escapeHtml(title)}</title>
-    <link rel="stylesheet" href="/style.css?v=20261208e">
+    <link rel="stylesheet" href="/style.css?v=20261209a">
     <link rel="stylesheet" href="/account.css?v=20261208a">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">
