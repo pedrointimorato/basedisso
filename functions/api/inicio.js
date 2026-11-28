@@ -5,7 +5,7 @@ import { listAllVisiblePosts } from "../_lib/posts.js";
 import { attachMedia } from "../_lib/midia.js";
 import { communityAvatarMap } from "../_lib/b-avatar.js";
 import { readBiblia, BIBLIA_DEFAULT } from "../_lib/biblia.js";
-import { listProfilePosts, publicProfilePost, excerptOf, PERFIL_FEED_MAX } from "../_lib/perfil-posts.js";
+import { listProfilePosts, publicProfilePost, excerptOf, PERFIL_FEED_MAX, EXCERPT_FEED_MAX } from "../_lib/perfil-posts.js";
 import { getSessionUser } from "../_lib/auth.js";
 import { getAdminContext } from "../_lib/admins.js";
 
@@ -17,7 +17,7 @@ function bCard(p, avatars) {
     id: p.id,
     community: p.community,
     title: p.title,
-    excerpt: excerptOf(p.body),
+    excerpt: excerptOf(p.body, EXCERPT_FEED_MAX),
     url: p.url,
     comment_count: Number(p.comment_count || 0),
     created_at: p.created_at,

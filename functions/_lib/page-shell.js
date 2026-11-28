@@ -88,7 +88,7 @@ export function headHtml(title) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${escapeHtml(title)}</title>
-    <link rel="stylesheet" href="/style.css?v=20261208b">
+    <link rel="stylesheet" href="/style.css?v=20261208c">
     <link rel="stylesheet" href="/account.css?v=20261208a">
     <link rel="stylesheet" href="/b/comunidades.css?v=${V}">
     <link rel="stylesheet" href="/comments.css?v=20261127b">

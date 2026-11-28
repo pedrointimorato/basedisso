@@ -6,9 +6,14 @@ import { maskFor } from "./ascii.js";
 export const PERFIL_FEED_MAX = 40;
 export const PERFIL_PAGE_MAX = 50;
 export const EXCERPT_MAX = 160;
+export const EXCERPT_FEED_MAX = 420;
 
 export function excerptOf(body, n = EXCERPT_MAX) {
-  const t = String(body || "").replace(/\s+/g, " ").trim();
+  const t = String(body || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n */g, "\n")
+    .trim();
   if (!t) return "";
   if (t.length <= n) return t;
   return t.slice(0, n).replace(/\s+\S*$/, "") + "…";

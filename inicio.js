@@ -84,18 +84,26 @@
       el("span", { class: "inicio-b-av" }, bIcon(p.community, p.avatar)),
       el("span", { class: "inicio-b-nome" }, p.community || "")));
     var main = el("div", { class: "inicio-b-main" });
+    var copy = el("div", { class: "inicio-b-copy" });
     if (mid && mid.miniatura) {
       var thumb = el("div", { class: "inicio-b-thumb" });
       thumb.appendChild(el("img", { src: mid.miniatura, alt: "", loading: "lazy", decoding: "async" }));
       if (mid.tipo === "video") thumb.appendChild(el("span", { class: "inicio-b-play", "aria-hidden": "true" }, "▶"));
-      main.appendChild(thumb);
+      copy.appendChild(thumb);
     }
-    main.appendChild(el("div", { class: "inicio-b-text" },
-      el("h3", { class: "card-title" }, p.title || "Sem título"),
-      p.excerpt ? el("p", { class: "card-text" }, p.excerpt) : null,
-      el("div", { class: "inicio-b-foot" }, commentsLabel(p.comment_count))));
+    copy.appendChild(el("h3", { class: "card-title" }, p.title || "Sem título"));
+    if (p.excerpt) copy.appendChild(green(el("p", { class: "card-text" }), p.excerpt));
+    main.appendChild(copy);
+    main.appendChild(el("div", { class: "inicio-b-foot" }, commentsLabel(p.comment_count)));
     card.appendChild(main);
     return card;
+  }
+
+  function markClamped(root) {
+    (root || document).querySelectorAll(".inicio-b-card .card-text").forEach(function (p) {
+      if (p.scrollHeight > p.clientHeight + 1) p.classList.add("is-clamped");
+      else p.classList.remove("is-clamped");
+    });
   }
 
   function perfilCard(p) {
@@ -154,6 +162,8 @@
     if (!lit.length && !grade.length && !perfil.length) {
       host.insertBefore(el("p", { class: "inicio-vazio" }, "O feed ainda está vazio."), host.firstChild);
     }
+    markClamped(host);
+    requestAnimationFrame(function () { markClamped(host); });
   }
 
   function start() {
