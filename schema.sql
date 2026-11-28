@@ -512,3 +512,43 @@ CREATE TABLE IF NOT EXISTS community_avatar (
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+
+-- MOR-46: wiki editável. Ver migrate-wiki.sql (inclui a importação das páginas).
+CREATE TABLE IF NOT EXISTS wiki_paginas (
+  slug TEXT PRIMARY KEY,
+  titulo TEXT NOT NULL,
+  nav TEXT NOT NULL,
+  grupo TEXT NOT NULL,
+  resumo TEXT NOT NULL DEFAULT '',
+  ordem INTEGER NOT NULL DEFAULT 0,
+  corpo TEXT NOT NULL,
+  oculta INTEGER NOT NULL DEFAULT 0,
+  rev_id TEXT NOT NULL,
+  criado_em TEXT NOT NULL,
+  atualizado_em TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS wiki_revisoes (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL,
+  tipo TEXT NOT NULL,
+  titulo TEXT NOT NULL,
+  nav TEXT NOT NULL,
+  grupo TEXT NOT NULL,
+  resumo TEXT NOT NULL DEFAULT '',
+  ordem INTEGER NOT NULL DEFAULT 0,
+  corpo TEXT NOT NULL,
+  autor_id TEXT,
+  autor_nome TEXT NOT NULL,
+  resumo_edicao TEXT NOT NULL DEFAULT '',
+  criado_em TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_wiki_rev_slug ON wiki_revisoes(slug, criado_em);
+
+CREATE TABLE IF NOT EXISTS wiki_editores (
+  user_id TEXT PRIMARY KEY,
+  concedido_por TEXT,
+  concedido_por_nome TEXT,
+  concedido_em TEXT NOT NULL
+);

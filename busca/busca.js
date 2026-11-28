@@ -224,14 +224,15 @@
       var res = await fetch(API_URL + "?q=" + encodeURIComponent(q), {
         headers: { Accept: "application/json" },
       });
-      if (!res.ok) return { comentarios: [], postagens: [] };
+      if (!res.ok) return { comentarios: [], postagens: [], wiki: [] };
       var data = await res.json();
       return {
         comentarios: Array.isArray(data.comentarios) ? data.comentarios : [],
         postagens: Array.isArray(data.postagens) ? data.postagens : [],
+        wiki: Array.isArray(data.wiki) ? data.wiki : [],
       };
     } catch (e) {
-      return { comentarios: [], postagens: [] };
+      return { comentarios: [], postagens: [], wiki: [] };
     }
   }
 
@@ -300,7 +301,7 @@
         var postagens = api.postagens || [];
         var seen = {};
         var all = [];
-        itens.concat(postagens).concat(comentarios).forEach(function (item) {
+        itens.concat(api.wiki || []).concat(postagens).concat(comentarios).forEach(function (item) {
           var key = (item.tipo || "") + "|" + (item.url || "") + "|" + (item.id || item.title);
           if (seen[key]) return;
           seen[key] = true;

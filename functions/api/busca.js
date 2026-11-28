@@ -1,4 +1,5 @@
 import { json } from "../_lib/shared.js";
+import { renderMarkdown, sectionsOf, plainText } from "../_lib/wiki-md.js";
 
 const Q_MIN = 2;
 const Q_MAX = 80;
@@ -173,7 +174,7 @@ async function searchProfilePosts(db, q, terms) {
   }));
 }
 
-export async function onRequestGet(context) {
+async function baseGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   const q = (url.searchParams.get("q") || "").trim().slice(0, Q_MAX);
@@ -260,4 +261,59 @@ export async function onRequestGet(context) {
     postagens = [];
   }
   return json({ q, comentarios, postagens });
+}
+
+// Wiki (MOR-46): páginas visíveis ficam no D1; a busca olha título, resumo e cada seção (##).
+async function searchWiki(db, terms) {
+  const { results } = await db
+    .prepare("SELECT slug, titulo, nav, resumo, corpo, atualizado_em FROM wiki_paginas WHERE oculta = 0 ORDER BY ordem")
+    .all();
+  const out = [];
+  for (const p of results || []) {
+    const base = p.slug === "index" ? "/wiki/" : `/wiki/${p.slug}/`;
+    const head = fold(`${p.titulo} ${p.nav} ${p.resumo}`);
+    const { html } = renderMarkdown(p.corpo, { cartoes: "" });
+    const secoes = sectionsOf(html);
+    const intro = plainText(html.split(/<h2 id="/)[0]);
+    const todos = [{ id: "", titulo: "", texto: intro }, ...secoes];
+    let achouSecao = false;
+    for (const s of todos) {
+      const hay = fold(`${p.titulo} ${s.titulo} ${s.texto}`);
+      if (!terms.every((t) => hay.includes(t))) continue;
+      if (!s.id && secoes.length && !terms.every((t) => fold(`${p.titulo} ${p.resumo} ${intro}`).includes(t))) continue;
+      achouSecao = true;
+      const texto = s.texto;
+      const ft = fold(texto);
+      const k = ft.indexOf(terms.find((t) => ft.includes(t)) || "\u0000");
+      const ini = k > 120 ? k - 120 : 0;
+      out.push({
+        id: `wiki-${p.slug}${s.id ? "-" + s.id : ""}`,
+        tipo: "wiki",
+        title: `Wiki: ${p.titulo}${s.titulo ? " — " + s.titulo : ""}`,
+        author: "",
+        url: base + (s.id ? "#" + s.id : ""),
+        body: (ini ? "…" : "") + texto.slice(ini, ini + 360),
+        created_at: p.atualizado_em,
+      });
+    }
+    if (!achouSecao && terms.every((t) => head.includes(t))) {
+      out.push({ id: `wiki-${p.slug}`, tipo: "wiki", title: `Wiki: ${p.titulo}`, author: "", url: base, body: p.resumo, created_at: p.atualizado_em });
+    }
+  }
+  return out.slice(0, 15);
+}
+
+export async function onRequestGet(context) {
+  const res = await baseGet(context);
+  try {
+    const q = (new URL(context.request.url).searchParams.get("q") || "").trim().slice(0, Q_MAX);
+    const terms = termsOf(q);
+    if (q.length < Q_MIN || !terms.length || !context.env.DB) return res;
+    const data = await res.clone().json();
+    let wiki = [];
+    try { wiki = await searchWiki(context.env.DB, terms); } catch { /* tabela ausente */ }
+    return json({ ...data, wiki });
+  } catch {
+    return res;
+  }
 }
