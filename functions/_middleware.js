@@ -1,9 +1,11 @@
 import { CLAIMABLE_ADMIN, isClaimableAdminName, normalizeUsername } from "./_lib/auth.js";
 import { profilePageHtml } from "./_lib/profile-page.js";
 import { ANON_NAME, foldName } from "./_lib/anonimo.js";
+import { isPrivatePath, privateNotFound } from "./_lib/privado.js";
 
 export async function onRequest(context) {
   const url = new URL(context.request.url);
+  if (isPrivatePath(url.pathname)) return privateNotFound();
   const m = url.pathname.match(/^\/@([^/]+)\/?$/);
   if (m && (context.request.method === "GET" || context.request.method === "HEAD")) {
     let raw;
