@@ -8,3 +8,12 @@
 /caixas/ /cadastro/#caixas 302
 /arte /f/arte.html 301
 /arte/ /f/arte.html 301
+
+# /s → /l (literatura da comunidade)
+/s /l/ 301
+/s/ /l/ 301
+/s/index.html /l/ 301
+/s/biblia-amarela /l/biblia-amarela.html 301
+/s/biblia-amarela/ /l/biblia-amarela.html 301
+/s/biblia-amarela.html /l/biblia-amarela.html 301
+/s/* /l/:splat 301

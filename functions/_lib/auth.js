@@ -22,6 +22,7 @@ const RESERVED = new Set(
     "moderation",
     "api",
     "s",
+    "l",
     "f",
     "entrar",
     "cadastro",

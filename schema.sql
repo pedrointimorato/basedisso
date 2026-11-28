@@ -112,6 +112,8 @@ INSERT OR IGNORE INTO communities (slug, name, description, posting, created_at)
   ('atoa', 'À toa', 'Off topic. Conversa à toa, sem assunto definido.', 'open', '2026-11-23T00:00:00.000Z');
 
 UPDATE comments SET page = '/b/adm' WHERE page = '/adm';
+UPDATE comments SET page = '/l' WHERE page = '/s';
+UPDATE comments SET page = '/l/biblia-amarela' WHERE page = '/s/biblia-amarela';
 
 -- Hierarquia de ADMs e membros da base (idempotente, exceto o ALTER que só roda se a coluna faltar)
 CREATE TABLE IF NOT EXISTS site_admins (

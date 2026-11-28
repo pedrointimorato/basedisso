@@ -1,6 +1,7 @@
 import { SLUG_RE, UUID_RE } from "./comunidades.js";
 
-const FIXED_COMMENT_PAGES = new Set(["/s", "/s/biblia-amarela", "/b/adm"]);
+const FIXED_COMMENT_PAGES = new Set(["/l", "/l/biblia-amarela", "/b/adm"]);
+const PAGE_ALIASES = { "/s": "/l", "/s/biblia-amarela": "/l/biblia-amarela" };
 const NAME_MAX = 80;
 const BODY_MAX = 2000;
 const RATE_POST_PER_MIN = 3;
@@ -39,6 +40,7 @@ export function normalizePage(raw) {
   s = s.replace(/\/{2,}/g, "/");
   if (s.length > 200 || s.includes("..") || /[^a-zA-Z0-9/_-]/.test(s)) return null;
   if (s === "/adm") s = "/b/adm";
+  if (PAGE_ALIASES[s]) s = PAGE_ALIASES[s];
   if (FIXED_COMMENT_PAGES.has(s)) return s;
   const m = s.match(/^\/b\/([a-z0-9][a-z0-9_-]{0,23})\/p\/([0-9a-f-]{36})$/i);
   if (m && SLUG_RE.test(m[1].toLowerCase()) && UUID_RE.test(m[2])) {

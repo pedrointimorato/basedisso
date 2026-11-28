@@ -5,7 +5,7 @@ export const SLUG_RE = /^[a-z0-9][a-z0-9_-]{0,23}$/;
 export const NEW_SLUG_RE = /^[a-z0-9][a-z0-9_-]{1,23}$/;
 export const RESERVED_SLUGS = new Set([
   "membros", "moderar", "criar", "novo", "api", "p", "admin", "index", "busca",
-  "cadastro", "entrar", "s", "f", "assets",
+  "cadastro", "entrar", "s", "l", "f", "assets",
 ]);
 // Pastas estáticas dentro de /b/ (servidas pelos arquivos, não pela Function dinâmica).
 export const STATIC_B_DIRS = new Set(["adm", "atoa", "membros", "todas"]);

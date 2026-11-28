@@ -1,4 +1,4 @@
-// Bíblia Amarela: conteúdo padrão (idêntico ao HTML estático de /s/biblia-amarela.html) + leitura/escrita no D1.
+// Bíblia Amarela: conteúdo padrão (idêntico ao HTML estático de /l/biblia-amarela.html) + leitura/escrita no D1.
 // Formato do texto (renderizado com escape no navegador, sem HTML cru):
 //   parágrafos separados por linha em branco · "## Título" / "### Subtítulo" · "> citação" · "- item"
 //   **negrito** · *itálico* · [texto](https://link) · >>Nome (menção)

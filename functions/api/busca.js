@@ -60,8 +60,10 @@ function pageHref(page, id) {
   const map = {
     "/adm": "/b/adm/",
     "/b/adm": "/b/adm/",
-    "/s": "/s/",
-    "/s/biblia-amarela": "/s/biblia-amarela.html",
+    "/l": "/l/",
+    "/s": "/l/",
+    "/l/biblia-amarela": "/l/biblia-amarela.html",
+    "/s/biblia-amarela": "/l/biblia-amarela.html",
   };
   const base = map[page] || (page && page.startsWith("/") ? page : "/");
   return id ? `${base}#c-${id}` : `${base}#comentarios`;

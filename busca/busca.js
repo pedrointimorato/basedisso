@@ -145,7 +145,7 @@
 
   function tipoLabel(tipo) {
     if (tipo === "publicacao") return "Publicação";
-    if (tipo === "satira") return "Sátira";
+    if (tipo === "literatura" || tipo === "satira") return "literatura";
     if (tipo === "ferramenta") return "Ferramenta";
     if (tipo === "comentario") return "Comentário";
     if (tipo === "comunidade") return "Comunidade";

@@ -110,7 +110,7 @@ export function profilePageHtml({ title, initialPath }) {
     <script src="/votos.js?v=20261201c"></script>
     <script src="/comments.js?v=20261203a"></script>
     <script src="/ascii-editor.js?v=20261129b"></script>
-    <script src="/perfil.js?v=20261129b"></script>
+    <script src="/perfil.js?v=20261207a"></script>
 </body>
 </html>`;
 }

@@ -4,8 +4,10 @@
   var PAGE_LABELS = {
     "/adm": { href: "/b/adm/", label: "b/adm" },
     "/b/adm": { href: "/b/adm/", label: "b/adm" },
-    "/s": { href: "/s/", label: "sátiras" },
-    "/s/biblia-amarela": { href: "/s/biblia-amarela.html", label: "A Bíblia Amarela" },
+    "/l": { href: "/l/", label: "literatura da comunidade" },
+    "/s": { href: "/l/", label: "literatura da comunidade" },
+    "/l/biblia-amarela": { href: "/l/biblia-amarela.html", label: "A Bíblia Amarela" },
+    "/s/biblia-amarela": { href: "/l/biblia-amarela.html", label: "A Bíblia Amarela" },
   };
 
   function el() {
